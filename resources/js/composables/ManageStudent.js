@@ -2,7 +2,9 @@ import axios from "axios"
 import { useRouter } from "vue-router"
 import { ref } from "vue"
 export default function useAuth() {
+    const students=ref([])
     const errors = ref({})
+    const editErrors = ref({})
     const generalErrorMsg = ref('')
     const router = useRouter()
     const levels=ref([{
@@ -33,6 +35,14 @@ export default function useAuth() {
         //     }
         // })
     }
+    const deleteStudent = async (student) => {
+        console.log('delete',JSON.parse(JSON.stringify(student)));
+    }
+    const editStudent = async (student) => {
+        console.log('edit',JSON.parse(JSON.stringify(student)));
+    }
+    const getStudents = async () => {
+    }
     const getMajors = async () => {
     }
     const getLevels = async () => {
@@ -41,9 +51,13 @@ export default function useAuth() {
     return {
         addStudent,
         getMajors,
+        deleteStudent,
+        editStudent,
+        students,
         levels,
         majors,
         generalErrorMsg,
+        editErrors,
         errors
     }
 }

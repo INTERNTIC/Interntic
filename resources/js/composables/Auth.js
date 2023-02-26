@@ -14,6 +14,8 @@ export default function useAuth() {
 
         }else if(guard=='student'){
 
+        }else if(guard=='admin'){
+
         }else{
             return
         }

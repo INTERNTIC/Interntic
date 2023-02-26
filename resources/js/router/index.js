@@ -56,6 +56,9 @@ const router = createRouter({
       path: "/signUp",
       name: "signUp",
       component: SignUp,
+      meta:{
+        notAPage: true,
+      },
       children: [
         {
           path: "/signUp",
@@ -96,7 +99,7 @@ const router = createRouter({
 //       next();
 //     }
 // })
-const guards=['student','campany','department']
+const guards=['student','campany','department','admin']
 router.beforeEach((to, from, next) => { 
 if(to.name=='login'){
   if(guards.includes(to.params.guard)){
@@ -104,6 +107,9 @@ if(to.name=='login'){
   }else{
   next({name:"statistiques"})
   }
+}
+if(to.meta.notApage){
+  next({name:"dashboard"})
 }
 next()
 })

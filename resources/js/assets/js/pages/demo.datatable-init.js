@@ -58,7 +58,7 @@ $(document).ready(function() {
         drawCallback: function() {
             $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
         }
-    }), $("#scroll-horizontal-datatable").DataTable({
+    }), $("#scroll-horizontal-datatable,.scroll-horizontal-datatable").DataTable({
         scrollX: !0,
         language: {
             paginate: {
