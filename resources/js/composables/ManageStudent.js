@@ -35,6 +35,20 @@ export default function useAuth() {
         //     }
         // })
     }
+    const getStudent = async (id) => {
+        console.log(id);
+        // await axios.post('/api/login', credentials).then((response) => {
+        //     AuthStore.$state.authUser = response.data.data
+        //     // AuthStore.setUserToken(response.data.data.teken)
+        //     errors.value = {}
+        //     router.push({ name: "dashboard" })
+        // }).catch((error) => {
+        //     if (error.response) {
+        //         errors.value = error.response.data.errors;
+        //         msg.value = error.response.data.msg;
+        //     }
+        // })
+    }
     const deleteStudent = async (student) => {
         console.log('delete',JSON.parse(JSON.stringify(student)));
     }
