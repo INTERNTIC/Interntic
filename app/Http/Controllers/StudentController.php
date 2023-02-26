@@ -16,28 +16,23 @@ class StudentController extends Controller
 {
     public function studentCreateAccount(Request $request)
     {
-        $validator=Validator::make($request->all(),[
+        Validator::make($request->all(),[
             'student_card_number'=>'required',
             'email'=>['required','ends_with:univ-constantine2.dz','unique:student_accounts'],
             'password'=>['required','min:6'],
-        ]);
-
-        
-        if($validator->fails()){
-            return response()->json(['status' => false,'message'=>'Something went wrong', 'errors' => $validator->errors()]);
-        }
+        ])->validate();
         
         
         $student_id = DB::table('students')->where('student_card', $request->student_card_number)->value('id');
         
         if ($student_id==false) {
-            return response()->json(['status' => false,'message'=>'Please be sure about your card number or contact your department head']);
+            return $this->returnError('Please be sure about your card number or contact your department head');
         }
         
         $token = Str::random(64);
         $email=$request->email;
 
-        StudentAccount::create([
+        StudentAccount::create([ 
             'id'=>$student_id,
             'email'=>$request->email,
             'password'=>Hash::make($request->password),
@@ -45,14 +40,14 @@ class StudentController extends Controller
         ]);
         $data=[];
         $data['token']=$token;
-        Mail::send('mail',$data ,function($message) use($token,$email)
+        Mail::send('verificationMail',$data ,function($message) use($token,$email) 
         {
             $message -> subject('Email verification');
             $message->to($email);
         });
     }
 
-    public function emailVerification(Request $request,$token)
+    public function emailVerification($token)
     {
          $student_account= StudentAccount::where('token', $token)->get()->first();
          $student_account->update([ 

@@ -54,7 +54,7 @@ return [
         ],
         'super_admin' => [
             'driver' => 'jwt',
-            'provider' => 'super_admins',
+            'provider' => 'super_admins', 
         ],
     ],
 
