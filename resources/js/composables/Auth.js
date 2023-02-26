@@ -13,6 +13,19 @@ export default function useAuth() {
         }else if(guard=='company'){
 
         }else if(guard=='student'){
+            // console.log(JSON.parse(window.localStorage.getItem('authUser')));
+        await axios.post('/api/login/'+guard, credentials).then((response) => {
+            console.log(response);
+            // AuthStore.$state.authUser = response.data.data
+            // // AuthStore.setUserToken(response.data.data.teken)
+            // errors.value = {}
+            // router.push({ name: "dashboard" })
+        }).catch((error) => {
+            if (error.response) {
+                errors.value = error.response.data.errors;
+                generalErrorMsg.value = error.response.data.generalErrorMsg;
+            }
+        })
 
         }else if(guard=='admin'){
 
@@ -26,18 +39,7 @@ export default function useAuth() {
         if(rememberMe){
             window.localStorage.setItem('user', JSON.stringify(credentials))
         }
-        console.log(JSON.parse(window.localStorage.getItem('authUser')));
-        // await axios.post('/api/login', credentials).then((response) => {
-        //     AuthStore.$state.authUser = response.data.data
-        //     // AuthStore.setUserToken(response.data.data.teken)
-        //     errors.value = {}
-        //     router.push({ name: "dashboard" })
-        // }).catch((error) => {
-        //     if (error.response) {
-        //         errors.value = error.response.data.errors;
-        //         generalErrorMsg.value = error.response.data.generalErrorMsg;
-        //     }
-        // })
+        
     }
     const companySignUp = async (credentials) => {
         console.log(credentials);

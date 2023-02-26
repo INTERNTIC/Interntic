@@ -10,28 +10,29 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Company
+ * Class Major
  * 
  * @property int $id
  * @property string $name
- * @property string $location
+ * @property string $short_cut
  * 
- * @property Collection|InternshipResponssible[] $internship_responssibles
+ * @property Collection|Level[] $levels
  *
  * @package App\Models
  */
-class Company extends Model
+class Major extends Model
 {
-	protected $table = 'companies';
+	protected $table = 'majors';
 	public $timestamps = false;
 
 	protected $fillable = [
 		'name',
-		'location'
+		'short_cut'
 	];
 
-	public function internship_responssibles()
+	public function levels()
 	{
-		return $this->hasMany(InternshipResponssible::class);
+		return $this->belongsToMany(Level::class)
+					->withPivot('id');
 	}
 }
