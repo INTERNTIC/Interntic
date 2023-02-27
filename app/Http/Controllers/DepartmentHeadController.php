@@ -8,14 +8,15 @@ use App\Models\Student;
 use App\Models\StudentAccount;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Traits\GeneralTrait;
 
 class DepartmentHeadController extends Controller
 
 {
     public function addStudentInfo(Request $request)
     {
-        // return $request;
-        Validator::make($request->all(),[
+       Validator::make($request->all(),[
+
             'first_name'=>'required',
             'last_name'=>'required',
             'birthday'=>'required',
@@ -45,10 +46,10 @@ class DepartmentHeadController extends Controller
     {
         $student= Student::find($request->id);
         if($student==false) {
-            return response()->json(['status' => false,'message'=>'Student not found']);
+            return $this->returnError('Student not found');
         }
 
-        $validator=Validator::make($request->all(),[
+        Validator::make($request->all(),[
             'first_name'=>'required',
             'last_name'=>'required',
             'birthday'=>'required',
@@ -58,12 +59,7 @@ class DepartmentHeadController extends Controller
             'social_security_num'=>['required','unique:students'],
             'level'=>'required',
             'major'=>'required',
-        ]);
-
-        
-        if($validator->fails()){
-            return response()->json(['status' => false,'message'=>'Something went wrong', 'errors' => $validator->errors()]);
-        }
+        ])->validate();
 
         $level_major_id = DB::table('level_major')->where('level_id', $request->level)->where('major_id',$request->major)->value('id');
         
@@ -85,14 +81,14 @@ class DepartmentHeadController extends Controller
         $account = StudentAccount::find($request->id);
 
         if($student==false) {
-            return response()->json(['status' => false,'message'=>'Something went wrong','errors'=>'Student not found']);
+            return $this->returnError('Student not found');
         }
-
+ 
         if ($account==true) {
             $account->delete();
         }
         
         $student->delete();
-        return response()->json(['status' => true]);
+        return $this->returnSuccessMessage('Student deleted successfully');
     }
 }

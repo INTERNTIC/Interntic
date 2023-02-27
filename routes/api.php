@@ -22,27 +22,45 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //Authentication part
-Route::post('/login/{guard}',[AuthController::class,"login"]);
-Route::group(['middleware'=>'check.auth.guard'],function(){
-    Route::post('/loginWithToken',[AuthController::class,"loginWithToken"]);
+
+Route::controller(AuthController::class)->group(function (){
+    Route::post('/login/{guard}',"login");
+  Route::group(['middleware'=>'check.auth.guard'],function(){
+    Route::post('/loginWithToken',"loginWithToken"); 
+  });
+    Route::post('/logout',"logout");
+    Route::post('/askResetPassword/{guard}','askResetPassword');   
+    Route::post('/resetPassword','resetPassword')->name('resetPassword');
 });
-// Route::middleware(['checkAuthUser'],)
-Route::post('/logout',[AuthController::class,"logout"]);
-
-//Super admin part
-Route::post('/addDepartmentHead',[SuperAdmin::class,"addDepartmentHead"]);
-Route::post('/editDepartmentHead',[SuperAdmin::class,"editDepartmentHead"]);
-
-// Department head part
-Route::post('/addStudentInfo',[DepartmentHeadController::class,"addStudentInfo"]);
-Route::post('/editStudentInfo',[DepartmentHeadController::class,"editStudentInfo"]);
-Route::post('/deleteStudent',[DepartmentHeadController::class,"deleteStudent"]);
-
 
 //Student part
-Route::post('/studentCreateAccount',[StudentController::class,"studentCreateAccount"]);
-Route::post('/emailVerification/{token}',[StudentController::class,"emailVerification"])->name('emailVerification');
+Route::controller(StudentController::class)->middleware(['auth:student'])->group(function (){
+    Route::post('/studentCreateAccount',"studentCreateAccount");
+    Route::post('/emailVerification/{token}',"emailVerification")->name('emailVerification');
+});
+
+
+
+//Super admin part
+Route::controller(SuperAdmin::class)->middleware(['auth:super_admin'])->group(function (){
+    Route::post('/addDepartmentHead',"addDepartmentHead");
+    Route::post('/editDepartmentHead',"editDepartmentHead");
+});
+
+
+// Department head part
+Route::controller(DepartmentHeadController::class)->middleware(['auth:department_head'])->group(function (){
+    Route::post('/addStudentInfo',"addStudentInfo");
+    Route::post('/editStudentInfo',"editStudentInfo");
+    Route::post('/deleteStudent',"deleteStudent");
+    
+});
+
 
 //Internship responsible part
-Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
+Route::controller(InternshipResponsibleController::class)->middleware(['auth:internship_responssible'])->group(function (){
+    Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
+});
+
+
 

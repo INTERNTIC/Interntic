@@ -7,7 +7,9 @@
 namespace App\Models;
 
 
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -21,6 +23,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  */
 class SuperAdmin extends Authenticatable implements JWTSubject 
 {
+	use Notifiable;
 	protected $table = 'super_admins';
 	public $timestamps = false;
 
@@ -32,6 +35,7 @@ class SuperAdmin extends Authenticatable implements JWTSubject
 		'email',
 		'password'
 	];
+
 	public function getJWTIdentifier()
     {
         return $this->getKey();
