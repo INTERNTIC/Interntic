@@ -38,7 +38,23 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'users',  
+        ],
+        'student' => [
+            'driver' => 'jwt',
+            'provider' => 'student_accounts',
+        ],
+        'department_head' => [
+            'driver' => 'jwt',
+            'provider' => 'department_heads',
+        ],
+        'internship_responssible' => [
+            'driver' => 'jwt',
+            'provider' => 'internship_responssibles',
+        ],
+        'super_admin' => [
+            'driver' => 'jwt',
+            'provider' => 'super_admins',
         ],
     ],
 
@@ -60,9 +76,33 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'users' => [ 
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
+
+        'student_accounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StudentAccount::class,
+        ],
+
+        'department_heads' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\DepartmentHead::class,
+        ],
+
+        'internship_responssibles' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\InternshipResponssible::class,
+        ],
+        'super_admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin::class,
         ],
 
         // 'users' => [
