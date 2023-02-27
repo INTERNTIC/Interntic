@@ -5,12 +5,12 @@ namespace App\Traits;
 trait GeneralTrait
 { 
 
-    public function getCurrentLang() 
+    public function getCurrentLang()  
     {
         return app()->getLocale();
     }
 
-    public function returnError( $msg,$code=400,$errors=[])
+    public function returnError($msg,$code=450,$errors=[])
     {
         return response()->json([
             'status' => false,
@@ -21,7 +21,7 @@ trait GeneralTrait
     }
 
 
-    public function returnSuccessMessage($msg = "", $code = 200)
+    public function returnSuccessMessage($msg, $code = 200)
     {
         return response()->json([
             'status' => true,
