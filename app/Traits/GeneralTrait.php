@@ -10,7 +10,7 @@ trait GeneralTrait
         return app()->getLocale();
     }
 
-    public function returnError( $msg,$code=400,$errors=[])
+    public function returnError( $msg,$code=450,$errors=[])
     {
         return response()->json([
             'status' => false,

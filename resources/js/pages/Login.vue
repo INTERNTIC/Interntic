@@ -1,18 +1,20 @@
 
 <script setup>
-import { ref } from 'vue';
+import { ref ,watch} from 'vue';
 import useAuth from '../composables/Auth.js'
 import CustomInput from '../components/form/CustomInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
 import { useRoute } from 'vue-router';
-const { login, errors,generalErrorMsg } = useAuth();
+import DangerNofitication from '../components/notification/DangerNofitication.vue';
+const { login, errors, generalErrorMsg } = useAuth();
 const route = useRoute()
-const guard=route.params.guard
-const rememberMe=ref(false)
+const guard = route.params.guard
+const rememberMe = ref(false)
 const loginFormModel = ref({
     'email': '',
     'password': '',
 })
+
 const body = document.querySelector('body');
 body.classList.add('authentication-bg')
 const getErrorText = (ErrorObject, property) => {
@@ -21,14 +23,12 @@ const getErrorText = (ErrorObject, property) => {
 
 
 </script>
-
-<template>
+<template> 
     <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xxl-4 col-lg-5">
                     <div class="card">
-
                         <!-- Logo -->
                         <div class="card-header pt-4 pb-4 text-center bg-primary">
                             <router-link :to="{ name: 'dashboard' }">
@@ -45,25 +45,24 @@ const getErrorText = (ErrorObject, property) => {
                                 <p class="text-muted mb-4">Enter your email address and password to access Dashboard.</p>
                             </div>
 
-                            <form @submit.prevent="login(guard,rememberMe,loginFormModel)">
+                            <form @submit.prevent="login(guard, rememberMe, loginFormModel)">
                                 {{ loginFormModel }}
-                                <CustomInput v-model="loginFormModel.email" label="Email Address" :errorText="getErrorText(errors,'email')"
-                                    :showError="errors.hasOwnProperty('email')" placeholder="Enter Email Address" inputType="email" />
+                                <CustomInput v-model="loginFormModel.email" label="Email Address"
+                                    :errorText="getErrorText(errors, 'email')" :showError="errors.hasOwnProperty('email')"
+                                    placeholder="Enter Email Address" inputType="email" />
                                 <div class="mb-3">
                                     <router-link to="#" class="text-muted float-end"><small>Forgot your
                                             password?</small></router-link>
                                     <label for="password" class="form-label">Password</label>
                                     <div class="input-group input-group-merge">
-                                        <input
-                                        :class="{ 'is-invalid': errors.hasOwnProperty('password') }"
-                                        v-model="loginFormModel.password"
-                                        type="password" id="password" 
+                                        <input :class="{ 'is-invalid': errors.hasOwnProperty('password') }"
+                                            v-model="loginFormModel.password" type="password" id="password"
                                             class="form-control" placeholder="Enter your password">
                                         <div role="button" class="input-group-text" data-password="false">
-                                            <span  class="password-eye"></span>
+                                            <span class="password-eye"></span>
                                         </div>
                                         <div v-if="errors.hasOwnProperty('password')" class="invalid-feedback">
-                                            {{ getErrorText(errors,'password') }}
+                                            {{ getErrorText(errors, 'password') }}
                                         </div>
                                     </div>
                                 </div>
@@ -90,12 +89,17 @@ const getErrorText = (ErrorObject, property) => {
                 </div> <!-- end col -->
             </div>
             <!-- end row -->
-        </div>
-        <!-- end container -->
     </div>
-    <!-- end page -->
+    <!-- end container -->
+</div>
+<!-- end page -->
 
-    <footer class="footer footer-alt">
-        2018 -2023 © Hyper - Coderthemes.com
-    </footer>
+<footer class="footer footer-alt">
+    2018 -2023 © Hyper - Coderthemes.com
+</footer>
+
+
+<DangerNofitication
+:errorMsg="generalErrorMsg"
+/>
 </template>

@@ -23,7 +23,10 @@ use Illuminate\Support\Facades\Auth;
 
 //Authentication part
 Route::post('/login/{guard}',[AuthController::class,"login"]);
-Route::post('/loginWithToken/{guard}',[AuthController::class,"loginWithToken"]);
+Route::group(['middleware'=>'check.auth.guard'],function(){
+    Route::post('/loginWithToken',[AuthController::class,"loginWithToken"]);
+});
+// Route::middleware(['checkAuthUser'],)
 Route::post('/logout',[AuthController::class,"logout"]);
 
 //Super admin part

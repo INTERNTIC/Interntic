@@ -23,8 +23,12 @@ class AuthController extends Controller
     {
         if ($guard == 'student') {
             $account = StudentAccount::where('email', $request->email)->get()->first();
+            if ($account==false) {
+                return $this->returnError('Your Email is invalid');
+            }
+
             if ($account->email_verified == 0) {
-                return $this->returnError('Your account is unvalid');
+                return $this->returnError('Your account is invalid');
             }
         }
 
@@ -49,17 +53,14 @@ class AuthController extends Controller
     public function loginWithToken(Request $request)
     {
         try {
-
             $token=$request->header('auth-token');
-            $teacher = Auth::guard('teacher-api')->user();
-            $teacher->token = $token;
-            return $this->returnData('teacher', $teacher);
+            $user = JWTAuth::parseToken()->authenticate();
+            $user->token = $token;
+            return $this->returnData($user);
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage(), $th->getCode());
         }
     }
-
-
 
 
 
