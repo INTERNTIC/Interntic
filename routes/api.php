@@ -22,9 +22,12 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //Authentication part
+
 Route::controller(AuthController::class)->group(function (){
     Route::post('/login/{guard}',"login");
-    Route::post('/loginWithToken/{guard}',"loginWithToken"); 
+  Route::group(['middleware'=>'check.auth.guard'],function(){
+    Route::post('/loginWithToken',"loginWithToken"); 
+  });
     Route::post('/logout',"logout");
     Route::post('/askResetPassword/{guard}','askResetPassword');   
     Route::post('/resetPassword','resetPassword')->name('resetPassword');
@@ -35,6 +38,7 @@ Route::controller(StudentController::class)->middleware(['auth:student'])->group
     Route::post('/studentCreateAccount',"studentCreateAccount");
     Route::post('/emailVerification/{token}',"emailVerification")->name('emailVerification');
 });
+
 
 
 //Super admin part

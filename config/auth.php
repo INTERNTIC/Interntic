@@ -81,10 +81,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'students' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Student::class,
-        ],
+        // 'students' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\Student::class,
+        // ],
 
         'student_accounts' => [
             'driver' => 'eloquent',

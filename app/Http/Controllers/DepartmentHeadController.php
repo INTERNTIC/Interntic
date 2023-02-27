@@ -16,6 +16,7 @@ class DepartmentHeadController extends Controller
     public function addStudentInfo(Request $request)
     {
        Validator::make($request->all(),[
+
             'first_name'=>'required',
             'last_name'=>'required',
             'birthday'=>'required',

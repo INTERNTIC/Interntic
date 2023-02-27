@@ -20,7 +20,6 @@ class InternshipResponsibleController extends Controller
             'company_name'=>'required',
             'company_location'=>'required',
         ])->validate();
-
         AccountRequest::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
