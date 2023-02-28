@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //Authentication part
-
 Route::controller(AuthController::class)->group(function (){
     Route::post('/login/{guard}',"login");
     Route::group(['middleware'=>'check.auth.guard'],function(){
