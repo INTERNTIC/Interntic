@@ -15,7 +15,7 @@ class CreateInternshipResponssiblesTable extends Migration
     {
     
 
-        Schema::create('internship_responssibles', function (Blueprint $table) {
+        Schema::create('internship_responsibles', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
@@ -34,6 +34,6 @@ class CreateInternshipResponssiblesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('internship_responssibles');
+        Schema::dropIfExists('internship_responsibles');
     }
 }

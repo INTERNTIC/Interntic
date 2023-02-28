@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountRequest;
-use App\Models\InternshipResponssible;
+use App\Models\InternshipResponsible;
 use App\Models\Offer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,9 +28,9 @@ class InternshipResponsibleController extends Controller
         ])->validate();
 
         $account_request=AccountRequest::where('email',$request->email)->get()->first();
-        $exist_account=InternshipResponssible::where('email',$request->email)->get()->first();
+        $exist_account=InternshipResponsible::where('email',$request->email)->get()->first();
 
-        if($account_request==true)
+        if($account_request==true) 
         {
             return $this->returnError('You already have sent a request!');
         }
@@ -51,66 +51,16 @@ class InternshipResponsibleController extends Controller
         ]);
     }
 
-    public function addOffer(Request $request)
+    public function responsibleResetPasword(Request $request,$id)
     {
-        $user = Auth::guard('internship_responssible')->user();
-
-        $responsible_id=$user->id;
-
-        Validator::make($request->all(),[ 
-            'theme'=>'required',
-            'details'=>'required',
-            'duration'=>'required',
-        ])->validate();
-
-
-        Offer::create([
-            'theme'=>$request->theme,
-            'details'=>$request->details,
-            'duration'=>$request->duration,
-            'internship_responsible_id'=>$responsible_id
-        ]);
-
-    }
-
-    public function displayOffers()
-    {
-        $user = Auth::guard('internship_responssible')->user();
-        $offers=DB::table('offers')->where('internship_responsible_id',$user->id)->get();
-
-        if($offers==false)
+        $responsible=InternshipResponsible::find($id);
+        if($responsible==false)
         {
-            return $this->returnError('No offer to display');
+            return $this->returnError('Something went wrong');
         }
-        return $this->returnData($offers);
-    }
-
-    public function selectOffer(Request $request)
-    {
-        $offer=DB::table('offers')->where('id',$request->id)->get()->first();
-        return $this->returnData($offer);
-    }
-
-    public function editOffer(Request $request)
-    {
-        Validator::make($request->all(),[ 
-            'theme'=>'required',
-            'details'=>'required',
-            'duration'=>'required',
-        ])->validate();
-
-        $offer=Offer::where('id',$request->id)->get()->first();
-
-        $offer->update([
-            'theme'=>$request->theme,
-            'details'=>$request->details,
-            'duration'=>$request->duration,
+        $responsible->update([
+            'password'=>Hash::make($request->password),
         ]);
-    }
-
-    public function deleteOffer(Request $request)
-    {
-        $offer=Offer::where('id',$request->id)->get()->first();
-        $offer->delete();
+        return $this->returnSuccessMessage('Password updated successfully');
     }
 }

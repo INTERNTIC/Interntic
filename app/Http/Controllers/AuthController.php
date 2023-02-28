@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use App\Models\DepartmentHead;
+use App\Models\InternshipResponsible;
 use App\Models\PasswordReset;
 use App\Models\StudentAccount;
 use App\Models\SuperAdmin;
@@ -111,6 +111,13 @@ class AuthController extends Controller
                 if($guard=='super_admin')
                 {
                     $account= SuperAdmin::where('email', $request->email)->get()->first();
+                }
+                else
+                {
+                    if($guard=='internship_responsibles')
+                    {
+                        $account= InternshipResponsible::where('email', $request->email)->get()->first();
+                    }
                 }
             }
         }
