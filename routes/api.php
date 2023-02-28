@@ -35,7 +35,6 @@ Route::controller(AuthController::class)->group(function (){
     });
     Route::post('/askResetPassword/{guard}','askResetPassword');   
     Route::post('/resetPassword','resetPassword')->name('resetPassword');
-});
 
 
 //Student part
