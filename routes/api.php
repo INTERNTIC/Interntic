@@ -45,6 +45,8 @@ Route::controller(SuperAdmin::class)->middleware(['auth:super_admin'])->group(fu
 
 
 // Department head part
+Route::post('/manageAccountRequest',[DepartmentHeadController::class,"manageAccountRequest"]);
+Route::get('/diplayStudents',[DepartmentHeadController::class,"diplayStudents"]);
 Route::controller(DepartmentHeadController::class)->middleware(['auth:department_head'])->group(function (){
     Route::post('/addStudentInfo',"addStudentInfo");
     Route::post('/editStudentInfo',"editStudentInfo");
@@ -54,8 +56,14 @@ Route::controller(DepartmentHeadController::class)->middleware(['auth:department
 
 
 //Internship responsible part
+Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
+Route::post('/addOffer',[InternshipResponsibleController::class,"addOffer"]);
+Route::get('/displayOffers',[InternshipResponsibleController::class,"displayOffers"]);
+Route::get('/selectOffer',[InternshipResponsibleController::class,"selectOffer"]);
+Route::post('/editOffer',[InternshipResponsibleController::class,"editOffer"]);
+Route::post('/deleteOffer',[InternshipResponsibleController::class,"deleteOffer"]);
+
 Route::controller(InternshipResponsibleController::class)->middleware(['auth:internship_responssible'])->group(function (){
-    Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
 });
 
 

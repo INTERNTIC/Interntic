@@ -14,15 +14,11 @@ return new class extends Migration
     public function up()
     {
 
-        Schema::create('assessments', function (Blueprint $table) {
+        Schema::create('super_admins', function (Blueprint $table) {
             $table->id();
-            $table->date('the_date');
-            $table->date('enter_time');
-            $table->date('left_time');
-            $table->text('note');
-            $table->unsignedBigInteger('internship_request_student_id');
+            $table->string('email')->unique();
+            $table->string('password');
         });
-
     }
 
     /**
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assessments');
+        Schema::dropIfExists('super_admins');
     }
 };

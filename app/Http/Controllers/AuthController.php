@@ -13,7 +13,7 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Mail; 
 use Illuminate\Support\Str;
 
 

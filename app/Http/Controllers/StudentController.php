@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use App\Traits\GeneralTrait;
 
 class StudentController extends Controller 
 {
+    use GeneralTrait;
     public function studentCreateAccount(Request $request)
     {
         Validator::make($request->all(),[

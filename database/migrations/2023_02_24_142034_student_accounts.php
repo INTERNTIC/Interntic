@@ -14,15 +14,13 @@ return new class extends Migration
     public function up()
     {
 
-        Schema::create('assessments', function (Blueprint $table) {
-            $table->id();
-            $table->date('the_date');
-            $table->date('enter_time');
-            $table->date('left_time');
-            $table->text('note');
-            $table->unsignedBigInteger('internship_request_student_id');
+        Schema::create('student_accounts', function (Blueprint $table) {
+            $table->unsignedBigInteger('id')->primary();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('token')->nullable();
+            $table->tinyInteger('email_verified')->default(0);
         });
-
     }
 
     /**
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assessments');
+        Schema::dropIfExists('student_accounts');
     }
 };

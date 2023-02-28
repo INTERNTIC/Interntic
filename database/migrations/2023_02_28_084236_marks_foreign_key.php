@@ -13,16 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-
-        Schema::create('assessments', function (Blueprint $table) {
-            $table->id();
-            $table->date('the_date');
-            $table->date('enter_time');
-            $table->date('left_time');
-            $table->text('note');
-            $table->unsignedBigInteger('internship_request_student_id');
+        Schema::table('marks', function (Blueprint $table){
+            $table->foreign('internship_request_student_id')->references('id')->on('internship_request_student')->onDelete('cascade')->onUpdate('cascade');      
         });
-
     }
 
     /**
@@ -32,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assessments');
+        //
     }
 };
