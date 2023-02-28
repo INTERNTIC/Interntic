@@ -45,12 +45,12 @@ return [
             'provider' => 'student_accounts',
         ],
         'department_head' => [
-            'driver' => 'jwt',
+            'driver' => 'jwt', 
             'provider' => 'department_heads',
         ],
-        'internship_responssible' => [
+        'internship_responsible' => [
             'driver' => 'jwt',
-            'provider' => 'internship_responssibles',
+            'provider' => 'internship_responsibles',
         ],
         'super_admin' => [
             'driver' => 'jwt',
@@ -96,9 +96,9 @@ return [
             'model' => App\Models\DepartmentHead::class,
         ],
 
-        'internship_responssibles' => [
+        'internship_responsibles' => [
             'driver' => 'eloquent',
-            'model' => App\Models\InternshipResponssible::class,
+            'model' => App\Models\InternshipResponsible::class,
         ],
         'super_admins' => [
             'driver' => 'eloquent',

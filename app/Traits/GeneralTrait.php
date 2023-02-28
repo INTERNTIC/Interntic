@@ -11,7 +11,8 @@ trait GeneralTrait
     }
 
 
-    public function returnError($msg,$code=450,$errors=[])
+    public function returnError($msg,$code=450,$errors=[])  
+
     {
         return response()->json([
             'status' => false,
