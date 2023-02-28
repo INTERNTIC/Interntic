@@ -281,16 +281,16 @@
           </a>
 
           <!-- item-->
-          <a href="javascript:void(0);" class="dropdown-item notify-item">
+          <router-link :to="{path:'login/student'}" class="dropdown-item notify-item">
             <i class="mdi mdi-lock-outline me-1"></i>
             <span>Lock Screen</span>
-          </a>
+          </router-link>
 
           <!-- item-->
-          <a href="javascript:void(0);" class="dropdown-item notify-item">
+          <router-link :to="{name:'logout'}" role="button" class="dropdown-item notify-item">
             <i class="mdi mdi-logout me-1"></i>
             <span>Logout</span>
-          </a>
+          </router-link>
         </div>
       </li>
 

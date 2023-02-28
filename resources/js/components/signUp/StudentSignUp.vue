@@ -5,6 +5,7 @@ import CustomInput from '../form/CustomInput.vue';
 import PasswordInput from '../form/PasswordInput.vue';
 import useAuth from '../../composables/Auth';
 import shared from '../../shared.js'
+
 const formModel = ref({
     email: '',
     password: '',

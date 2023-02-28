@@ -8,17 +8,24 @@
     <title>Laravel</title>
     <!-- App css -->
     <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style"/>
+    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
     <!-- Fonts
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     -->
-   <style>
+    <style>
         /* body {
             font-family: 'Nunito', sans-serif;
         } */
+        [v-cloak]>* {
+            display: none
+        }
+
+        [v-cloak]::before {
+            content: "Loading…"
+        }
     </style>
     @vite(['resources/js/app.js','resources/css/app.css'])
-    
+
     <script defer src="/assets/js/vendor.min.js"></script>
     <script defer src="/assets/js/app.min.js"></script>
     <!-- third party js -->
@@ -27,18 +34,18 @@
     <script defer src="/assets/js/vendor/dataTables.responsive.min.js"></script>
     <script defer src="/assets/js/vendor/responsive.bootstrap5.min.js"></script>
     <script defer src="/assets/js/vendor/dataTables.buttons.min.js"></script> -->
-       <!-- third party js ends -->
-        <!-- demo app -->
-        <!-- <script defer src="/assets/js/pages/demo.datatable-init.js"></script> -->
-       <!-- end demo js -->
+    <!-- third party js ends -->
+    <!-- demo app -->
+    <!-- <script defer src="/assets/js/pages/demo.datatable-init.js"></script> -->
+    <!-- end demo js -->
 
-    
+
 </head>
 
 <body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid" data-rightbar-onstart="true">
-    <div id="app">
+    <div id="app" v-cloak>
     </div>
-    
+
 </body>
 
 </html>

@@ -25,12 +25,13 @@ use Illuminate\Support\Facades\Auth;
 
 Route::controller(AuthController::class)->group(function (){
     Route::post('/login/{guard}',"login");
-  Route::group(['middleware'=>'check.auth.guard'],function(){
-    Route::post('/loginWithToken',"loginWithToken"); 
-  });
-    Route::post('/logout',"logout");
+    Route::group(['middleware'=>'check.auth.guard'],function(){
+        Route::post('/loginWithToken',"loginWithToken"); 
+        Route::post('/logout',"logout");
+    });
     Route::post('/askResetPassword/{guard}','askResetPassword');   
     Route::post('/resetPassword','resetPassword')->name('resetPassword');
+    Route::patch('/lokman/{id}','lokman')->name('lokman');
 });
 
 //Student part

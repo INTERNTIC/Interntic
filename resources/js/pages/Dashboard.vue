@@ -5,7 +5,6 @@ import Content from '../components/general/Content.vue';
 
 // import { useAuthStore } from '../stores/AuthStore';
 // const AuthStore = useAuthStore();
-console.log(window.sessionStorage);
 const authUser=window.sessionStorage.getItem('authUser');
 </script>
 <template>

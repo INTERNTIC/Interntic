@@ -28,16 +28,17 @@ class AuthController extends Controller
 
     public function login(Request $request, $guard) 
     {
-        if ($guard == 'Student') {
+        if ($guard == 'student') {
             $account = StudentAccount::where('email', $request->email)->get()->first();
             if ($account==false) {
                 return $this->returnError('Your Email is invalid');
             }
-
+            
             if ($account->email_verified == 0) {
                 return $this->returnError('Your account is invalid');
             }
         }
+        
 
         $token = auth()->guard($guard)->attempt(['email' => $request->email, 'password' => $request->password]);
         try {
@@ -57,9 +58,8 @@ class AuthController extends Controller
 
 
 
-    public function loginWithToken(Request $request,$guard)
+    public function loginWithToken(Request $request)
     {
-        return $request;
         try {
             $token=$request->header('auth-token');
             $user = JWTAuth::parseToken()->authenticate();
@@ -75,18 +75,15 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-
         try {
             $token = $request->header('auth-token');
-            // return $token;
+            
             if (!$token)
             {
                 return $this->returnError('Something was wrong');
             }
-            
-            // JWTAuth::setToken($token)->invalidate();
-            Auth::logoutOtherDevices($token);
-
+            JWTAuth::setToken($token)->invalidate(); 
+            // Auth::logoutOtherDevices($token);
             return $this->returnSuccessMessage('Logged out Successfully');
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage(), $th->getCode());
@@ -193,4 +190,5 @@ class AuthController extends Controller
         }
         
     }
+
 }

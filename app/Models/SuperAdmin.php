@@ -12,18 +12,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-/**
- * Class SuperAdmin
- * 
- * @property int $id
- * @property string $email
- * @property string $password
- *
- * @package App\Models
- */
+
 class SuperAdmin extends Authenticatable implements JWTSubject 
 {
-	use Notifiable;
 	protected $table = 'super_admins';
 	public $timestamps = false;
 
