@@ -27,9 +27,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  *
  * @package App\Models
  */
-class InternshipResponssible extends Authenticatable implements JWTSubject
+class InternshipResponsible extends Authenticatable implements JWTSubject
 {
-	protected $table = 'internship_responssibles';
+	protected $table = 'internship_responsibles';
 	public $timestamps = false;
 
 	protected $casts = [

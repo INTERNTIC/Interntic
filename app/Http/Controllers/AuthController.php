@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use App\Models\DepartmentHead;
+use App\Models\InternshipResponsible;
 use App\Models\PasswordReset;
 use App\Models\StudentAccount;
 use App\Models\SuperAdmin;
@@ -13,7 +13,7 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Traits\GeneralTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Mail; 
 use Illuminate\Support\Str;
 
 
@@ -113,6 +113,13 @@ class AuthController extends Controller
                 if($guard=='super_admin')
                 {
                     $account= SuperAdmin::where('email', $request->email)->get()->first();
+                }
+                else
+                {
+                    if($guard=='internship_responsibles')
+                    {
+                        $account= InternshipResponsible::where('email', $request->email)->get()->first();
+                    }
                 }
             }
         }
