@@ -3,11 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SuperAdmin;
+use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\DepartmentHeadController;
 use App\Http\Controllers\StudentController; 
 use App\Http\Controllers\InternshipResponsibleController;
+use App\Http\Controllers\InternshipAccountsRequestsController;
+use App\Http\Controllers\InternshipOffersController;
+use App\Models\InternshipResponsible;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
 use Illuminate\Support\Facades\Auth;
 
 /* 
@@ -31,37 +35,54 @@ Route::controller(AuthController::class)->group(function (){
     });
     Route::post('/askResetPassword/{guard}','askResetPassword');   
     Route::post('/resetPassword','resetPassword')->name('resetPassword');
-    Route::patch('/lokman/{id}','lokman')->name('lokman');
+
 });
 
+
 //Student part
-Route::controller(StudentController::class)->middleware(['auth:student'])->group(function (){
-    Route::post('/studentCreateAccount',"studentCreateAccount");
-    Route::post('/emailVerification/{token}',"emailVerification")->name('emailVerification');
-});
+Route::post('/studentCreateAccount',[StudentController::class,"studentCreateAccount"]);
+Route::post('/emailVerification/{token}',[StudentController::class,"emailVerification"])->name('emailVerification');
+// Route::post('/displayAccount',[StudentController::class,"displayAccount"]); use getStudent from department head
+Route::post('/studentResetPasword/{id}',[StudentController::class,"studentResetPasword"]);
+
 
 
 
 //Super admin part
-Route::controller(SuperAdmin::class)->middleware(['auth:super_admin'])->group(function (){
-    Route::post('/addDepartmentHead',"addDepartmentHead");
-    Route::post('/editDepartmentHead',"editDepartmentHead");
-});
+Route::post('/addDepartmentHead',[DepartmentHeadController::class,"addDepartmentHead"]);
+Route::get('/displayDepartmentHeads',[DepartmentHeadController::class,"displayDepartmentHeads"]);
+Route::get('/getDepartmentHead/{id}',[DepartmentHeadController::class,"getDepartmentHead"]);
+Route::post('/editDepartmentHead/{id}',[DepartmentHeadController::class,"editDepartmentHead"]);
+Route::delete('/deleteDepartmentHead/{id}',[DepartmentHeadController::class,"deleteDepartmentHead"]);
+Route::post('/superAdminResetPasword/{id}',[SuperAdminController::class,"superAdminResetPasword"]);
+
 
 
 // Department head part
-Route::controller(DepartmentHeadController::class)->middleware(['auth:department_head'])->group(function (){
-    Route::post('/addStudentInfo',"addStudentInfo");
-    Route::post('/editStudentInfo',"editStudentInfo");
-    Route::post('/deleteStudent',"deleteStudent");
-    
-});
+Route::get('/displayAccountsRequests',[InternshipAccountsRequestsController::class,"displayAccountsRequests"]);
+Route::get('/getAccountRequest/{id}',[InternshipAccountsRequestsController::class,"getAccountRequest"]);
+Route::post('/manageAccountRequest/{id}',[InternshipAccountsRequestsController::class,"manageAccountRequest"]);
+
+Route::post('/addStudentInfo',[StudentController::class,"addStudentInfo"]);
+Route::get('/diplayStudents',[StudentController::class,"diplayStudents"]);
+Route::get('/getStudent/{id}',[StudentController::class,"getStudent"]);
+Route::post('/editStudentInfo/{id}',[StudentController::class,"editStudentInfo"]);
+Route::delete('/deleteStudent/{id}',[StudentController::class,"deleteStudent"]);
+Route::post('/departmentheadResetPasword/{id}',[DepartmentHeadController::class,"departmentheadResetPasword"]);
+
 
 
 //Internship responsible part
-Route::controller(InternshipResponsibleController::class)->middleware(['auth:internship_responssible'])->group(function (){
-    Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
-});
+Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
+
+Route::post('/addOffer',[InternshipOffersController::class,"addOffer"]);
+Route::get('/displayOffers',[InternshipOffersController::class,"displayOffers"]);
+Route::get('/selectOffer/{id}',[InternshipOffersController::class,"selectOffer"]);
+Route::patch('/editOffer/{id}',[InternshipOffersController::class,"editOffer"]);
+Route::delete('/deleteOffer/{id}',[InternshipOffersController::class,"deleteOffer"]);
+Route::post('/responsibleResetPasword/{id}',[InternshipResponsibleController::class,"responsibleResetPasword"]);
+
+
 
 
 

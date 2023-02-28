@@ -3,92 +3,122 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DepartmentHead;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\Student;
-use App\Models\StudentAccount;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use App\Traits\GeneralTrait;
 
-class DepartmentHeadController extends Controller
+class DepartmentHeadController extends Controller 
 
 {
-    public function addStudentInfo(Request $request)
+    use GeneralTrait;
+
+    public function addDepartmentHead(Request $request)
     {
-       Validator::make($request->all(),[
+        Validator::make($request->all(),[
 
             'first_name'=>'required',
             'last_name'=>'required',
-            'birthday'=>'required',
-            'place_of_birth'=>'required',
-            'phone_number'=>['required','numeric'],
-            'student_card_number'=>['required','unique:students,student_card'],
-            'social_security_num'=>['required','unique:students'],
-            'level'=>'required',
-            'major'=>'required',
+            'email'=>['required','email','ends_with:univ-constantine2.dz','unique:department_heads'],
+            'password'=>['required','min:6'],
+            'department_name'=>'required',
+
         ])->validate();
 
-        $level_major_id = DB::table('level_major')->where('level_id', $request->level)->where('major_id',$request->major)->value('id');
+        $department_id=DB::table('departments')->where('name',$request->department_name)->value('id');
 
-        Student::create([
+        if($department_id==false)
+        {
+            return $this->returnError('Make sure about the department name');
+        }
+
+        DepartmentHead::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'birthday' => $request->birthday,
-            'place_of_birth'=>$request->place_of_birth,
-            'phone'=>$request->phone_number,
-            'student_card'=>$request->student_card_number,
-            'social_security_num'=>$request->social_security_num,
-            'level_major_id'=>$level_major_id,
+            'email'=>$request->email,
+            'password'=>Hash::make($request->password),
+            'department_id'=>$department_id,
         ]);
     }
 
-    public function editStudentInfo(Request $request)
+    public function displayDepartmentHeads()
     {
-        $student= Student::find($request->id);
-        if($student==false) {
-            return $this->returnError('Student not found');
+        $department_heads=DB::table('department_heads')->get();
+        if($department_heads==false)
+        {
+            return $this->returnError('No department head to display');
+        }
+        return $this->returnData($department_heads);
+    }
+
+    public function getDepartmentHead($id)
+    {
+        $department_head=DB::table('department_heads')->where('id',$id)->get();
+
+        if($department_head==false)
+        {
+            return $this->returnError('Something went wrong');
+        }
+
+        return $this->returnData($department_head);
+    }
+
+    public function editDepartmentHead(Request $request)
+    {
+        $departmentHead= DepartmentHead::find($request->id);
+
+        if($departmentHead==false) {
+            return $this->returnError('Department head not found');
+        }
+
+        $department_id=DB::table('departments')->where('name',$request->department_name)->value('id');
+
+        if($department_id==false)
+        {
+            return $this->returnError('Make sure about the department name');
         }
 
         Validator::make($request->all(),[
             'first_name'=>'required',
             'last_name'=>'required',
-            'birthday'=>'required',
-            'place_of_birth'=>'required',
-            'phone'=>'required',
-            'student_card'=>['required','unique:students'],
-            'social_security_num'=>['required','unique:students'],
-            'level'=>'required',
-            'major'=>'required',
+            'email'=>['required','email','ends_with:univ-constantine2.dz','unique:department_heads'],
+            'department_name'=>'required',
         ])->validate();
-
-        $level_major_id = DB::table('level_major')->where('level_id', $request->level)->where('major_id',$request->major)->value('id');
         
-        $student->update([
+        $departmentHead->update([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'birthday' => $request->birthday,
-            'place_of_birth'=>$request->place_of_birth,
-            'phone'=>$request->phone,
-            'student_card'=>$request->student_card,
-            'social_security_num'=>$request->social_security_num,
-            'level_major_id'=>$level_major_id,
+            'email'=>$request->email,
+            'department_id'=>$department_id,
         ]);
     }
 
-    public function deleteStudent(Request $request)
+    public function deleteDepartmentHead($id)
     {
-        $student = Student::find($request->id);
-        $account = StudentAccount::find($request->id);
+        $department_head = DepartmentHead::find($id);
 
-        if($student==false) {
-            return $this->returnError('Student not found');
+        if ($department_head==false) 
+        {
+            return $this->returnError('Something went wrong');
         }
- 
-        if ($account==true) {
-            $account->delete();
+
+        $department_head->delete();
+        return $this->returnSuccessMessage('Department head deleted successfully');
+    }
+
+    public function departmentheadResetPasword(Request $request,$id)
+    {
+        $department_head=DepartmentHead::find($id);
+        if($department_head==false)
+        {
+            return $this->returnError('Something went wrong');
         }
-        
-        $student->delete();
-        return $this->returnSuccessMessage('Student deleted successfully');
+        $department_head->update([
+            'password'=>Hash::make($request->password),
+        ]);
+        return $this->returnSuccessMessage('Password updated successfully');
     }
 }

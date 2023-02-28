@@ -13,7 +13,7 @@ class CreateStudentcvsTable extends Migration
      */
     public function up()
     {
-        Schema::create('studentcvs', function (Blueprint $table) {
+        Schema::create('student_cvs', function (Blueprint $table) {
             $table->id();
             $table->string('link');
             $table->unsignedBigInteger('student_id');
@@ -28,6 +28,6 @@ class CreateStudentcvsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('studentcvs');
+        Schema::dropIfExists('student cvs');
     }
 }
