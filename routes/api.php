@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 //Authentication part
+
 Route::post('/login/{guard}',[AuthController::class,"login"]);
 Route::post('/loginWithToken/{guard}',[AuthController::class,"loginWithToken"]); 
 Route::post('/logout',[AuthController::class,"logout"]);
@@ -33,11 +34,13 @@ Route::post('/askResetPassword/{guard}',[AuthController::class,'askResetPassword
 Route::post('/resetPassword',[AuthController::class,'resetPassword'])->name('resetPassword');
 
 
+
 //Student part
 Route::post('/studentCreateAccount',[StudentController::class,"studentCreateAccount"]);
 Route::post('/emailVerification/{token}',[StudentController::class,"emailVerification"])->name('emailVerification');
 // Route::post('/displayAccount',[StudentController::class,"displayAccount"]); use getStudent from department head
 Route::post('/studentResetPasword/{id}',[StudentController::class,"studentResetPasword"]);
+
 
 
 

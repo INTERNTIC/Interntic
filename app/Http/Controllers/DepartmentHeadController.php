@@ -19,6 +19,7 @@ class DepartmentHeadController extends Controller
     public function addDepartmentHead(Request $request)
     {
         Validator::make($request->all(),[
+
             'first_name'=>'required',
             'last_name'=>'required',
             'email'=>['required','email','ends_with:univ-constantine2.dz','unique:department_heads'],

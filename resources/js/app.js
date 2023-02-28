@@ -24,7 +24,7 @@ const app = createApp(Global);
 const pinia = createPinia();
 // app.use(VueMeta)
 // app.use(VueHead);
-app.use(router);
 app.use(pinia);
+app.use(router);
 
 app.mount("#app");
