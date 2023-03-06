@@ -7,7 +7,7 @@ import PageNotFound from "../pages/PageNotFound.vue";
 import CompanySignUp from "../components/signUp/CompanySignUp.vue";
 import StudentSignUp from "../components/signUp/StudentSignUp.vue";
 import DepartmentSignUp from "../components/signUp/DepartmentSignUp.vue";
-import ManageStudentsAccounts from '../components/admin/student/ManageStudentsAccounts.vue';
+import ManageStudentsAccounts from '../components/departmentHead/student/ManageStudentsAccounts.vue';
 import Statistiques from "../components/dashboard/Statistiques.vue";
 import axios from "axios";
 

@@ -41,6 +41,7 @@ class AuthController extends Controller
         
 
         $token = auth()->guard($guard)->attempt(['email' => $request->email, 'password' => $request->password]);
+        Auth::shouldUse($guard); // this is auth guard currently
         try {
             if (!$token) {
                 return $this->returnError('Invalid credentials');
@@ -62,7 +63,7 @@ class AuthController extends Controller
     {
         try {
             $token=$request->header('auth-token');
-            $user = JWTAuth::parseToken()->authenticate();
+            $user = Auth::user();
             $user->token = $token;
             return $this->returnData($user);
 

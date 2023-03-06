@@ -20,7 +20,7 @@ class CreateStudentsTable extends Migration
             $table->string('last_name'); 
             $table->date('birthday');
             $table->string('place_of_birth');
-            $table->string('phone')->unique();
+            $table->integer('phone')->unique();
             $table->string('student_card')->unique();
             $table->string('social_security_num')->unique();
             $table->unsignedBigInteger('level_major_id');

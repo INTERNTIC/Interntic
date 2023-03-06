@@ -28,16 +28,6 @@
 
     <script defer src="/assets/js/vendor.min.js"></script>
     <script defer src="/assets/js/app.min.js"></script>
-    <!-- third party js -->
-    <!-- <script defer src="/assets/js/vendor/jquery.dataTables.min.js"></script>
-    <script defer src="/assets/js/vendor/dataTables.bootstrap5.js"></script>
-    <script defer src="/assets/js/vendor/dataTables.responsive.min.js"></script>
-    <script defer src="/assets/js/vendor/responsive.bootstrap5.min.js"></script>
-    <script defer src="/assets/js/vendor/dataTables.buttons.min.js"></script> -->
-    <!-- third party js ends -->
-    <!-- demo app -->
-    <!-- <script defer src="/assets/js/pages/demo.datatable-init.js"></script> -->
-    <!-- end demo js -->
 
 
 </head>

@@ -1,24 +1,20 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeMount,onMounted, ref, watch } from 'vue';
 import DangerModal from '../../modal/DangerModal.vue';
 import FullWidthModal from '../../modal/FullWidthModal.vue';
+import DangerNofitication from '../../notification/DangerNofitication.vue';
+import SuccessNofitication from '../../notification/SuccessNofitication.vue';
 import useManageStudent from '@/composables/ManageStudent.js';
-
-
 import StudentModelForm from './StudentModelForm.vue';
-const currentStudent = ref({
-    first_name: "lokman",
-    last_name: "abd",
-    student_card_number: "",
-    birthday: "",
-    place_of_birth: "",
-    phone_number: "",
-    social_security_num: "",
-    level_id: "",
-    major_id: "",
-})
-const { addStudent, deleteStudent, editStudent, students, getMajors, levels, majors, generalErrorMsg,editErrors, errors } = useManageStudent();
-const studentModel = ref({
+import $ from "jquery";
+import { notify } from "@kyvg/vue3-notification";
+
+notify({
+  title: "Authorization",
+  text: "You have been logged in!",
+  type: "success",
+});
+const studentExemple={
     first_name: "",
     last_name: "",
     student_card_number: "",
@@ -28,27 +24,39 @@ const studentModel = ref({
     social_security_num: "",
     level_id: "",
     major_id: "",
-})
+}
+const currentStudent = ref(studentExemple)
+const { addStudent, deleteStudent, editStudent, students, getMajorsOfLevel,getLevels, levels, majors, generalErrorMsg,generalSuccessMsg,editErrors, errors } = useManageStudent();
+const studentModel = ref(studentExemple)
 watch(
     () => studentModel.value.level_id, () => {
         console.log('student level change');
-        getMajors()
+        getMajorsOfLevel(studentModel.value.level_id)
     }
 )
+
+const saveStudent=async()=>{
+await addStudent(studentModel.value)
+// to do if there is no errors
+// empty studentModel
+}
 
 const table = [
     () => import("@/assets/js/vendor/jquery.dataTables.min.js"),
     () => import("@/assets/js/vendor/dataTables.bootstrap5.js"),
     () => import("@/assets/js/vendor/dataTables.responsive.min.js"),
-    () => import("@/assets/js/pages/demo.datatable-init.js"),
+    () => import("@/assets/js/pages/demo.datatable-init.js")
 ]
-onMounted(() => {
-    table.forEach(jsFiles => {
+onMounted( async () => {
+    table.forEach( jsFiles  => {
         jsFiles()
     });
+  await getLevels()
 })
+
 </script>
 <template>
+   
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
@@ -61,7 +69,7 @@ onMounted(() => {
             </div>
         </div>
     </div>
-
+{{ studentModel }}
 
     <div class="row">
         <div class="col-12">
@@ -80,7 +88,7 @@ onMounted(() => {
                             :levels="levels"
                             />
                             <div>
-                                <button @click="addStudent(studentModel)" type="submit" class="btn btn-primary">Submit</button>
+                                <button @click="saveStudent()" type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </div> <!-- end tab-content-->
@@ -207,7 +215,9 @@ onMounted(() => {
     </FullWidthModal>
     
     <!-- /.modal -->
-    <!-- Danger Filled Modal -->
+
+    <SuccessNofitication :successMsg="generalSuccessMsg" />
+    <DangerNofitication :errorMsg="generalErrorMsg" />
     <DangerModal :deleteEvent="deleteStudent" :deletedObject="currentStudent"
         deleteMsg="Are you sure you want to delete student" firstProperty="first_name" secondProperty="last_name" />
 </template>

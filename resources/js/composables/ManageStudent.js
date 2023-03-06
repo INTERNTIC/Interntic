@@ -6,34 +6,21 @@ export default function useAuth() {
     const errors = ref({})
     const editErrors = ref({})
     const generalErrorMsg = ref('')
+    const generalSuccessMsg = ref('')
     const router = useRouter()
-    const levels=ref([{
-        name: "lokman2",
-        id: '2'
-    }, {
-        name: "lokman1",
-        id: '1'
-    }])
-    const majors=ref([{
-        name: "lokman2",
-        id: '2'
-    }, {
-        name: "lokman1",
-        id: '1'
-    }])
+    const levels=ref([])
+    const majors=ref([])
     const addStudent = async (credentials) => {
-        console.log(JSON.parse(JSON.stringify(credentials)));
-        // await axios.post('/api/login', credentials).then((response) => {
-        //     AuthStore.$state.authUser = response.data.data
-        //     // AuthStore.setUserToken(response.data.data.teken)
-        //     errors.value = {}
-        //     router.push({ name: "dashboard" })
-        // }).catch((error) => {
-        //     if (error.response) {
-        //         errors.value = error.response.data.errors;
-        //         msg.value = error.response.data.msg;
-        //     }
-        // })
+        // console.log(JSON.parse(JSON.stringify(credentials)));
+        await axios.post('/api/addStudentInfo', credentials).then((response) => {
+            errors.value = {}
+            generalSuccessMsg.value=response.data.msg
+        }).catch((error) => {
+            if (error.response) {
+                errors.value = error.response.data.errors;
+                generalErrorMsg.value = error.response.data.msg;
+            }
+        })
     }
     const getStudent = async (id) => {
         console.log(id);
@@ -45,7 +32,7 @@ export default function useAuth() {
         // }).catch((error) => {
         //     if (error.response) {
         //         errors.value = error.response.data.errors;
-        //         msg.value = error.response.data.msg;
+        //         generalErrorMsg.value = error.response.data.msg;
         //     }
         // })
     }
@@ -57,20 +44,41 @@ export default function useAuth() {
     }
     const getStudents = async () => {
     }
-    const getMajors = async () => {
+    const getMajorsOfLevel = async (id) => {
+         await axios.get('/api/levels/majors/'+id).then((response) => {
+            errors.value = {}
+            majors.value = response.data.data
+            
+        }).catch((error) => {
+            if (error.response) {
+                errors.value = error.response.data.errors;
+                generalErrorMsg.value = error.response.data.msg;
+            }
+        })
     }
     const getLevels = async () => {
+        await axios.get('/api/levels').then((response) => {
+            errors.value = {}
+            levels.value = response.data.data
+            
+        }).catch((error) => {
+            if (error.response) {
+                errors.value = error.response.data.errors;
+                generalErrorMsg.value = error.response.data.msg;
+            }
+        })
     }
-    
     return {
         addStudent,
-        getMajors,
+        getMajorsOfLevel,
+        getLevels,
         deleteStudent,
         editStudent,
         students,
         levels,
         majors,
         generalErrorMsg,
+        generalSuccessMsg,
         editErrors,
         errors
     }
