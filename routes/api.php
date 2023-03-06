@@ -24,7 +24,6 @@ use App\Models\InternshipResponsible;
 */
 
 //Authentication part
-
 Route::controller(AuthController::class)->group(function (){
     Route::post('/login/{guard}',"login");
     Route::group(['middleware'=>'check.auth.guard'],function(){
