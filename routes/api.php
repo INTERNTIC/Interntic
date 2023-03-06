@@ -22,6 +22,10 @@ use App\Http\Controllers\InternshipOffersController;
 use App\Http\Controllers\InternshipRequestController;
 use App\Http\Controllers\InternshipResponsibleController;
 use App\Http\Controllers\InternshipAccountsRequestsController;
+use App\Http\Controllers\InternshipOffersController;
+use App\Models\InternshipResponsible;
+
+
 
 /* 
 |--------------------------------------------------------------------------
@@ -78,6 +82,8 @@ Route::post('/departmentheadResetPasword/{id}',[DepartmentHeadController::class,
 
 
 
+
+
 //Internship responsible part
 Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
 
@@ -111,5 +117,7 @@ Route::group(['middleware'=>'check.auth.guard'],function(){
     Route::apiResource('studentCvs',StudentCvController::class);
 });
 
+
 Route::post('/internshipRequests/manage/{internshipRequest}',[InternshipRequestController::class,"manageTheInternshipRequest"]);
 // Route::get('/level_majors',[LevelMajorController::class,"manageTheInternshipRequest"]);
+
