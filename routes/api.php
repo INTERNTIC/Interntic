@@ -1,15 +1,30 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\InternshipResponsible;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SuperAdminController;
-use App\Http\Controllers\DepartmentHeadController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\MajorController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StudentController; 
+use App\Http\Controllers\StudentCvController;
+use App\Http\Controllers\LevelMajorController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\CompanyCauseController;
+
+use App\Http\Controllers\CompanyRefuseController;
+use App\Http\Controllers\DepartmentHeadController;
+use App\Http\Controllers\DepartmentCauseController;
+use App\Http\Controllers\DepartmentRefuseController;
+use App\Http\Controllers\InternshipOffersController;
+use App\Http\Controllers\InternshipRequestController;
 use App\Http\Controllers\InternshipResponsibleController;
 use App\Http\Controllers\InternshipAccountsRequestsController;
 use App\Http\Controllers\InternshipOffersController;
 use App\Models\InternshipResponsible;
+
 
 
 /* 
@@ -39,9 +54,9 @@ Route::post('/studentCreateAccount',[StudentController::class,"studentCreateAcco
 Route::post('/emailVerification/{token}',[StudentController::class,"emailVerification"])->name('emailVerification');
 // Route::post('/displayAccount',[StudentController::class,"displayAccount"]); use getStudent from department head
 Route::post('/studentResetPasword/{id}',[StudentController::class,"studentResetPasword"]);
-
-
-
+Route::group(['middleware'=>'check.auth.guard:student'],function(){
+    Route::apiResource('internshipRequests',InternshipRequestController::class);
+});
 
 //Super admin part
 Route::post('/addDepartmentHead',[DepartmentHeadController::class,"addDepartmentHead"]);
@@ -72,15 +87,37 @@ Route::post('/departmentheadResetPasword/{id}',[DepartmentHeadController::class,
 //Internship responsible part
 Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
 
+Route::apiResource('internshipResponsibles',InternshipResponsibleController::class);
+
 Route::post('/addOffer',[InternshipOffersController::class,"addOffer"]);
 Route::get('/displayOffers',[InternshipOffersController::class,"displayOffers"]);
 Route::get('/selectOffer/{id}',[InternshipOffersController::class,"selectOffer"]);
-Route::patch('/editOffer/{id}',[InternshipOffersController::class,"editOffer"]);
+Route::post('/editOffer/{id}',[InternshipOffersController::class,"editOffer"]);
 Route::delete('/deleteOffer/{id}',[InternshipOffersController::class,"deleteOffer"]);
 Route::post('/responsibleResetPasword/{id}',[InternshipResponsibleController::class,"responsibleResetPasword"]);
 
 
 
 
+// u shold be auth
+// TODO try defult auth middleware
+// TODO cv fix model and db
+// short_cut at depremtent unique
+Route::apiResource('companyCauses' ,CompanyCauseController::class,  ['only' => ['index', 'store','destroy']]);
+Route::apiResource('companyRefuses' ,CompanyRefuseController::class,  ['only' => ['index', 'store','show','destroy']]);
+Route::apiResource('departmentRefuses' ,DepartmentRefuseController::class,  ['only' => ['index', 'store','show','destroy']]);
+Route::apiResource('departmentCauses' ,DepartmentCauseController::class,  ['only' => ['index', 'store','destroy']]);
 
+
+Route::get('/levels/majors/{level}',[LevelController::class,"getMajors"]);
+Route::apiResource('levels',LevelController::class);
+Route::apiResource('majors',MajorController::class);
+Route::apiResource('companies',CompanyController::class);
+Route::group(['middleware'=>'check.auth.guard'],function(){
+    Route::apiResource('studentCvs',StudentCvController::class);
+});
+
+
+Route::post('/internshipRequests/manage/{internshipRequest}',[InternshipRequestController::class,"manageTheInternshipRequest"]);
+// Route::get('/level_majors',[LevelMajorController::class,"manageTheInternshipRequest"]);
 

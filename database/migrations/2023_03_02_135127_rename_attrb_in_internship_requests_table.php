@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCompanyRefusesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateCompanyRefusesTable extends Migration
      */
     public function up()
     {
-
-        Schema::create('company_refuses', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('internship_request_id');
-            $table->unsignedBigInteger('company_cause_id');
+        Schema::table('internship_requests', function (Blueprint $table) {
+            $table->renameColumn('internshipResponssible_email','internshipResponsible_email');
         });
-
     }
 
     /**
@@ -29,6 +25,8 @@ class CreateCompanyRefusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('company_refuses');
+        Schema::table('internship_requests', function (Blueprint $table) {
+            
+        });
     }
-}
+};

@@ -8,19 +8,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class DepartmentRefus
- * 
- * @property int $id
- * @property int $internship_request_id
- * @property int $department_cause_id
- * 
- * @property DepartmentCause $department_cause
- * @property InternshipRequest $internship_request
- *
- * @package App\Models
- */
-class DepartmentRefus extends Model
+
+class DepartmentRefuse extends Model
 {
 	protected $table = 'department_refuses';
 	public $timestamps = false;

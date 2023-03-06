@@ -49,7 +49,9 @@ class InternshipRequest extends Model
 		'status',
 		'theme',
 		'start_at',
-		'end_at'
+		'end_at',
+		'company_name',
+		'company_location',
 	];
 
 	public function student()

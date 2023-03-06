@@ -4,6 +4,7 @@ import Global from "./pages/Global.vue";
 import router from "./router";
 import { createPinia } from 'pinia'
 // import VueMeta from 'vue-meta'
+import Notifications from '@kyvg/vue3-notification'
 
 
 // import "./assets/css/vendor/jquery-jvectormap-1.2.2.css";
@@ -22,9 +23,11 @@ import { createPinia } from 'pinia'
 
 const app = createApp(Global);
 const pinia = createPinia();
+
 // app.use(VueMeta)
 // app.use(VueHead);
-app.use(pinia);
-app.use(router);
 
+app.use(pinia);
+app.use(Notifications);
+app.use(router);
 app.mount("#app");

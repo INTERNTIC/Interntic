@@ -55,7 +55,7 @@ return new class extends Migration
 
         Schema::table('company_refuses', function (Blueprint $table){
             $table->foreign('internship_request_id')->references('id')->on('internship_requests')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('company_causes_id')->references('id')->on('company_causes')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_cause_id')->references('id')->on('company_causes')->onDelete('cascade')->onUpdate('cascade');
         });
 
         Schema::table('internship_request_student', function (Blueprint $table){

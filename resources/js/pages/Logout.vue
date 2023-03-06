@@ -10,5 +10,4 @@ onBeforeMount(async () => {
 })
 </script>
 <template>
-<h1>logout out</h1>  
 </template>

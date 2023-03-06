@@ -30,6 +30,6 @@ class CompanyCause extends Model
 
 	public function company_refuses()
 	{
-		return $this->hasMany(CompanyRefus::class, 'company_causes_id');
+		return $this->hasMany(CompanyRefus::class, 'company_cause_id');
 	}
 }

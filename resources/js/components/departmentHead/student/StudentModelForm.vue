@@ -59,8 +59,8 @@ const {studentModel,errors,majors,levels} = defineProps(['studentModel', 'errors
             <SelectInput propertyOfValue="id" property-of-show="name"
                 placeholder="Select Student Level" :floatingTheme="true"
                 v-model="studentModel.level_id"
-                :errorText="shared.getErrorText(errors, 'major_id')"
-                :showError="errors.hasOwnProperty('major_id')"
+                :errorText="shared.getErrorText(errors, 'level_id')"
+                :showError="errors.hasOwnProperty('level_id')"
                 label="Select Student Level" :options="levels" />
         </div>
 

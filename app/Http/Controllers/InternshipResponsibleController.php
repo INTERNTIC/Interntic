@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AccountRequest;
-use App\Models\InternshipResponsible;
 use App\Models\Offer;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
+use App\Models\AccountRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\InternshipResponsible;
 use Illuminate\Support\Facades\Validator; 
-use Illuminate\Support\Facades\DB;
-use App\Traits\GeneralTrait;
+use App\Http\Requests\InternshipResponsibleRequest;
 
 class InternshipResponsibleController extends Controller
 {
@@ -76,4 +77,67 @@ class InternshipResponsibleController extends Controller
         }
         return $this->returnSuccessMessage('Password updated successfully');
     }
+
+
+    public function index()
+    {
+        return $this->returnData(InternshipResponsible::all());
+    }
+
+
+    public function store(InternshipResponsibleRequest $request)
+    {
+        $internshipResponsible=InternshipResponsible::create($request->validated());
+        return $this->returnData($internshipResponsible);
+    }
+
+ 
+    public function show(InternshipResponsible $internshipResponsible)
+    {
+        return $this->returnData($internshipResponsible);
+    }
+
+
+    public function update(InternshipResponsibleRequest $request, InternshipResponsible $internshipResponsible)
+    {
+        $newRequest =$request->validated();
+        unset($newRequest['password']);
+        $internshipResponsible->update($newRequest);
+        return $this->returnData($internshipResponsible);
+    }
+    
+    public function destroy(InternshipResponsible $internshipResponsible)
+    {
+        $internshipResponsible->delete();
+        return $this->returnSuccessMessage('deleted successfully');
+    }
+
+
+    public function findOrCreate(InternshipResponsibleRequest $request)
+	{
+        $internshipResponsible = InternshipResponsible::where('email','=',$request->email)->first();
+        $request
+        ->setContainer(app())
+        ->setRedirector(app(\Illuminate\Routing\Redirector::class))
+        ->validateResolved();
+        
+		return $internshipResponsible!=null? $internshipResponsible: InternshipResponsible::create($request->validated());
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

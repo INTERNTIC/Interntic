@@ -27,12 +27,11 @@ class StudentController extends Controller
             'phone_number'=>['required','numeric'],
             'student_card_number'=>['required','unique:students,student_card'],
             'social_security_num'=>['required','unique:students'],
-            'level'=>'required',
-            'major'=>'required',
+            'level_id'=>['required','exists:levels,id'],
+            'major_id'=>['required','exists:majors,id'],
         ])->validate();
 
-        $level_major_id = DB::table('level_major')->where('level_id', $request->level)->where('major_id',$request->major)->value('id');
-
+        $level_major_id = DB::table('level_major')->where('level_id', $request->level_id)->where('major_id',$request->major_id)->value('id');
         Student::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -43,6 +42,7 @@ class StudentController extends Controller
             'social_security_num'=>$request->social_security_num,
             'level_major_id'=>$level_major_id,
         ]);
+        return $this->returnSuccessMessage('Created successfully');
     }
 
     public function diplayStudents()
@@ -68,14 +68,14 @@ class StudentController extends Controller
             'last_name'=>'required',
             'birthday'=>'required',
             'place_of_birth'=>'required',
-            'phone'=>'required',
+            'phone_number'=>['required','numeric'],
             'student_card'=>'required',
             'social_security_num'=>'required',
-            'level'=>'required',
-            'major'=>'required',
+            'level_id'=>['required','exists:levels,id'],
+            'major_id'=>['required','exists:majors,id'],
         ])->validate();
 
-        $level_major_id = DB::table('level_major')->where('level_id', $request->level)->where('major_id',$request->major)->value('id');
+        $level_major_id = DB::table('level_major')->where('level_id', $request->level_id)->where('major_id',$request->major_id)->value('id');
         
         $student->update([
             'first_name' => $request->first_name,

@@ -8,17 +8,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class StudentCv
- * 
- * @property int $id
- * @property string $link
- * @property int $student_id
- * 
- * @property Student $student
- *
- * @package App\Models
- */
+
 class StudentCv extends Model
 {
 	protected $table = 'student_cvs';
@@ -29,7 +19,8 @@ class StudentCv extends Model
 	];
 
 	protected $fillable = [
-		'link',
+		'deatails',
+		'image',
 		'student_id'
 	];
 

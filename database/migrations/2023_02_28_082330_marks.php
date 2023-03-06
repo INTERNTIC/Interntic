@@ -13,7 +13,6 @@ return new class extends Migration
      */
     public function up()
     {
-
         Schema::create('marks', function (Blueprint $table) {
             $table->id();
             $table->integer('discipline');
