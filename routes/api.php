@@ -10,9 +10,7 @@ use App\Http\Controllers\InternshipResponsibleController;
 use App\Http\Controllers\InternshipAccountsRequestsController;
 use App\Http\Controllers\InternshipOffersController;
 use App\Models\InternshipResponsible;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
-use Illuminate\Support\Facades\Auth;
 
 /* 
 |--------------------------------------------------------------------------
@@ -34,8 +32,8 @@ Route::controller(AuthController::class)->group(function (){
     });
     Route::post('/askResetPassword/{guard}','askResetPassword');   
     Route::post('/resetPassword','resetPassword')->name('resetPassword');
-
 });
+
 //Student part
 Route::post('/studentCreateAccount',[StudentController::class,"studentCreateAccount"]);
 Route::post('/emailVerification/{token}',[StudentController::class,"emailVerification"])->name('emailVerification');
@@ -69,6 +67,8 @@ Route::post('/departmentheadResetPasword/{id}',[DepartmentHeadController::class,
 
 
 
+
+
 //Internship responsible part
 Route::post('/accountRequest',[InternshipResponsibleController::class,"accountRequest"]);
 
@@ -78,6 +78,7 @@ Route::get('/selectOffer/{id}',[InternshipOffersController::class,"selectOffer"]
 Route::patch('/editOffer/{id}',[InternshipOffersController::class,"editOffer"]);
 Route::delete('/deleteOffer/{id}',[InternshipOffersController::class,"deleteOffer"]);
 Route::post('/responsibleResetPasword/{id}',[InternshipResponsibleController::class,"responsibleResetPasword"]);
+
 
 
 

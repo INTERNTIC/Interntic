@@ -160,14 +160,26 @@ class StudentController extends Controller
 
     public function studentResetPasword(Request $request,$id)
     {
+        Validator($request->all(),[
+            'old_password'=>'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
+        ])->validate();
+
         $student=StudentAccount::find($id);
         if($student==false)
         {
             return $this->returnError('Something went wrong');
         }
-        $student->update([
-            'password'=>Hash::make($request->password),
-        ]);
+       if (Hash::check($request->old_password, $student->password)) {
+            $student->update([
+                'password'=>Hash::make($request->password),
+            ]);
+        }
+        else
+        {
+            return $this->returnError('Old password is incorrect');
+        }
         return $this->returnSuccessMessage('Password updated successfully');
     }
    

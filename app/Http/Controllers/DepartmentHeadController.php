@@ -111,14 +111,26 @@ class DepartmentHeadController extends Controller
 
     public function departmentheadResetPasword(Request $request,$id)
     {
+        Validator($request->all(),[
+            'old_password'=>'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
+        ])->validate();
+
         $department_head=DepartmentHead::find($id);
         if($department_head==false)
         {
             return $this->returnError('Something went wrong');
         }
-        $department_head->update([
-            'password'=>Hash::make($request->password),
-        ]);
+       if (Hash::check($request->old_password, $department_head->password)) {
+            $department_head->update([
+                'password'=>Hash::make($request->password),
+            ]);
+        }
+        else
+        {
+            return $this->returnError('Old password is incorrect');
+        }
         return $this->returnSuccessMessage('Password updated successfully');
     }
 }
