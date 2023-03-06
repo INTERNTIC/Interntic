@@ -54,14 +54,26 @@ class InternshipResponsibleController extends Controller
 
     public function responsibleResetPasword(Request $request,$id)
     {
-        $responsible=InternshipResponsible::find($id);
-        if($responsible==false)
+        Validator($request->all(),[
+            'old_password'=>'required',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
+        ])->validate();
+
+        $internship_responsible=InternshipResponsible::find($id);
+        if($internship_responsible==false)
         {
             return $this->returnError('Something went wrong');
         }
-        $responsible->update([
-            'password'=>Hash::make($request->password),
-        ]);
+       if (Hash::check($request->old_password, $internship_responsible->password)) {
+            $internship_responsible->update([
+                'password'=>Hash::make($request->password),
+            ]);
+        }
+        else
+        {
+            return $this->returnError('Old password is incorrect');
+        }
         return $this->returnSuccessMessage('Password updated successfully');
     }
 }
