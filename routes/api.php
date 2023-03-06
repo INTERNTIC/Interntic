@@ -22,8 +22,6 @@ use App\Http\Controllers\InternshipOffersController;
 use App\Http\Controllers\InternshipRequestController;
 use App\Http\Controllers\InternshipResponsibleController;
 use App\Http\Controllers\InternshipAccountsRequestsController;
-use App\Http\Controllers\InternshipOffersController;
-use App\Models\InternshipResponsible;
 
 
 
