@@ -17,6 +17,7 @@ class CreateCompanyCausesTable extends Migration
         Schema::create('company_causes', function (Blueprint $table) {
             $table->id();
             $table->text('cause');
+            $table->unsignedBigInteger('company_id');
         });
 
     }

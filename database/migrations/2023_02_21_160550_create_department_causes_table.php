@@ -17,6 +17,7 @@ class CreateDepartmentCausesTable extends Migration
         Schema::create('department_causes', function (Blueprint $table) {
             $table->id();
             $table->text('cause');
+            $table->unsignedBigInteger('department_id');
         });
 
        

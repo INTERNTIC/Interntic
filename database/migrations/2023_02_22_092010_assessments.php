@@ -17,10 +17,11 @@ return new class extends Migration
         Schema::create('assessments', function (Blueprint $table) {
             $table->id();
             $table->date('the_date');
-            $table->date('enter_time');
-            $table->date('left_time');
-            $table->text('note');
-            $table->unsignedBigInteger('internship_request_student_id');
+            $table->time('enter_time')->nullable();
+            $table->time('left_time')->nullable();
+            $table->text('note')->nullable();
+            $table->unsignedBigInteger('internship_request_id');
+            $table->unique('the_date', 'internship_request_id');
         });
 
     }

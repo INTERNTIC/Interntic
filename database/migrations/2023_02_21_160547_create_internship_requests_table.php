@@ -17,11 +17,12 @@ class CreateInternshipRequestsTable extends Migration
         Schema::create('internship_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->string('internshipResponssible_email');
+            $table->string('internshipResponsible_email');
             $table->tinyInteger('status')->default(0);
             $table->text('theme');
             $table->date('start_at');
             $table->date('end_at');
+            $table->unsignedBigInteger('company_id');
         });
 
 

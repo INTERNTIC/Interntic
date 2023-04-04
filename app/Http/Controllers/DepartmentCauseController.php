@@ -31,17 +31,11 @@ class DepartmentCauseController extends Controller
         Validator::make($request->all(),[ 
             'cause'=>['required','string'],
         ])->validate();
-        $departmentCause=DepartmentCause::create($request->all());
+        $department_id=auth()->id();
+        $departmentCause=DepartmentCause::create($request->only('cause')+['department_id'=>$department_id]);
         return $this->returnData($departmentCause);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DepartmentCause  $departmentCause
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(DepartmentCause $departmentCause)
     {
         $departmentCause->delete();

@@ -26,10 +26,6 @@ return new class extends Migration
             $table->foreign('id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
         });
 
-        Schema::table('department_level', function (Blueprint $table){
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('level_id')->references('id')->on('levels')->onDelete('cascade')->onUpdate('cascade');
-        });
 
         Schema::table('internship_responsibles', function (Blueprint $table){
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');            
@@ -49,7 +45,7 @@ return new class extends Migration
             $table->foreign('major_id')->references('id')->on('majors')->onDelete('cascade')->onUpdate('cascade');
         });
 
-        Schema::table('student_cvs', function (Blueprint $table){
+        Schema::table('student_cv_items', function (Blueprint $table){
         $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
         });
 
@@ -57,21 +53,30 @@ return new class extends Migration
             $table->foreign('internship_request_id')->references('id')->on('internship_requests')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('company_cause_id')->references('id')->on('company_causes')->onDelete('cascade')->onUpdate('cascade');
         });
+        Schema::table('company_causes', function (Blueprint $table){
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');
 
-        Schema::table('internship_request_student', function (Blueprint $table){
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('internship_request_id')->references('id')->on('internship_requests')->onDelete('cascade')->onUpdate('cascade');      
+        });
+        Schema::table('department_causes', function (Blueprint $table){
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
+
         });
 
         Schema::table('assessments', function (Blueprint $table){
-            $table->foreign('internship_request_student_id')->references('id')->on('internship_request_student')->onDelete('cascade')->onUpdate('cascade');      
+            $table->foreign('internship_request_id')->references('id')->on('internship_requests')->onDelete('cascade')->onUpdate('cascade');      
         });
-
         Schema::table('offers', function (Blueprint $table){
             $table->foreign('internship_responsible_id')->references('id')->on('internship_responsibles')->onDelete('cascade')->onUpdate('cascade');      
         });
-    
-    
+        Schema::table('account_requests', function (Blueprint $table){
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');      
+        });
+        Schema::table('internship_requests', function (Blueprint $table){
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');      
+        });
+        Schema::table('majors', function (Blueprint $table){
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');      
+        });
     }
 
     /**

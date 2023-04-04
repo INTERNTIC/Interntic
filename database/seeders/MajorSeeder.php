@@ -19,10 +19,12 @@ class MajorSeeder extends Seeder
             [
                 'name' => 'Math et informatique',
                 'short_cut'=>'MI',
+                'department_id'=>1
             ],
             [
                 'name' => "Technologie de l'information",
                 'short_cut'=>'TI',
+                'department_id'=>2
             ],
         ];
        
@@ -30,6 +32,7 @@ class MajorSeeder extends Seeder
             DB::table('majors')->insert([
                 'name' =>$major['name'] ,
                 'short_cut' =>$major['short_cut'] ,
+                'department_id' =>$major['department_id'] ,
             ]);
      
         }

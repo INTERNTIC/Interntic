@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $location
  * 
- * @property Collection|InternshipResponssible[] $internship_responssibles
+ * @property Collection|InternshipResponsible[] $internship_Responsibles
  *
  * @package App\Models
  */
@@ -30,8 +30,12 @@ class Company extends Model
 		'location'
 	];
 
-	public function internship_responssibles()
+	public function internship_Responsibles()
 	{
-		return $this->hasMany(InternshipResponssible::class);
+		return $this->hasMany(InternshipResponsible::class);
+	}
+	public function internship_Requests()
+	{
+		return $this->hasMany(InternshipRequest::class);
 	}
 }

@@ -25,7 +25,8 @@ class DepartmentCause extends Model
 	public $timestamps = false;
 
 	protected $fillable = [
-		'cause'
+		'cause',
+		"department_id"
 	];
 
 	public function department_refuses()

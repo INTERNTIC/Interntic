@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $duration
  * @property int $internship_responsible_id
  * 
- * @property InternshipResponssible $internship_responssible
+ * @property InternshipResponsible $internship_Responsible
  *
  * @package App\Models
  */
@@ -37,8 +37,8 @@ class Offer extends Model
 		'internship_responsible_id'
 	];
 
-	public function internship_responssible()
+	public function internship_Responsible()
 	{
-		return $this->belongsTo(InternshipResponssible::class, 'internship_responsible_id');
+		return $this->belongsTo(InternshipResponsible::class, 'internship_responsible_id');
 	}
 }

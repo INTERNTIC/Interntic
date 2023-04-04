@@ -24,10 +24,10 @@ class InternshipRequest_Request extends FormRequest
      */
     public function rules()
     {
-        $student_id = JWTAuth::parseToken()->authenticate()->id;
+        $student_id = auth()->id();
         $this->merge(['student_id' => $student_id]);
         return [
-		'internshipResponssible_email'=>['required', 'email'],
+		'internshipResponsible_email'=>['required', 'email'],
 		'theme'=>['required', 'string'],
         'status'=>['boolean'],
 		'start_at'=>['required','date','before:end_at' ],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StudentResource;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\StudentAccount;
@@ -47,29 +48,24 @@ class StudentController extends Controller
 
     public function diplayStudents()
     {
-        $students=DB::table('students')->get();
-        if($students==false)
-        {
-            return $this->returnError('No student to display');
-        }
-        return $this->returnData($students);
+        // TODO check this for no student if ther is an Error
+        $students=Student::with("level_major.level")->get();
+        return $this->returnData(StudentResource::collection($students));
     }
 
     public function editStudentInfo(Request $request,$id)
     {
-        return $request->all();
+        // TODO validate the date form , also in store function
         $student= Student::find($id);
-        if($student==false) {
-            return $this->returnError('Student not found');
-        }
+        abort_if(!$student,404);
 
         Validator::make($request->all(),[
             'first_name'=>'required',
             'last_name'=>'required',
             'birthday'=>'required',
             'place_of_birth'=>'required',
-            'phone_number'=>['required','numeric'],
-            'student_card'=>'required',
+            'phone_number'=>['required','numeric','unique:students,phone,'.$id],
+            'student_card_number'=>'required',
             'social_security_num'=>'required',
             'level_id'=>['required','exists:levels,id'],
             'major_id'=>['required','exists:majors,id'],
@@ -82,8 +78,8 @@ class StudentController extends Controller
             'last_name' => $request->last_name,
             'birthday' => $request->birthday,
             'place_of_birth'=>$request->place_of_birth,
-            'phone'=>$request->phone,
-            'student_card'=>$request->student_card,
+            'phone'=>$request->phone_number,
+            'student_card'=>$request->student_card_number,
             'social_security_num'=>$request->social_security_num,
             'level_major_id'=>$level_major_id,
         ]);
@@ -92,10 +88,7 @@ class StudentController extends Controller
     public function getStudent($id)
     {
         $student = Student::find($id);
-    
-        if($student==false) {
-            return $this->returnError('Something went wrong');
-        }
+        abort_if(!$student,404);
         return $this->returnData($student);
     }
 
@@ -104,9 +97,7 @@ class StudentController extends Controller
         $student = Student::find($id);
         $account = StudentAccount::find($id);
 
-        if($student==false) {
-            return $this->returnError('Something went wrong');
-        }
+        abort_if(!$student,404);
  
         if ($account==true) {
             $account->delete();

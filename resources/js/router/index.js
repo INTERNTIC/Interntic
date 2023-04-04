@@ -6,11 +6,17 @@ import Logout from "../pages/Logout.vue";
 import PageNotFound from "../pages/PageNotFound.vue";
 import CompanySignUp from "../components/signUp/CompanySignUp.vue";
 import StudentSignUp from "../components/signUp/StudentSignUp.vue";
-import DepartmentSignUp from "../components/signUp/DepartmentSignUp.vue";
-import ManageStudentsAccounts from '../components/departmentHead/student/ManageStudentsAccounts.vue';
+import ManageStudentsAccounts from '../components/departmentHead/ManageStudentsAccounts.vue';
+// InternshipResponsible
+import InternshipResponsibleManageInternshipRequests from '../components/internshipResponsible/ManageInternshipRequests.vue';
+import InternshipResponsibleManageInternships from '../components/internshipResponsible/ManageInternships.vue';
+// END InternshipResponsible
+// departemntHead
+import DepartmentHeadManageInternshipRequests from '../components/departmentHead/ManageInternshipRequests.vue';
+import ManageInternshipResponsibleAccounts from '../components/departmentHead/ManageInternshipResponsibleAccounts.vue';
+// END departemntHead
 import Statistiques from "../components/dashboard/Statistiques.vue";
 import axios from "axios";
-
 import shared from "@/shared.js"
 
 
@@ -49,7 +55,7 @@ const defaultLoginGuard =(to,from,next)=>{
     next({ name: "login", params: { guard: 'student'} })
   }
 }
-const newLogin= async(to,from,next)=>{
+const login= async(to,from,next)=>{
   await checkIfAuth()
   if(isAuth){
     next()
@@ -69,58 +75,6 @@ const redirectToDashboardIfAuth=async (to,from,next)=>{
    next()
    return
 }
-// const redirectToLogin=async (to,from,next)=>{
-//   await checkIfAuth()
-//    if(isAuth){
-//      next()
-//      return
-//     }
-//     next({path:"blabla"});
-//    return
-// }
-
-
-// const loginFromLocalStorage = async (to,from,next)=>{
-//   const localToken = window.localStorage.getItem('token')
-//   const localGuard = window.localStorage.getItem('guard')
-//   if (localToken && localGuard) {
-//     await checkUserToken(localToken, localGuard);
-//      if (!isAuth) {
-//       if(shared.guards.includes(localGuard)) {
-//         next({ name: "login", params: { guard: localGuard } })
-//         return
-//       }else{
-//         next({ name: "login", params: { guard: 'student' } })
-//         return
-//       }
-//     } 
-//   } else {
-//     next({ name: "login", params: { guard: "student" } })
-//     return
-//   }
-// }
-// const loginFromSessionStorage = async (to,from,next)=>{
-//   const sessionToken = window.sessionStorage.getItem('token')
-//   const sessionGuard = window.sessionStorage.getItem('guard')
-//   if (sessionToken && sessionGuard) {
-
-//     await checkUserToken(sessionToken, sessionGuard);
-//     if (!isAuth) {       
-//       if(shared.guards.includes(sessionGuard)){
-//         next({ name: "login", params: { guard: sessionGuard } })
-//         return
-//       }else{
-//         next({ name: "login", params: { guard: 'student' } })
-//         return
-//       }
-//     }
-//   } else {
-//     await loginFromLocalStorage(to,from,next)
-//   }
-//   next()
-//   return
-// }
-
 
 
 const router = createRouter({
@@ -131,7 +85,7 @@ const router = createRouter({
       path: "/",
       name: "dashboard",
       component: Dashboard,
-      beforeEnter:[newLogin],
+      beforeEnter:[login],
       meta: {
         needsAuth: true,
       },
@@ -142,10 +96,30 @@ const router = createRouter({
           component: Statistiques,
         },
         {
-          path: "/Manage/Student/Account",
+          path: "Department-head/Manage/Student/Account",
           name: "manageStudentsAccounts",
           component: ManageStudentsAccounts,
-        }
+        },
+        {
+          path: "Department-head/Manage/Student/Request",
+          name: "departmentHeadManageInternshipRequests",
+          component: DepartmentHeadManageInternshipRequests,
+        },
+        {
+          path: "Department-head/Manage/Internship-responsible/Account",
+          name: "manageInternshipResponsibleAccounts",
+          component: ManageInternshipResponsibleAccounts,
+        },
+        {
+          path: "Internship-responsible/Manage/Student/Request",
+          name: "internshipResponsibleManageInternshipRequests",
+          component: InternshipResponsibleManageInternshipRequests,
+        },
+        {
+          path: "Internship-responsible/Manage/Student/Internship",
+          name: "internshipResponsibleManageInternships",
+          component: InternshipResponsibleManageInternships,
+        },
       ]
     },
     {
@@ -181,11 +155,6 @@ const router = createRouter({
           path: "/signUp/company",
           name: "companySignUp",
           component: CompanySignUp,
-        },
-        {
-          path: "/signUp/department",
-          name: "departmentSignUp",
-          component: DepartmentSignUp,
         }
       ]
     }
@@ -205,20 +174,10 @@ router.beforeEach(async (to, from, next) => {
   }
   next()
 })
-
-
-
-
-
-
-
-
-
 const checkUserToken = async (token, guard) => {
   const config = {
     headers: {
       'auth-token': token,
-      'guard': guard
     }
   }
   await axios.post('/api/loginWithToken/', {}, config).then((response) => {

@@ -31,7 +31,8 @@ class CompanyCauseController extends Controller
         Validator::make($request->all(),[ 
             'cause'=>['required','string'],
         ])->validate();
-        $companyCause=CompanyCause::create($request->all());
+        $company_id=auth()->id();
+        $companyCause=CompanyCause::create($request->only('cause')+['company_id'=>$company_id]);
         return $this->returnData($companyCause);
     }
 

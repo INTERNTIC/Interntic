@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('initiative');
             $table->integer('creativity');
             $table->integer('knowledge');
-            $table->unsignedBigInteger('internship_request_student_id');
+            $table->unsignedBigInteger('internship_request_id');
         });
 
     }

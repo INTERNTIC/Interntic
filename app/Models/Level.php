@@ -28,13 +28,6 @@ class Level extends Model
 	protected $fillable = [
 		'name'
 	];
-
-	public function departments()
-	{
-		return $this->belongsToMany(Department::class)
-					->withPivot('id');
-	}
-
 	public function majors()
 	{
 		return $this->belongsToMany(Major::class)

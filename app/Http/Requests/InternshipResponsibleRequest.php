@@ -35,9 +35,9 @@ class InternshipResponsibleRequest extends FormRequest
         return [
             'first_name'=>'required',
             'last_name'=>'required',
-            'email'=>['required','unique:account_requests,email,'.$internshipResponsible->email],
+            'email'=>['required','unique:internship_responsibles,email,'.$internshipResponsible->email],
             'password'=>['required','min:6'],
-            'phone'=>'required',
+            'phone'=>['required','unique:internship_responsibles,phone,'.$internshipResponsible->phone],
             'company_id'=>['required','exists:companies,id'],
         ];
     }

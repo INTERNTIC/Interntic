@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInternshipResponssiblesTable extends Migration
+
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -36,4 +37,4 @@ class CreateInternshipResponssiblesTable extends Migration
     {
         Schema::dropIfExists('internship_responsibles');
     }
-}
+};

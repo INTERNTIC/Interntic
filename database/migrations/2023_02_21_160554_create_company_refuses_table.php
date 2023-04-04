@@ -16,7 +16,7 @@ class CreateCompanyRefusesTable extends Migration
 
         Schema::create('company_refuses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('internship_request_id');
+            $table->unsignedBigInteger('internship_request_id')->unique();
             $table->unsignedBigInteger('company_cause_id');
         });
 

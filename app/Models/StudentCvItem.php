@@ -9,9 +9,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class StudentCv extends Model
+class StudentCvItem extends Model
 {
-	protected $table = 'student_cvs';
+	protected $table = 'student_cv_items';
 	public $timestamps = false;
 
 	protected $casts = [

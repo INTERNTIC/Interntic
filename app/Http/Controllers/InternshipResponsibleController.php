@@ -16,42 +16,6 @@ use App\Http\Requests\InternshipResponsibleRequest;
 class InternshipResponsibleController extends Controller
 {
     use GeneralTrait;
-    public function accountRequest(Request $request) 
-    {
-        Validator::make($request->all(),[ 
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>['required','unique:account_requests'],
-            'password'=>['required','min:6'],
-            'phone_number'=>'required',
-            'company_name'=>'required',
-            'company_location'=>'required',
-        ])->validate();
-
-        $account_request=AccountRequest::where('email',$request->email)->get()->first();
-        $exist_account=InternshipResponsible::where('email',$request->email)->get()->first();
-
-        if($account_request==true) 
-        {
-            return $this->returnError('You already have sent a request!');
-        }
-
-        if($exist_account==true)
-        {
-            return $this->returnError('You already have have an account!');   
-        }
-
-
-        AccountRequest::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone'=>$request->phone_number,
-            'company_name'=>$request->company_name,
-            'company_location'=>$request->company_location,
-        ]);
-    }
 
     public function responsibleResetPasword(Request $request,$id)
     {

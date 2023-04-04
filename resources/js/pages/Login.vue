@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, onBeforeMount,onMounted } from 'vue';
 import useAuth from '../composables/Auth.js'

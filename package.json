@@ -15,12 +15,16 @@
     "dependencies": {
         "@kyvg/vue3-notification": "^2.9.0",
         "@vitejs/plugin-vue": "^4.0.0",
-        "datatables.net-bs5": "^1.13.2",
+        "datatables.net-bs5": "^1.13.3",
         "datatables.net-responsive-bs5": "^2.4.0",
+        "datatables.net-select": "^1.6.1",
+        "datatables.net-select-bs5": "^1.6.1",
+        "datatables.net-vue3": "^2.1.0",
         "jquery": "^3.6.3",
         "pinia": "^2.0.32",
         "vue": "^3.2.36",
         "vue-loader": "^17.0.1",
+        "vue-loading-overlay": "^6.0.3",
         "vue-meta": "^2.4.0",
         "vue-router": "^4.1.6"
     }

@@ -17,7 +17,7 @@ class CreateDepartmentRefusesTable extends Migration
 
         Schema::create('department_refuses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('internship_request_id');
+            $table->unsignedBigInteger('internship_request_id')->unique();
             $table->unsignedBigInteger('department_cause_id');
         });
 

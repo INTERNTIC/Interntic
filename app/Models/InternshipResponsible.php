@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; 
 /**
- * Class InternshipResponssible
+ * Class InternshipResponsible
  * 
  * @property int $id
  * @property string $first_name
@@ -73,4 +73,20 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 	{
 		return $this->hasMany(Offer::class, 'internship_responsible_id');
 	}
+	public function studentsIntershipRequests()
+    {
+        return $this->company->internship_Requests->where('status',config('global.internship_request_status.accepted_by_department_head'))->where('internshipResponsible_email',$this->email);
+    }
+	public function studentsIntershipRequestsId()
+    {
+		return $this->studentsIntershipRequests()->pluck('id')->toArray();
+    }
+	public function studentsInterships()
+    {
+        return $this->company->internship_Requests->where('status',config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email',$this->email);
+    }
+	public function studentsIntershipIds()
+    {
+		return $this->studentsInterships()->pluck('id')->toArray();
+    }
 }

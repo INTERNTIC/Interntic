@@ -21,9 +21,8 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email');
             $table->string('password');
-            $table->string('phone');
-            $table->string('company_name');
-            $table->string('company_location');
+            $table->integer('phone');
+            $table->unsignedBigInteger('company_id');
         });
     }
 

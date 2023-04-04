@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Department extends Model
 {
+	use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 	protected $table = 'departments';
 	public $timestamps = false;
 
@@ -35,10 +36,17 @@ class Department extends Model
 	{
 		return $this->hasMany(DepartmentHead::class);
 	}
-
-	public function levels()
+	public function majors()
 	{
-		return $this->belongsToMany(Level::class)
-					->withPivot('id');
+		return $this->hasMany(Major::class);
 	}
+	public function studentsIntershipRequests()
+	{
+		return $this->hasManyDeep(InternshipRequest::class, [Major::class, LevelMajor::class,Student::class])->where('status',config('global.internship_request_status.not_seen'));
+	}
+	public function studentsIntershipRequestsId()
+	{
+		return $this->studentsIntershipRequests()->pluck('internship_requests.id')->toArray();
+	}
+	
 }

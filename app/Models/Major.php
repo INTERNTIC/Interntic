@@ -27,7 +27,8 @@ class Major extends Model
 
 	protected $fillable = [
 		'name',
-		'short_cut'
+		'short_cut',
+		'department_id'
 	];
 
 	public function levels()
@@ -35,4 +36,13 @@ class Major extends Model
 		return $this->belongsToMany(Level::class)
 					->withPivot('id');
 	}
+	public function departments()
+	{
+		return $this->belongsToMany(Department::class)
+					->withPivot('id');
+	}
+	public function students()
+    {
+        return $this->hasManyThrough(Student::class, LevelMajor::class);
+    }
 }

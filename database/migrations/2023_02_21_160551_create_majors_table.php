@@ -19,6 +19,7 @@ class CreateMajorsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('short_cut');
+            $table->unsignedBigInteger('department_id');
         });
 
        

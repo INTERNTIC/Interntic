@@ -19,8 +19,6 @@ class CheckAuthUser
     {
         $guards = array_keys(config('auth.guards'));
         try {
-
-
             // auth()->shouldUse('super_admin'); //shoud you user guard / table
             //$isAuth= JWTAuth::parseToken()->check(); //this to check if is auth 
             $token = $request->header('auth-token');
@@ -55,6 +53,7 @@ class CheckAuthUser
         } catch (JWTException $e) {
             return  $this->returnError($e->getMessage(), 401);
         } catch (\Throwable $th) {
+
             return  $this->returnError($th->getMessage(), 401);
         }
         return $next($request);

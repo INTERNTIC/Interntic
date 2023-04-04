@@ -25,7 +25,8 @@ class CompanyCause extends Model
 	public $timestamps = false;
 
 	protected $fillable = [
-		'cause'
+		'cause',
+		"company_id"
 	];
 
 	public function company_refuses()

@@ -13,7 +13,6 @@ Refused Internship Request
 
 <?php print_r($student)?>
 <?php print_r($internshipRequest)?>
-<?php print_r($depaartmentCause)?>
 </body>
 
 </html>

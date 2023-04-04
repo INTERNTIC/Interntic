@@ -1,20 +1,22 @@
 <script setup>
 import { onMounted } from 'vue';
-const script3 = () => import("@/assets/js/vendor/apexcharts.min.js");
-const script4 = () => import("@/assets/js/vendor/jquery-jvectormap-1.2.2.min.js");
-const script5 = () => import("@/assets/js/vendor/jquery-jvectormap-world-mill-en.js");
-const script6 = () => import("@/assets/js/pages/demo.dashboard.js");
 
 
-onMounted(() => {
-
-  script3();
-  script4();
-  script5();
-  script6();
-
-
+onMounted(async () => {
+    import('@/assets/js/vendor/apexcharts.min.js').then(() => {
+        console.log('nothing');
+        import('@/assets/js/vendor/jquery-jvectormap-1.2.2.min.js').then(() => {
+            console.log('nothing1');
+            import('@/assets/js/vendor/jquery-jvectormap-world-mill-en.js').then(() => {
+                console.log('nothing2');
+                import("@/assets/js/pages/demo.dashboard.js").then(() => {
+                  console.log('nothing3');
+                });
+            });
+        });
+    });
 })
+
 </script>
 <template>
   <!-- start page title -->

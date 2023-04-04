@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property int $student_id
- * @property string $internshipResponssible_email
+ * @property string $internshipResponsible_email
  * @property int $status
  * @property string $theme
  * @property Carbon $start_at
@@ -45,15 +45,18 @@ class InternshipRequest extends Model
 
 	protected $fillable = [
 		'student_id',
-		'internshipResponssible_email',
+		'internshipResponsible_email',
 		'status',
 		'theme',
 		'start_at',
 		'end_at',
-		'company_name',
-		'company_location',
+		'company_id',
 	];
 
+	public function company()
+	{
+		return $this->belongsTo(Company::class);
+	}
 	public function student()
 	{
 		return $this->belongsTo(Student::class);

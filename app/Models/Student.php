@@ -10,26 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Student
- * 
- * @property int $id
- * @property string $first_name
- * @property string $last_name
- * @property Carbon $birthday
- * @property string $place_of_birth
- * @property string $phone
- * @property string $student_card
- * @property string $social_security_num
- * @property int $level_major_id
- * 
- * @property LevelMajor $level_major
- * @property Collection|InternshipRequest[] $internship_requests
- * @property StudentAccount $student_account
- * @property Collection|StudentCv[] $student_cvs
- *
- * @package App\Models
- */
+
 class Student extends Model
 {
 	protected $table = 'students';
@@ -69,8 +50,8 @@ class Student extends Model
 		return $this->hasOne(StudentAccount::class, 'id');
 	}
 
-	public function student_cvs()
+	public function student_cv_items()
 	{
-		return $this->hasMany(StudentCv::class);
+		return $this->hasMany(StudentCvItem::class);
 	}
 }
