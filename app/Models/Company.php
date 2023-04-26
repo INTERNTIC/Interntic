@@ -38,4 +38,9 @@ class Company extends Model
 	{
 		return $this->hasMany(InternshipRequest::class);
 	}
+	public static function findByNameLocation($name, $location)
+	{
+		return self::where('name','=',$name)
+        ->where('location','=',$location)->first();
+	}
 }

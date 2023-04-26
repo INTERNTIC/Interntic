@@ -21,11 +21,6 @@ class AuthController extends Controller
 {
     use GeneralTrait;
 
-    public function __construct()
-    {
-    }
-
-
     public function login(Request $request, $guard) 
     {
         if ($guard == 'student') {

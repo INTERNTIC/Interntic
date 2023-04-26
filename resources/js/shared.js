@@ -2,7 +2,7 @@ import { notify } from "@kyvg/vue3-notification";
 const getErrorText = (ErrorObject, property) => {
     return ErrorObject.hasOwnProperty(property) ? ErrorObject[property][0] : "";
 }
-const token=window.sessionStorage.getItem('token');
+const token=sessionStorage.getItem('token');
 const isUserCredentialsSaved=() =>window.sessionStorage.getItem('token')!==null || window.localStorage.getItem('token')!==null ;
 const guards = ['student', 'internship_responsible', 'department_head', 'super_admin']
 

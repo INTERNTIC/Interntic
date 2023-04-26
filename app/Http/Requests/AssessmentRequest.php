@@ -36,8 +36,8 @@ class AssessmentRequest extends FormRequest
                     }
                 )->ignore($assessment->id)
             ],
-            'enter_time' => ['nullable', 'date_format:H:i'],
-            'left_time' => ['nullable', 'date_format:H:i'],
+            'enter_time' => ['nullable', 'date_format:H:i:s'],
+            'left_time' => ['nullable', 'date_format:H:i:s'],
             'note' => ['nullable'],
             'internship_request_id' => ['required', 'exists:internship_requests,id']
         ];

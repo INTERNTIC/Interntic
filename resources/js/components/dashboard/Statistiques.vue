@@ -1,20 +1,25 @@
 <script setup>
-import { onMounted } from 'vue';
-
-
+import { onMounted, onBeforeMount } from 'vue';
+onBeforeMount(() => {
+  // if (localStorage.getItem("hasCodeRunBefore") === null) {
+  //   localStorage.setItem("hasCodeRunBefore", true);
+  //   location.reload()
+  // }
+})
 onMounted(async () => {
-    import('@/assets/js/vendor/apexcharts.min.js').then(() => {
-        console.log('nothing');
-        import('@/assets/js/vendor/jquery-jvectormap-1.2.2.min.js').then(() => {
-            console.log('nothing1');
-            import('@/assets/js/vendor/jquery-jvectormap-world-mill-en.js').then(() => {
-                console.log('nothing2');
-                import("@/assets/js/pages/demo.dashboard.js").then(() => {
-                  console.log('nothing3');
-                });
-            });
+  import('@/assets/js/vendor/apexcharts.min.js').then(() => {
+    console.log('nothing');
+    import('@/assets/js/vendor/jquery-jvectormap-1.2.2.min.js').then(() => {
+      console.log('nothing1');
+      import('@/assets/js/vendor/jquery-jvectormap-world-mill-en.js').then(() => {
+        console.log('nothing2');
+        import("@/assets/js/pages/demo.dashboard.js").then(() => {
+          console.log('nothing3');
+
         });
+      });
     });
+  });
 })
 
 </script>

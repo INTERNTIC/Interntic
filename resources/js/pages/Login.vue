@@ -38,7 +38,7 @@ onMounted(() => {
     <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-xxl-4 col-lg-5">
+                <div class="col-10">
                     <div class="card">
                         <!-- Logo -->
                         <div class="card-header pt-4 pb-4 text-center bg-primary">

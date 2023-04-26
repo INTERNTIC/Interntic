@@ -6,27 +6,11 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use Illuminate\Support\Facades\DB;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; 
-/**
- * Class InternshipResponsible
- * 
- * @property int $id
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $password
- * @property string $phone
- * @property int $company_id
- * 
- * @property Company $company
- * @property Collection|Offer[] $offers
- *
- * @package App\Models
- */
+
 class InternshipResponsible extends Authenticatable implements JWTSubject
 {
 	protected $table = 'internship_responsibles';
@@ -50,19 +34,19 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 	];
 
 	public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
+	{
+		return $this->getKey();
+	}
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
+	/**
+	 * Return a key value array, containing any custom claims to be added to the JWT.
+	 *
+	 * @return array
+	 */
+	public function getJWTCustomClaims()
+	{
+		return [];
+	}
 
 	public function company()
 	{
@@ -73,20 +57,51 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 	{
 		return $this->hasMany(Offer::class, 'internship_responsible_id');
 	}
+
+	public static function findByEmail($email)
+	{
+		return self::where('email', '=', $email)->first();
+	}
+
 	public function studentsIntershipRequests()
-    {
-        return $this->company->internship_Requests->where('status',config('global.internship_request_status.accepted_by_department_head'))->where('internshipResponsible_email',$this->email);
-    }
+	{
+		return $this->company->internship_Requests->where('status', config('global.internship_request_status.accepted_by_department_head'))->where('internshipResponsible_email', $this->email);
+	}
+
+
 	public function studentsIntershipRequestsId()
-    {
+	{
 		return $this->studentsIntershipRequests()->pluck('id')->toArray();
-    }
+	}
+
 	public function studentsInterships()
-    {
-        return $this->company->internship_Requests->where('status',config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email',$this->email);
-    }
+	{
+		return $this->company->internship_Requests->where('status', config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email', $this->email);
+	}
+
 	public function studentsIntershipIds()
-    {
+	{
 		return $this->studentsInterships()->pluck('id')->toArray();
-    }
+	}
+
+	public function studentsMark()
+	{
+		return Mark::whereIn("internship_request_id", $this->studentsIntershipIds())->get();
+	}
+
+	public function notAssessedStudentToday()
+	{
+		// get all internships then remove that have assessment with currnt date
+		return InternshipRequest::where('internship_requests.status', config('global.internship_request_status.accepted_by_internship_responsible'))
+			->where('internship_requests.internshipResponsible_email', $this->email)
+			->whereNotIn(
+				'id',
+				DB::table('assessments')
+					->join('internship_requests', 'internship_requests.id', '=', 'assessments.internship_request_id')
+					->where('assessments.the_date', "=",  date('Y-m-d'))
+					->get()
+					->pluck('internship_request_id')
+					->toArray()
+			)->get();
+	}
 }

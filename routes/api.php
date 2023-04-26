@@ -2,14 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MarkController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\SuperAdminController;
-use App\Http\Controllers\CompanyCauseController;
 
+use App\Http\Controllers\CompanyCauseController;
 use App\Http\Controllers\CompanyRefuseController;
 use App\Http\Controllers\StudentCvItemController;
 use App\Http\Controllers\AccountRequestController;
@@ -38,7 +39,7 @@ use App\Http\Controllers\InternshipAccountsRequestsController;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/login/{guard}', "login");
     Route::group(['middleware' => 'check.auth.guard'], function () {
-        Route::post('/loginWithToken', "loginWithToken");
+        // Route::post('/loginWithToken', "loginWithToken");
         Route::post('/logout', "logout");
     });
     Route::post('/askResetPassword/{guard}', 'askResetPassword');
@@ -85,11 +86,11 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
 
     Route::apiResource('internshipResponsibles', InternshipResponsibleController::class);
 
-    Route::post('/addOffer', [InternshipOffersController::class, "addOffer"]);
     Route::get('/displayOffers', [InternshipOffersController::class, "displayOffers"]);
-    Route::get('/selectOffer/{id}', [InternshipOffersController::class, "selectOffer"]);
-    Route::post('/editOffer/{id}', [InternshipOffersController::class, "editOffer"]);
-    Route::delete('/deleteOffer/{id}', [InternshipOffersController::class, "deleteOffer"]);
+    Route::post('/addOffer', [InternshipOffersController::class, "addOffer"]);
+    Route::get('/selectOffer/{offer}', [InternshipOffersController::class, "selectOffer"]);
+    Route::patch('/editOffer/{offer}', [InternshipOffersController::class, "editOffer"]);
+    Route::delete('/deleteOffer/{offer}', [InternshipOffersController::class, "deleteOffer"]);
     Route::post('/responsibleResetPassword/{id}', [InternshipResponsibleController::class, "responsibleResetPasword"]);
 
 
@@ -109,17 +110,18 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::apiResource('levels', LevelController::class);
     Route::apiResource('majors', MajorController::class);
     Route::apiResource('companies', CompanyController::class);
-
     Route::apiResource('studentCvItems', StudentCvItemController::class);
+    Route::apiResource('marks', MarkController::class);
 
     Route::post('/internshipRequests/manage/{internshipRequest}', [InternshipRequestController::class, "manageTheInternshipRequest"]);
-    Route::get('/internships/assess/', [InternshipRequestController::class, "studentInternships"]);
+    Route::get('/internships/students/', [InternshipRequestController::class, "studentInternships"]);
+    Route::get('/internships/students/not-assessed', [InternshipRequestController::class, "studentInternshipsNotAssessedToday"]);
 
     Route::apiResource('accountRequests', AccountRequestController::class, ['only' => ['index','show', 'destroy']]);
     Route::post('accountRequests/manage/{accountRequest}', [AccountRequestController::class,'manageAccountRequest']);
 
-    Route::apiResource('assessments',AssessmentController::class,['only' => ['store','show','update', 'destroy']]);
-    Route::get('assessments/{internship_request_id}/all',[AssessmentController::class,'index']);
+    Route::apiResource('assessments',AssessmentController::class);
+    Route::get('assessments/{internship_request_id}/all',[AssessmentController::class,'assessmentsOfInternship']);
 });
 // store method shold br without auth
 Route::post('accountRequests', [AccountRequestController::class,'store']);

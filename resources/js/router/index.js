@@ -9,7 +9,11 @@ import StudentSignUp from "../components/signUp/StudentSignUp.vue";
 import ManageStudentsAccounts from '../components/departmentHead/ManageStudentsAccounts.vue';
 // InternshipResponsible
 import InternshipResponsibleManageInternshipRequests from '../components/internshipResponsible/ManageInternshipRequests.vue';
-import InternshipResponsibleManageInternships from '../components/internshipResponsible/ManageInternships.vue';
+import AssessStudents from '../components/internshipResponsible/AssessStudents.vue';
+import InternshipResponsibleAllStudents from '../components/internshipResponsible/AllStudents.vue';
+import Assessments from '../components/internshipResponsible/Assessments.vue';
+import Marks from '../components/internshipResponsible/Marks.vue';
+import Offers from '../components/internshipResponsible/ManageOffers.vue';
 // END InternshipResponsible
 // departemntHead
 import DepartmentHeadManageInternshipRequests from '../components/departmentHead/ManageInternshipRequests.vue';
@@ -35,12 +39,12 @@ const checkIfAuth= async()=>{
   const sessionToken = window.sessionStorage.getItem('token')
     const sessionGuard = window.sessionStorage.getItem('guard')
     if(sessionToken && sessionGuard){
-      await checkUserToken(sessionToken,sessionGuard)
+      // await checkUserToken(sessionToken,sessionGuard)
     }else{
       const localToken = window.localStorage.getItem('token')
       const localGuard = window.localStorage.getItem('guard')
       if(localToken && localGuard){
-        await checkUserToken(localToken,localGuard)
+        // await checkUserToken(localToken,localGuard)
       }
     }
 }
@@ -56,9 +60,15 @@ const defaultLoginGuard =(to,from,next)=>{
   }
 }
 const login= async(to,from,next)=>{
+  
+  if(from.name=='login'){
+    next();
+    return;
+  }
   await checkIfAuth()
-  if(isAuth){
-    next()
+  if(true){
+  // if(isAuth){
+    next();
     return;
   }else{
     defaultLoginGuard(to,from,next)
@@ -68,7 +78,7 @@ const redirectToDashboardIfAuth=async (to,from,next)=>{
   if(from.name!='logout'){
     await checkIfAuth()
      if(isAuth){
-        next({name:"dashboard"});
+        next({name:"statistiques"});
         return
      }
   }
@@ -116,9 +126,29 @@ const router = createRouter({
           component: InternshipResponsibleManageInternshipRequests,
         },
         {
-          path: "Internship-responsible/Manage/Student/Internship",
-          name: "internshipResponsibleManageInternships",
-          component: InternshipResponsibleManageInternships,
+          path: "Internship-responsible/Assess/Students",
+          name: "assessStudents",
+          component: AssessStudents,
+        },
+        {
+          path: "Internship-responsible/Students",
+          name: "allStudents",
+          component: InternshipResponsibleAllStudents,
+        },
+        {
+          path: "Internship-responsible/Assessments",
+          name: "assessments",
+          component: Assessments,
+        },
+        {
+          path: "Internship-responsible/Marks",
+          name: "marks",
+          component: Marks,
+        },
+        {
+          path: "Internship-responsible/Offers",
+          name: "offers",
+          component: Offers,
         },
       ]
     },
@@ -186,7 +216,6 @@ const checkUserToken = async (token, guard) => {
     window.sessionStorage.setItem('token', response.data.data.token)
     window.sessionStorage.setItem('guard', guard)
   }).catch((error) => {
-    console.log(error);
     isAuth = false;
     if (error.response) {
       if (error.response.status == 401) {

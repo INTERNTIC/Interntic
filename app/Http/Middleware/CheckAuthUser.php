@@ -21,14 +21,18 @@ class CheckAuthUser
         try {
             // auth()->shouldUse('super_admin'); //shoud you user guard / table
             //$isAuth= JWTAuth::parseToken()->check(); //this to check if is auth 
-            $token = $request->header('auth-token');
-            $request->headers->set('auth-token', (string) $token, true);
-            $request->headers->set('Authorization', 'Bearer ' . $token, true);
+            // $token = $request->header('auth-token');
+            // $request->headers->set('auth-token', (string) $token, true);
+            // $request->headers->set('Authorization', 'Bearer ' . $token, true);
+           
 
             if (!JWTAuth::parseToken()->check()) {
-                return  $this->returnError('Unauthenticated user', 401);
+                
+                return  $this->returnError(JWTAuth:: authenticate(), 401);
+                // return  $this->returnError('Unauthenticated User', 401);
             }
-
+            
+           
             if (count($routeGuards) > 0) {
                 foreach ($routeGuards as $routeGuard) {
                     if (Auth::guard($routeGuard)->check()) {

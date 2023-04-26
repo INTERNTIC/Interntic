@@ -1,18 +1,17 @@
-import axios from "axios"
 import { useRouter } from "vue-router"
 import { ref } from "vue"
 import shared from "@/shared"
-export default function useStudent() {
+export default function useInternship() {
     const router = useRouter();
-    const students = ref([])
+    const studentInternshipsNotAssessed = ref([])
+    const studentInternships = ref([])
+    const assessments = ref([])
     const errors = ref({})
-    const editErrors = ref({})
     const generalErrorMsg = ref('')
     const generalSuccessMsg = ref('')
-    const levels = ref([])
-    const majors = ref([])
+
+    
     const restErrorsAndSuccess = () => {
-        editErrors.value = {}
         errors.value = {}
         generalErrorMsg.value = '';
         generalSuccessMsg.value = '';
@@ -30,21 +29,41 @@ export default function useStudent() {
                     generalErrorMsg.value = "Oppps !! Something went wrong";
                 }
     }
-    const storeStudent = async (credentials) => {
+
+
+    const getStudentInternshipsNotAssessed = async () => {
         restErrorsAndSuccess()
-        await axios.post('/addStudentInfo', credentials).then((response) => {
+        await axios.get('/internships/students/not-assessed').then((response) => {
+            studentInternshipsNotAssessed.value = response.data.data
+        }).catch((error) => {
+            if (error.response) {
+                handleError(error)
+            }
+        })
+    }
+    const getAssessment = async () => {
+        restErrorsAndSuccess()
+        await axios.get('/assessments').then((response) => {
+            assessments.value = response.data.data
+        }).catch((error) => {
+            if (error.response) {
+                handleError(error)
+            }
+        })
+    }
+    const storeAssessment = async (assessment) => {
+        restErrorsAndSuccess()
+        await axios.post('/assessments', assessment).then((response) => {
             generalSuccessMsg.value = response.data.msg
-
         }).catch((error) => {
             if (error.response) {
                 handleError(error)
             }
         })
     }
-
-    const updateStudent = async (student) => {
+    const updateAssessment = async (id,assessment) => {
         restErrorsAndSuccess()
-        await axios.patch('/editStudentInfo/' + student.id, student).then((response) => {
+        await axios.patch('/assessments/'+id, assessment).then((response) => {
             generalSuccessMsg.value = response.data.msg
         }).catch((error) => {
             if (error.response) {
@@ -52,41 +71,9 @@ export default function useStudent() {
             }
         })
     }
-    const getStudents = async () => {
+    const destroyAssessment = async (id) => {
         restErrorsAndSuccess()
-        await axios.get('/displayStudents').then((response) => {
-            students.value = response.data.data
-            errors.value = {}
-        }).catch((error) => {
-            if (error.response) {
-                handleError(error)
-            }
-        })
-    }
-    const getMajorsOfLevel = async (id) => {
-        restErrorsAndSuccess()
-        await axios.get('/levels/majors/' + id).then((response) => {
-            majors.value = response.data.data
-        }).catch((error) => {
-            if (error.response) {
-                handleError(error)
-            }
-        })
-    }
-    const getLevels = async () => {
-        restErrorsAndSuccess()
-        await axios.get('/levels').then((response) => {
-            levels.value = response.data.data
-
-        }).catch((error) => {
-            if (error.response) {
-                handleError(error)
-            }
-        })
-    }
-    const destroyStudent = async (student_id) => {
-        restErrorsAndSuccess()
-        await axios.delete('/deleteStudent/' + student_id).then((response) => {
+        await axios.delete('/assessments/'+id).then((response) => {
             generalSuccessMsg.value = response.data.msg
         }).catch((error) => {
             if (error.response) {
@@ -95,19 +82,18 @@ export default function useStudent() {
         })
     }
     return {
-        getStudents,
-        storeStudent,
-        getMajorsOfLevel,
-        getLevels,
-        destroyStudent,
-        updateStudent,
+        getStudentInternshipsNotAssessed,
+        getStudentInternships,
+        getAssessment,
+        storeAssessment,
+        updateAssessment,
+        destroyAssessment,
 
-        students,
-        levels,
-        majors,
+        assessments,
+        studentInternshipsNotAssessed,
+        studentInternships,
         generalErrorMsg,
         generalSuccessMsg,
-        editErrors,
         errors
     }
 }

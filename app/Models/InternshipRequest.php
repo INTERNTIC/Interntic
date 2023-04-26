@@ -61,20 +61,14 @@ class InternshipRequest extends Model
 	{
 		return $this->belongsTo(Student::class);
 	}
-
-	public function company_refuses()
+	public function marks()
 	{
-		return $this->hasMany(CompanyRefus::class);
+		return $this->hasOne(Mark::class);
 	}
 
-	public function department_refuses()
+	public function assessments()
 	{
-		return $this->hasMany(DepartmentRefus::class);
+		return $this->hasMany(Assessment::class);
 	}
-
-	public function students()
-	{
-		return $this->belongsToMany(Student::class)
-					->withPivot('id');
-	}
+		
 }

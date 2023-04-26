@@ -1,29 +1,26 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import DangerModalOutline from '../modal/DangerModalOutline.vue';
+import { onMounted, ref } from 'vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
-import useInternship from '@/composables/Internship.js';
-import shared from "@/shared";
-import SuccessModal from '../modal/SuccessModal.vue';
-import SelectInput from '../form/SelectInput.vue';
-import { useLoading } from 'vue-loading-overlay'
-import DatePicker from '../form/datePicker.vue';
-
-const $loading = useLoading({
-});
-
+import UseAssessment from '@/composables/Assessment.js';
+import shared from "@/shared.js"
 
 const {
-    getStudentInternships,
+    getStudentInternshipsNotAssessed,
+        getStudentInternships,
+        getAssessment,
+        storeAssessment,
+        updateAssessment,
+        destroyAssessment,
 
+        assessments,
+        studentInternshipsNotAssessed,
+        studentInternships,
+        generalErrorMsg,
+        generalSuccessMsg,
+        errors
 
-    studentInternships,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors
-} = useInternship();
+} = UseAssessment();
 
 const internshipsExemple = {
     id: '',
@@ -52,22 +49,26 @@ const internshipsExemple = {
         location: '',
     },
 }
-const assessmentExemple = {
-    "the_date": "",
-    "enter_time": "",
-    "left_time": "",
-    "note": "",
-    "internship_request_id": ""
+const MarkExemple = {
+    id: '',
+    discipline: "",
+    skills: "",
+    initiative: "",
+    creativity: "",
+    knowledge: "",
+    internship_request_id: "",
 }
-const assessment = ref(assessmentExemple)
-const currentInternship = ref(internshipsExemple)
-let principleTable = null;
+const currentInternship = ref(Object.create(internshipsExemple))
+const currentMark = ref(Object.create(MarkExemple))
+let principleTable=null;
+
 
 
 $(document).on('click', 'tr button', async (e) => {
     const internship_id = e.currentTarget.getAttribute('internship_id')
     currentInternship.value = studentInternships.value.find(internship => internship.id == internship_id);
 });
+
 const principleColumns =
     [
         {
@@ -82,15 +83,11 @@ const principleColumns =
             data: null,
             render: function (data, type, row) {
                 return ` 
-                        <button  button_type="edit" internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm me-2" data-bs-toggle="modal"
-                        data-bs-target="#full-width-modal">View</button>
-                        <button type="button" internship_id='${data.id}' data-bs-toggle="modal"
-                            data-bs-target="#full-width-modal-assessment" class="btn btn-light" >Close</button>
-                        <button type="button" internship_id='${data.id}' data-bs-toggle="modal"
-                            data-bs-target="#success-header-modal" class="btn btn-success">Accept</button>
-                        <button type="button" internship_id='${data.id}' data-bs-toggle="modal" data-bs-target="#danger-header-modal"
-                            class="btn btn-danger">Decline</button>
-                        `;
+                    <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#full-width-modal">View</button>
+                    <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#evaluate-modal">Marks</button>
+                    `;
             }
         },
     ];
@@ -108,6 +105,7 @@ onMounted(async () => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
                     console.log('nothing');
+                    $('.timepicker').timepicker({});
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
                         language: {
@@ -180,7 +178,7 @@ onMounted(async () => {
 
                         <!-- end preview-->
                     </div>
-
+                   
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->
@@ -197,34 +195,33 @@ onMounted(async () => {
                             <p class="text-muted font-14">
                                 Manage Student Internship
                             </p>
-
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput
                                         :modelValue="`${currentInternship.student.first_name} ${currentInternship.student.last_name}`"
-                                        :readonly="true" label="Student Full Name" inputType="text" />
+                                        :readonly="true" label="Student Full Name" />
                                     <CustomInput :modelValue="currentInternship.student.student_card_number"
-                                        :readonly="true" label="Student Student Card" inputType="text" />
+                                        :readonly="true" label="Student Student Card" />
                                     <CustomInput :modelValue="currentInternship.student.major" :readonly="true"
-                                        label="Student Major" inputType="text" />
+                                        label="Student Major" />
                                     <CustomInput :modelValue="currentInternship.student.email" :readonly="true"
-                                        label="Student Email" inputType="text" />
+                                        label="Student Email" />
                                     <CustomInput :modelValue="currentInternship.student.level" :readonly="true"
-                                        label="Student Level" inputType="text" />
+                                        label="Student Level" />
                                     <CustomInput :modelValue="currentInternship.theme" :readonly="true"
-                                        label="Internship Theme" inputType="text" />
+                                        label="Internship Theme" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput :modelValue="currentInternship.internshipResponsible_email"
-                                        :readonly="true" label="Internship responsible email" inputType="text" />
+                                        :readonly="true" label="Internship responsible email" />
                                     <CustomInput :modelValue="currentInternship.start_at" :readonly="true"
-                                        label="Internship Start at" inputType="text" />
+                                        label="Internship Start at" />
                                     <CustomInput :modelValue="currentInternship.end_at" :readonly="true"
-                                        label="Internship End at" inputType="text" />
+                                        label="Internship End at" />
                                     <CustomInput :modelValue="currentInternship.company.name" :readonly="true"
-                                        label="Internship Company Name" inputType="text" />
+                                        label="Internship Company Name" />
                                     <CustomInput :modelValue="currentInternship.company.location" :readonly="true"
-                                        label="Internship Company Location" inputType="text" />
+                                        label="Internship Company Location" />
 
                                 </div>
                             </div>
@@ -234,72 +231,9 @@ onMounted(async () => {
             </div>
         </template>
         <template v-slot:buttons>
-            <!-- <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button @click="handelRequest('accept')" type="button" data-bs-toggle="modal"
-                            data-bs-target="#success-header-modal" class="btn btn-success">Accept</button>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#danger-header-modal"
-                            class="btn btn-danger">Decline</button> -->
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
         </template>
     </FullWidthModal>
-    <FullWidthModal modalId="full-width-modal-assessment">
-        <template v-slot:body>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="header-title">Assess Student </h4>
-                            <p class="text-muted font-14">
-                                Assess Student
-                            </p>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <DatePicker v-model="assessment.the_date"
-                                        :errorText="shared.getErrorText(errors, 'the_date')"
-                                        :showError="errors.hasOwnProperty('the_date')" label="The Date"
-                                        placeholder="Enter The Date" />
-                                </div>
-                                <div class="col-lg-6">
-                                    <CustomInput :modelValue="currentInternship.internshipResponsible_email"
-                                        :readonly="true" label="Internship responsible email" inputType="text" />
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-slot:buttons>
-            <!-- <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button @click="handelRequest('accept')" type="button" data-bs-toggle="modal"
-                            data-bs-target="#success-header-modal" class="btn btn-success">Accept</button>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#danger-header-modal"
-                            class="btn btn-danger">Decline</button> -->
-        </template>
-    </FullWidthModal>
-    <DangerModalOutline>
-        <template v-slot:body>
-            <h1>lokman</h1>
-        </template>
-
-    </DangerModalOutline>
-
-    <SuccessModal>
-        <template v-slot:body>
-            Are you sure you want to accept this internship request ?
-        </template>
-
-    </SuccessModal>
-    <InfoModalOutline>
-        <template v-slot:body>
-            <!-- Are you sure you want to <b>{{ judgement.decision.split("_").join(" ") }}</b> this decision ? -->
-        </template>
-        <template v-slot:buttons>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-info" data-bs-dismiss="modal">Confirm</button>
-        </template>
-
-    </InfoModalOutline>
 </template>
 <style>
 @import "@/assets/css/vendor/dataTables.bootstrap5.css";

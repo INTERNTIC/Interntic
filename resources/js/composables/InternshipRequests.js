@@ -1,7 +1,6 @@
 import axios from "axios"
 import { useRouter } from "vue-router"
 import { ref } from "vue"
-import shared from "@/shared"
 export default function useInternshipRequest() {
     const newCause = ref({
         id: null,
@@ -15,10 +14,6 @@ export default function useInternshipRequest() {
     const generalErrorMsg = ref('')
     const generalSuccessMsg = ref('')
 
-    const axiosClient = axios.create({
-        baseURL: '/api',
-        headers: { 'auth-token': shared.token }
-    });
     const restErrorsAndSuccess = () => {
         errors.value = {}
         generalErrorMsg.value = '';
@@ -41,7 +36,7 @@ export default function useInternshipRequest() {
 
     const getStudentsRequests = async () => {
         restErrorsAndSuccess()
-        await axiosClient.get('/internshipRequests').then((response) => {
+        await axios.get('/internshipRequests').then((response) => {
             studentsRequests.value = response.data.data
         }).catch((error) => {
 
@@ -50,9 +45,19 @@ export default function useInternshipRequest() {
             }
         })
     }
+     const getStudentInternships = async () => {
+        restErrorsAndSuccess()
+        await axios.get('/internships/students').then((response) => {
+            studentsRequests.value = response.data.data
+        }).catch((error) => {
+            if (error.response) {
+                handleError(error)
+            }
+        })
+    }
     const getDepartmentRefuseCauses = async () => {
         restErrorsAndSuccess()
-        await axiosClient.get('/departmentCauses').then((response) => {
+        await axios.get('/departmentCauses').then((response) => {
             departmentRefuseCauses.value = response.data.data
         }).catch((error) => {
             if (error.response) {
@@ -62,7 +67,7 @@ export default function useInternshipRequest() {
     }
     const getCompanyRefuseCauses = async () => {
         restErrorsAndSuccess()
-        await axiosClient.get('/companyCauses').then((response) => {
+        await axios.get('/companyCauses').then((response) => {
             companyRefuseCauses.value = response.data.data
         }).catch((error) => {
             if (error.response) {
@@ -72,7 +77,7 @@ export default function useInternshipRequest() {
     }
     const manageInternshipRequests = async (decision, internship_request_id) => {
         restErrorsAndSuccess()
-        await axiosClient.post('/internshipRequests/manage/' + internship_request_id, decision).then((response) => {
+        await axios.post('/internshipRequests/manage/' + internship_request_id, decision).then((response) => {
             generalSuccessMsg.value = response.data.msg
         }).catch((error) => {
             if (error.response) {
@@ -83,7 +88,7 @@ export default function useInternshipRequest() {
 
     const storeDepartmentRefuseCause = async (cause) => {
         restErrorsAndSuccess()
-        await axiosClient.post('/departmentCauses', cause).then((response) => {
+        await axios.post('/departmentCauses', cause).then((response) => {
             newCause.value = response.data.data
         }).catch((error) => {
             if (error.response) {
@@ -93,7 +98,7 @@ export default function useInternshipRequest() {
     }
     const storeCompanyRefuseCause = async (cause) => {
         restErrorsAndSuccess()
-        await axiosClient.post('/companyCauses', cause).then((response) => {
+        await axios.post('/companyCauses', cause).then((response) => {
             newCause.value = response.data.data
         }).catch((error) => {
             if (error.response) {
@@ -111,6 +116,7 @@ export default function useInternshipRequest() {
         manageInternshipRequests,
         storeDepartmentRefuseCause,
         storeCompanyRefuseCause,
+        getStudentInternships,
 
         departmentRefuseCauses,
         companyRefuseCauses,

@@ -77,17 +77,6 @@ class InternshipResponsibleController extends Controller
     }
 
 
-    public function findOrCreate(InternshipResponsibleRequest $request)
-	{
-        $internshipResponsible = InternshipResponsible::where('email','=',$request->email)->first();
-        $request
-        ->setContainer(app())
-        ->setRedirector(app(\Illuminate\Routing\Redirector::class))
-        ->validateResolved();
-        
-		return $internshipResponsible!=null? $internshipResponsible: InternshipResponsible::create($request->validated());
-	}
-
 
 
 
