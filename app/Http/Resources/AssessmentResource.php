@@ -14,6 +14,15 @@ class AssessmentResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            "id"=>$this->id, 
+            "the_date"=>$this->the_date,
+            "enter_time"=>$this->enter_time, 
+            "left_time"=>$this->left_time, 
+            "note"=>$this->note, 
+            "internship_request_id"=>$this->internship_request_id,
+            "internship_request"=>new InternshipRequestResource($this->internship_request),
+            
+        ];
     }
 }

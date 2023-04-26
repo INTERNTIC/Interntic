@@ -33,7 +33,7 @@ trait GeneralTrait
         
     }
 
-    public function returnData($value, $msg = "",$code=200,$status=true)
+    public function returnData($value, $msg = "Success",$code=200,$status=true)
     {
         return response()->json([
             'status' => $status,

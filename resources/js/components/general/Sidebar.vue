@@ -150,8 +150,47 @@
                 <router-link :to="{name:'internshipResponsibleManageInternshipRequests'}">Manage Internship Requests</router-link>
               </li>
               <li>
-                <router-link :to="{name:'internshipResponsibleManageInternships'}">Assess Students</router-link>
+                <router-link :to="{name:'assessStudents'}">Assess Students</router-link>
               </li>
+              <li>
+                <router-link :to="{name:'assessments'}">Manage Assessments</router-link>
+              </li>
+              <li>
+                <router-link :to="{name:'marks'}">Manage Marks</router-link>
+              </li>
+              <li>
+                <router-link :to="{name:'offers'}">Manage Offers</router-link>
+              </li>
+              <li>
+                <a href="apps-ecommerce-orders-details.html">Order Details</a>
+              </li>
+              <li>
+                <a href="apps-ecommerce-customers.html">Customers</a>
+              </li>
+              <li>
+                <a href="apps-ecommerce-shopping-cart.html">Shopping Cart</a>
+              </li>
+              <li>
+                <a href="apps-ecommerce-checkout.html">Checkout</a>
+              </li>
+              <li>
+                <a href="apps-ecommerce-sellers.html">Sellers</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="side-nav-item">
+          <a data-bs-toggle="collapse" href="#student" aria-expanded="false" aria-controls="student"
+            class="side-nav-link">
+            <i class="uil-store"></i>
+            <span> Student part</span>
+            <span class="menu-arrow"></span>
+          </a>
+          <div class="collapse" id="student">
+            <ul class="side-nav-second-level">
+              <!-- <li>
+                <router-link :to="{name:'internshipResponsibleManageInternshipRequests'}">Manage Internship Requests</router-link>
+              </li>              -->
               <li>
                 <a href="apps-ecommerce-orders-details.html">Order Details</a>
               </li>

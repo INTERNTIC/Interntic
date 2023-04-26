@@ -2,6 +2,7 @@ import './bootstrap';
 import { createApp } from "vue";
 import Global from "./pages/Global.vue";
 import router from "./router";
+import "./axiosClient";
 import { createPinia } from 'pinia'
 // import VueMeta from 'vue-meta'
 import Notifications from '@kyvg/vue3-notification'

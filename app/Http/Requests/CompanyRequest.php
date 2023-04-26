@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
+
 use App\Models\Company;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,20 +25,22 @@ class CompanyRequest extends FormRequest
      */
     public function rules()
     {
-        $company=$this->route('company')?? new Company();
+        $company = $this->route('company') ?? new Company();
         return [
-        'name'=>['required'],
-        'location'=>['required',
-        Rule::unique("companies")->where(
-            function ($query) use ($company) {
-                return $query->where(
-                    [
-                        ["name", "=", $company->name],
-                        ["location", "=", $company->location]
-                    ]
-                );
-            })->ignore($company->id)
-        ]
+            'name' => ['required'],
+            'location' => [
+                'required',
+                Rule::unique("companies")->where(
+                    function ($query){
+                        return $query->where(
+                            [
+                                ["name", "=", $this->name],
+                                ["location", "=", $this->location]
+                            ]
+                        );
+                    }
+                )->ignore($company->id)
+            ],
         ];
     }
 }

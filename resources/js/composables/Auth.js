@@ -8,9 +8,6 @@ export default function useAuth() {
     const errors = ref({})
     const generalErrorMsg = ref('')
     const router = useRouter()
-    const axiosClient = axios.create({
-        baseURL: '/api',
-    });
 
     const restErrorsAndSuccess = () => {
         errors.value = {}
@@ -36,7 +33,8 @@ export default function useAuth() {
         if (shared.guards.includes(guard)) {
 
             // console.log(JSON.parse(window.localStorage.getItem('authUser')));
-            await axiosClient.post('/login/' + guard, credentials).then((response) => {
+            await axios.post('/login/' + guard, credentials).then((response) => {
+                axios.defaults.headers.common['Authorization']=`Bearer ${response.data.data.token}`;
                 AuthStore.$state.authUser = response.data.data;
                 AuthStore.$state.userGuard = guard;
                 AuthStore.$state.userToken = response.data.data.token;
@@ -48,7 +46,7 @@ export default function useAuth() {
                     window.localStorage.setItem('token', response.data.data.token)
                     window.localStorage.setItem('guard', guard)
                 }
-                router.push({ name: "dashboard" })
+                router.push({ name: "statistiques" })
             }).catch((error) => {
                 if (error.response) {
                     handleError(error)
@@ -62,25 +60,25 @@ export default function useAuth() {
         }
 
     }
-    const checkUserToken = async (token) => {
-        const config = {
-            headers: {
-                'auth-token': token,
-            }
-        }
-        await axiosClient.post('/loginWithToken/', {}, config).then((response) => {
+    // const checkUserToken = async (token) => {
+    //     const config = {
+    //         headers: {
+    //             'auth-token': token,
+    //         }
+    //     }
+    //     await axios.post('/loginWithToken/', {}, config).then((response) => {
 
-            window.sessionStorage.setItem('authUser', JSON.stringify(response.data.data))
-            window.sessionStorage.setItem('token', response.data.data.token)
-            return true;
+    //         window.sessionStorage.setItem('authUser', JSON.stringify(response.data.data))
+    //         window.sessionStorage.setItem('token', response.data.data.token)
+    //         return true;
 
-        }).catch((error) => {
-            if (error.response) {
-                handleError(error)
-            }
-            return false;
-        })
-    }
+    //     }).catch((error) => {
+    //         if (error.response) {
+    //             handleError(error)
+    //         }
+    //         return false;
+    //     })
+    // }
     const companySignUp = async (credentials) => {
         console.log(credentials);
     }
@@ -93,7 +91,7 @@ export default function useAuth() {
                 'auth-token': window.sessionStorage.getItem('token'),
             }
         }
-        await axiosClient.post('/logout', {}, config).then((response) => {
+        await axios.post('/logout', {}, config).then((response) => {
         }).catch((error) => {
             if (error.response) {
                 handleError(error)
@@ -104,13 +102,14 @@ export default function useAuth() {
         window.sessionStorage.removeItem('token');
         window.localStorage.removeItem('authUser');
         window.localStorage.removeItem('token');
+        window.localStorage.removeItem('hasCodeRunBefore');
         AuthStore.$state.authUser = null;
         AuthStore.$state.userGuard = null;
         AuthStore.$state.userToken = null;
     }
     return {
         login,
-        checkUserToken,
+        
         companySignUp,
         studentSignUp,
         logout,
