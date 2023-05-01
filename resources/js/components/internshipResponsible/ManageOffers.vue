@@ -10,7 +10,11 @@ import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
 import { computed } from 'vue';
-
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+}from "@/axiosClient";
 
 const {
     getOffers,
@@ -19,9 +23,7 @@ const {
     destroyOffer,
     offersPagination,
     offers,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors } = useOffer();
+} = useOffer();
 
 const OfferObject = {
     "id": "",
@@ -93,7 +95,7 @@ onMounted(async () => {
         </div>
     </div>
     <div class="row">
-            <div v-for="offer in offers" :key="offer.id" class="col-md-6">
+            <div v-for="offer in offers" :key="offer.id" class="col-lg-6">
             <div  class="card">
                 <div class="card-body">
                     <h4 class="header-title">{{ offer.theme }}</h4>
@@ -176,28 +178,6 @@ onMounted(async () => {
             <button @click="deleteOffer" type="button" class="btn btn-danger" data-bs-dismiss="modal">Continue</button>
         </template>
     </DangerModalOutline>
-    <!--
-    <SuccessModal>
-        <template v-slot:body>
-            Are you sure you want to accept this internship request ?
-        </template>
-        <template v-slot:buttons>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button @click="submitHandeledRequest" type="button" class="btn btn-success"
-                data-bs-dismiss="modal">Accept</button>
-        </template>
-    </SuccessModal>
-    <InfoModalOutline>
-        <template v-slot:body>
-            Are you sure you want to <b>{{ judgement.decision.split("_").join(" ") }}</b> this decision ?
-        </template>
-        <template v-slot:buttons>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button @click="submitHandeledRequest" type="button" class="btn btn-info"
-                data-bs-dismiss="modal">Confirm</button>
-        </template>
-
-    </InfoModalOutline> -->
 </template>
 <style>
 @import "@/assets/css/vendor/dataTables.bootstrap5.css";

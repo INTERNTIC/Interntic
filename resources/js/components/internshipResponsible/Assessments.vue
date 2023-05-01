@@ -14,6 +14,12 @@ import { useLoading } from 'vue-loading-overlay'
 import DatePicker from '../form/datePicker.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
 
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+}from "@/axiosClient";
+
 const $loading = useLoading({
 });
 
@@ -24,9 +30,6 @@ const {
     destroyAssessment,
 
     assessments,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors
 } = UseAssessment();
 
 const assessmentExemple = {
@@ -128,7 +131,6 @@ onMounted(async () => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing');
                     $('.timepicker').timepicker({});
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,

@@ -9,7 +9,7 @@ import shared from "@/shared";
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import {useLoading} from 'vue-loading-overlay'
-
+import { generalErrorMsg, generalSuccessMsg,errors } from "@/axiosClient";
 const $loading = useLoading({
     });
 const judgement = ref({
@@ -19,16 +19,14 @@ const judgement = ref({
 const createNewCause = ref(false)
 
 const {
-    getStudentsRequests,
+    getInternshipRequests,
     getCompanyRefuseCauses,
     manageInternshipRequests,
     studentsRequests,
     companyRefuseCauses,
     storeCompanyRefuseCause,
     newCause,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors } = useInternshipRequest();
+ } = useInternshipRequest();
 
 const internshipsRequestExemple = {
     id: '',
@@ -105,7 +103,7 @@ const submitHandeledRequest = async () => {
     await manageInternshipRequests(judgement.value, currentInternshipsRequest.value.id)
     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
-        await getStudentsRequests()
+        await getInternshipRequests()
         shared.refreshTable(principleTable, studentsRequests.value)
         currentInternshipsRequest.value = internshipsRequestExemple
     }
@@ -125,13 +123,12 @@ const saveRefuseCause = async () => {
 
 
 onMounted(async () => {
-    await getStudentsRequests()
+    await getInternshipRequests()
     await getCompanyRefuseCauses()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing');
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
                         language: {
@@ -274,6 +271,8 @@ onMounted(async () => {
                 <CustomInput v-model="newCause.cause" label="New Cause" placeholder="Enter New Cause"
                     :errorText="shared.getErrorText(errors, 'cause')" :showError="errors.hasOwnProperty('cause')" />
                 <button @click="saveRefuseCause" type="button" class="btn btn-info">Submit</button>
+                <button @click="createNewCause = false" type="button" class="btn btn-light">Cancel</button>
+
             </div>
             <button @click="createNewCause = true" v-else type="button" class="btn btn-info mt-2 ">Create a new
                 Cause</button>

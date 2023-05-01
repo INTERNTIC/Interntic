@@ -39,7 +39,7 @@ use App\Http\Controllers\InternshipAccountsRequestsController;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/login/{guard}', "login");
     Route::group(['middleware' => 'check.auth.guard'], function () {
-        // Route::post('/loginWithToken', "loginWithToken");
+        Route::get('/getUserByToken', "getUserByToken");
         Route::post('/logout', "logout");
     });
     Route::post('/askResetPassword/{guard}', 'askResetPassword');
@@ -114,7 +114,7 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::apiResource('marks', MarkController::class);
 
     Route::post('/internshipRequests/manage/{internshipRequest}', [InternshipRequestController::class, "manageTheInternshipRequest"]);
-    Route::get('/internships/students/', [InternshipRequestController::class, "studentInternships"]);
+    Route::get('/internships/students/', [InternshipRequestController::class, "internshipsIAccepted"]);
     Route::get('/internships/students/not-assessed', [InternshipRequestController::class, "studentInternshipsNotAssessedToday"]);
 
     Route::apiResource('accountRequests', AccountRequestController::class, ['only' => ['index','show', 'destroy']]);

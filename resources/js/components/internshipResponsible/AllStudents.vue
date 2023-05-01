@@ -3,11 +3,14 @@ import { onMounted, ref } from 'vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import UseAssessment from '@/composables/Assessment.js';
-import shared from "@/shared.js"
-
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+}from "@/axiosClient";
 const {
-    getStudentInternshipsNotAssessed,
-        getStudentInternships,
+        getStudentInternshipsNotAssessed,
+        getInternshipsIAccepted,
         getAssessment,
         storeAssessment,
         updateAssessment,
@@ -16,9 +19,6 @@ const {
         assessments,
         studentInternshipsNotAssessed,
         studentInternships,
-        generalErrorMsg,
-        generalSuccessMsg,
-        errors
 
 } = UseAssessment();
 
@@ -99,12 +99,11 @@ const principleColumns =
 
 
 onMounted(async () => {
-    await getStudentInternships()
+    await getInternshipsIAccepted()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing');
                     $('.timepicker').timepicker({});
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,

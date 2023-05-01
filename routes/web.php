@@ -16,4 +16,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::view('{any}', 'welcome')->where('any','.*');
+Route::view('{any}', 'welcome')->where('any','^(?!api/).*');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequest;
 use App\Models\DepartmentHead;
 use App\Models\InternshipResponsible;
 use App\Models\PasswordReset;
@@ -21,8 +22,9 @@ class AuthController extends Controller
 {
     use GeneralTrait;
 
-    public function login(Request $request, $guard) 
+    public function login(AuthRequest $request, $guard) 
     {
+        $request->validated();
         if ($guard == 'student') {
             $account = StudentAccount::where('email', $request->email)->get()->first();
             if ($account==false) {
@@ -44,9 +46,10 @@ class AuthController extends Controller
             $user = Auth::guard($guard)->user();
 
             $user->token = $token;
+            $user->guard = $guard;
             return $this->returnData($user);
         } catch (\Throwable $th) {
-            return $this->returnError($th->getMessage(), $th->getCode());
+            return $this->returnError($th->getMessage());
         }
     }
 
@@ -54,12 +57,15 @@ class AuthController extends Controller
 
 
 
-    public function loginWithToken(Request $request)
+    public function getUserByToken()
     {
         try {
-            $token=$request->header('auth-token');
             $user = Auth::user();
+            $token = JWTAuth::fromUser($user);
+            $guard=Auth::getDefaultDriver();
             $user->token = $token;
+            $user->guard = $guard;
+
             return $this->returnData($user);
 
         } catch (\Throwable $th) {
@@ -72,7 +78,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $token = $request->header('auth-token');
+            $token = $request->bearerToken();
             
             if (!$token)
             {

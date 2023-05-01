@@ -21,7 +21,7 @@ const { companySignUp, errors } = useAuth();
             <div class="row justify-content-center">
                 <div class="card">
                     <div class="card-header pt-4 pb-4 text-center bg-primary">
-                        <router-link :to="{ name: 'dashboard' }">
+                        <router-link :to="{ name: 'statistiques' }">
                             <span>
                                 <h2 style="color: #fff">INTERNTIC</h2>
                             </span>

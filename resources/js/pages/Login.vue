@@ -1,14 +1,14 @@
 <script setup>
-import { ref, onBeforeMount,onMounted } from 'vue';
-import useAuth from '../composables/Auth.js'
+import { ref,onMounted,onUnmounted } from 'vue';
 import CustomInput from '../components/form/CustomInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
 import { useRoute } from 'vue-router';
 import DangerNofitication from '../components/notification/DangerNofitication.vue';
-import { useRouter } from 'vue-router';
-const { login, errors, generalErrorMsg } = useAuth();
-const router = new useRouter();
+import { useAuthStore } from '../stores/AuthStore';
+import {getErrorText} from "@/newShared";
+// const {  authStore.authErrors, authStore.generalErrorMsg } = useAuth();
 const route = useRoute()
+const authStore = useAuthStore();
  
 
 
@@ -18,21 +18,13 @@ const loginFormModel = ref({
     'password': '',
 })
 
-
-const getErrorText = (ErrorObject, property) => {
-    return ErrorObject.hasOwnProperty(property) ? ErrorObject[property][0] : "";
-}
-onBeforeMount(() => {
-    // redirect user to dashboard if he is authenticated
-    // if (shared.isUserCredentialsSaved()) {
-    //     router.push({ name: 'dashboard' })
-    // }
-})
+const body = document.querySelector('body');
 onMounted(() => {
-    const body = document.querySelector('body');
     body.classList.add('authentication-bg')
 })
-
+onUnmounted(() => {
+    body.classList.remove('authentication-bg')
+})
 </script>
 <template>
     <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
@@ -42,7 +34,7 @@ onMounted(() => {
                     <div class="card">
                         <!-- Logo -->
                         <div class="card-header pt-4 pb-4 text-center bg-primary">
-                            <router-link :to="{ name: 'dashboard' }">
+                            <router-link :to="{ name: 'statistiques' }">
                                 <span>
                                     <h2 style="color: #fff">INTERNTIC</h2>
                                 </span>
@@ -56,24 +48,24 @@ onMounted(() => {
                                 <p class="text-muted mb-4">Enter your email address and password to access Dashboard.</p>
                             </div>
 
-                            <form @submit.prevent="login(route.params.guard, rememberMe, loginFormModel)">
+                            <form @submit.prevent="authStore.login(route.params.guard, rememberMe, loginFormModel)">
                                 {{ loginFormModel }}
                                 <CustomInput v-model="loginFormModel.email" label="Email Address"
-                                    :errorText="getErrorText(errors, 'email')" :showError="errors.hasOwnProperty('email')"
+                                    :errorText="getErrorText(authStore.authErrors, 'email')" :showError="authStore.authErrors.hasOwnProperty('email')"
                                     placeholder="Enter Email Address" inputType="email" />
                                 <div class="mb-3">
                                     <router-link to="#" class="text-muted float-end"><small>Forgot your
                                             password?</small></router-link>
                                     <label for="password" class="form-label">Password</label>
                                     <div class="input-group input-group-merge">
-                                        <input :class="{ 'is-invalid': errors.hasOwnProperty('password') }"
+                                        <input :class="{ 'is-invalid': authStore.authErrors.hasOwnProperty('password') }"
                                             v-model="loginFormModel.password" type="password" id="password"
                                             class="form-control" placeholder="Enter your password">
                                         <div role="button" class="input-group-text" data-password="false">
                                             <span class="password-eye"></span>
                                         </div>
-                                        <div v-if="errors.hasOwnProperty('password')" class="invalid-feedback">
-                                            {{ getErrorText(errors, 'password') }}
+                                        <div v-if="authStore.authErrors.hasOwnProperty('password')" class="invalid-feedback">
+                                            {{ getErrorText(authStore.authErrors, 'password') }}
                                         </div>
                                     </div>
                                 </div>
@@ -110,5 +102,5 @@ onMounted(() => {
     </footer>
 
 
-    <DangerNofitication :errorMsg="generalErrorMsg" />
+    <DangerNofitication :errorMsg="authStore.generalErrorMsg" />
 </template>

@@ -28,7 +28,8 @@ class InternshipResponsibleService
 
             $internshipResponsible_password = Str::random(10);
 
-            $internshipResponsibleRequest = new InternshipResponsibleRequest([
+            $internshipResponsibleRequest = new InternshipResponsibleRequest();
+            $internshipResponsibleRequest->merge([
                 'first_name' => 'first_name',
                 'last_name' => 'last_name',
                 'phone' => "00000000",
@@ -37,8 +38,8 @@ class InternshipResponsibleService
                 'company_id' => $company_id,
             ]);
 
-            $internshipResponsibleRequest = app()->make(InternshipResponsibleRequest::class);
-            $internshipResponsible =  InternshipResponsible::create($internshipResponsibleRequest->validated());
+            $validatedData=$internshipResponsibleRequest->validate($internshipResponsibleRequest->rules());
+            $internshipResponsible =  InternshipResponsible::create($validatedData);
             $credentials = [
                 "email" => $internshipResponsible_email,
                 "password" => $internshipResponsible_password

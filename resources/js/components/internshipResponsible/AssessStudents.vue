@@ -1,19 +1,19 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import DangerModalOutline from '../modal/DangerModalOutline.vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import TimePicker from '@/components/form/TimePicker.vue';
 import useAssessment from '@/composables/Assessment.js';
 import shared from "@/shared";
-import SuccessModal from '../modal/SuccessModal.vue';
-import SelectInput from '../form/SelectInput.vue';
-import FloatingInput from '../form/FloatingInput.vue';
-import { useLoading } from 'vue-loading-overlay'
-import DatePicker from '../form/datePicker.vue';
-import CustomTextAria from '../form/CustomTextAria.vue';
 
+import { useLoading } from 'vue-loading-overlay'
+
+import CustomTextAria from '../form/CustomTextAria.vue';
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+} from "@/axiosClient";
 const $loading = useLoading({
 });
 
@@ -21,11 +21,7 @@ const $loading = useLoading({
 const {
     getStudentInternshipsNotAssessed,
     storeAssessment,
-
     studentInternshipsNotAssessed,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors
 } = useAssessment();
 
 const internshipsExemple = {
@@ -76,11 +72,10 @@ $(document).on('click', 'tr button', async (e) => {
 
 const saveAssessment = async () => {
     assessment.value.internship_request_id = currentInternship.value.id
-
     getTimeFromRange()
     await storeAssessment(assessment.value)
     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
-    if (generalSuccessMsg.value != '') {
+    if (generalErrorMsg.value == '') {
         await getStudentInternshipsNotAssessed();
         shared.refreshTable(principleTable, studentInternshipsNotAssessed.value)
         currentInternship.value = Object.create(internshipsExemple)
@@ -135,7 +130,6 @@ onMounted(async () => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing');
                     $('.timepicker').timepicker({});
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
@@ -210,7 +204,7 @@ onMounted(async () => {
 
                         <!-- end preview-->
                     </div>
-                   
+
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->

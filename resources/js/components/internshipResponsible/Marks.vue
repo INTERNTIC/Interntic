@@ -14,7 +14,11 @@ import FloatingInput from '../form/FloatingInput.vue';
 import { useLoading } from 'vue-loading-overlay'
 import DatePicker from '../form/datePicker.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
-
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+}from "@/axiosClient";
 const $loading = useLoading({
 });
 
@@ -26,12 +30,9 @@ const {
     destroyMark,
 
     studentMarks,
-    generalErrorMsg,
-    generalSuccessMsg,
-    errors
 } = useMark();
 const {
-    getStudentInternships,
+    getInternshipsIAccepted,
     studentsRequests,
 
 } = useInternshipRequest();
@@ -82,7 +83,7 @@ $(document).on('click', 'tr button', async (e) => {
 
     const internship_request_id = e.currentTarget.getAttribute('internship_id')
     currentInternship.value=studentsRequests.value.find(studentsMarks => studentsMarks.id == internship_request_id);
-    currentStudentMarks.value = currentInternship.value.marks || _.cloneDeep(MarksExemple);
+    currentStudentMarks.value = currentInternship?.value?.marks || _.cloneDeep(MarksExemple);
     currentStudentMarks.value.internship_request_id=internship_request_id;
 });
 
@@ -94,7 +95,7 @@ const saveStudentMarks = async () => {
     }
     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
-        await getStudentInternships();
+        await getInternshipsIAccepted();
         shared.refreshTable(principleTable, studentsRequests.value)
         currentStudentMarks.value = _.cloneDeep(MarksExemple)
         $('#full-width-modal').modal('hide')
@@ -106,7 +107,7 @@ const deleteMarks = async () => {
     await destroyMark(currentStudentMarks.value.id)
     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
-        await getStudentInternships();
+        await getInternshipsIAccepted();
         shared.refreshTable(principleTable, studentsRequests.value)
         currentStudentMarks.value = _.cloneDeep(MarksExemple)
         $('#danger-header-modal').modal('hide')
@@ -157,7 +158,7 @@ const principleColumns =
 
 
 onMounted(async () => {
-    await getStudentInternships()
+    await getInternshipsIAccepted()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {

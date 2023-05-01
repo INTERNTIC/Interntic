@@ -40,13 +40,13 @@ class Department extends Model
 	{
 		return $this->hasMany(Major::class);
 	}
-	public function studentsIntershipRequests()
+	public function internshipsWaiting()
 	{
 		return $this->hasManyDeep(InternshipRequest::class, [Major::class, LevelMajor::class,Student::class])->where('status',config('global.internship_request_status.not_seen'));
 	}
 	public function studentsIntershipRequestsId()
 	{
-		return $this->studentsIntershipRequests()->pluck('internship_requests.id')->toArray();
+		return $this->internshipsWaiting()->pluck('internship_requests.id')->toArray();
 	}
 	
 }

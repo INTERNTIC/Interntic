@@ -18,6 +18,7 @@ class InternshipRequestResource extends JsonResource
         "theme"=>$this->theme,
         "start_at"=>date_format(date_create($this->start_at), 'Y-m-d'),
         "end_at"=>date_format(date_create($this->end_at), 'Y-m-d'),
+        "company_id"=>$this->company_id,
         "company"=>$this->company,
         "student"=> new StudentResource($this->student),
         "marks"=>new MarkResource($this->marks),

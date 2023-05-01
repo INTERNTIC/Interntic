@@ -1,10 +1,28 @@
 <script setup>
+import { useAuthStore } from '@/stores/AuthStore';
+import { computed } from 'vue';
+const authStore = useAuthStore()
+const is_student = computed(
+  () => {
+    return authStore.userGuard == "student";
+  }
+)
+const is_department_head = computed(
+  () => {
+    return authStore.userGuard == "department_head";
+  }
+)
+const is_internship_responsible = computed(
+  () => {
+    return authStore.userGuard == "internship_responsible";
+  }
+)
 </script>
 <template>
   <div class="leftside-menu">
 
     <!-- LOGO -->
-    <router-link :to="{name:'dashboard'}" class="logo text-center logo-light">
+    <router-link :to="{ name: 'statistiques' }" class="logo text-center logo-light">
       <span class="logo-lg">
         <img src="/assets/images/logo.png" alt="" height="16">
       </span>
@@ -31,8 +49,8 @@
         <li class="side-nav-title side-nav-item">Navigation</li>
 
         <li class="side-nav-item">
-          <router-link data-bs-toggle="collapse" :to="{name:'dashboard'}" aria-expanded="false" aria-controls="sidebarDashboards"
-            class="side-nav-link">
+          <router-link data-bs-toggle="collapse" :to="{ name: 'statistiques' }" aria-expanded="false"
+            aria-controls="sidebarDashboards" class="side-nav-link">
             <i class="uil-home-alt"></i>
             <span class="badge bg-success float-end">4</span>
             <span> Dashboards </span>
@@ -100,7 +118,7 @@
           </div>
         </li>
 
-        <li class="side-nav-item">
+        <li v-if="is_department_head" class="side-nav-item">
           <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce"
             class="side-nav-link">
             <i class="uil-store"></i>
@@ -110,15 +128,17 @@
           <div class="collapse" id="sidebarEcommerce">
             <ul class="side-nav-second-level">
               <li>
-                <router-link :to="{name:'manageStudentsAccounts'}">Manage Students Accounts</router-link>
+                <router-link :to="{ name: 'manageStudentsAccounts' }">Manage Students Accounts</router-link>
               </li>
               <li>
-                <router-link :to="{name:'departmentHeadManageInternshipRequests'}">Manage Internship Requests</router-link>
+                <router-link :to="{ name: 'departmentHeadManageInternshipRequests' }">Manage Internship
+                  Requests</router-link>
               </li>
               <li>
-                <router-link :to="{name:'manageInternshipResponsibleAccounts'}">Manage Internship Responsible </router-link>
+                <router-link :to="{ name: 'manageInternshipResponsibleAccounts' }">Manage Internship Responsible
+                </router-link>
               </li>
-             
+
               <li>
                 <a href="apps-ecommerce-orders-details.html">Order Details</a>
               </li>
@@ -137,9 +157,9 @@
             </ul>
           </div>
         </li>
-        <li class="side-nav-item">
-          <a data-bs-toggle="collapse" href="#internship_responsible" aria-expanded="false" aria-controls="internship_responsible"
-            class="side-nav-link">
+        <li v-if="is_internship_responsible" class="side-nav-item">
+          <a data-bs-toggle="collapse" href="#internship_responsible" aria-expanded="false"
+            aria-controls="internship_responsible" class="side-nav-link">
             <i class="uil-store"></i>
             <span> Internship Responsible part</span>
             <span class="menu-arrow"></span>
@@ -147,19 +167,20 @@
           <div class="collapse" id="internship_responsible">
             <ul class="side-nav-second-level">
               <li>
-                <router-link :to="{name:'internshipResponsibleManageInternshipRequests'}">Manage Internship Requests</router-link>
+                <router-link :to="{ name: 'internshipResponsibleManageInternshipRequests' }">Manage Internship
+                  Requests</router-link>
               </li>
               <li>
-                <router-link :to="{name:'assessStudents'}">Assess Students</router-link>
+                <router-link :to="{ name: 'assessStudents' }">Assess Students</router-link>
               </li>
               <li>
-                <router-link :to="{name:'assessments'}">Manage Assessments</router-link>
+                <router-link :to="{ name: 'assessments' }">Manage Assessments</router-link>
               </li>
               <li>
-                <router-link :to="{name:'marks'}">Manage Marks</router-link>
+                <router-link :to="{ name: 'marks' }">Manage Marks</router-link>
               </li>
               <li>
-                <router-link :to="{name:'offers'}">Manage Offers</router-link>
+                <router-link :to="{ name: 'offers' }">Manage Offers</router-link>
               </li>
               <li>
                 <a href="apps-ecommerce-orders-details.html">Order Details</a>
@@ -179,7 +200,7 @@
             </ul>
           </div>
         </li>
-        <li class="side-nav-item">
+        <li v-if="is_student" class="side-nav-item">
           <a data-bs-toggle="collapse" href="#student" aria-expanded="false" aria-controls="student"
             class="side-nav-link">
             <i class="uil-store"></i>
@@ -188,9 +209,12 @@
           </a>
           <div class="collapse" id="student">
             <ul class="side-nav-second-level">
-              <!-- <li>
-                <router-link :to="{name:'internshipResponsibleManageInternshipRequests'}">Manage Internship Requests</router-link>
-              </li>              -->
+              <li>
+                <router-link :to="{ name: 'studentInternshipRequests' }">Manage Internship Requests</router-link>
+              </li>
+              <li>
+                <router-link :to="{ name: 'studentOffers' }">View Companies's Offers</router-link>
+              </li>
               <li>
                 <a href="apps-ecommerce-orders-details.html">Order Details</a>
               </li>
@@ -798,5 +822,4 @@
     </div>
     <!-- Sidebar -left -->
 
-  </div>
-</template>
+</div></template>

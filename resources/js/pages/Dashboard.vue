@@ -4,9 +4,9 @@ import Topbar from '../components/general/Topbar.vue';
 import Content from '../components/general/Content.vue';
 import SettingSidebar from '../components/general/SettingSidebar.vue';
 
-// import { useAuthStore } from '../stores/AuthStore';
-// const AuthStore = useAuthStore();
-const authUser=window.sessionStorage.getItem('authUser');
+import { useAuthStore } from '../stores/AuthStore';
+const AuthStore = useAuthStore();
+
 
 </script>
 <template>

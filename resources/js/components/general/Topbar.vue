@@ -1,4 +1,7 @@
 <script setup>
+import { useAuthStore } from '../../stores/AuthStore';
+const authStore = useAuthStore()
+
 </script>
 <template>
   <div class="navbar-custom">
@@ -287,10 +290,15 @@
           </router-link>
 
           <!-- item-->
-          <router-link :to="{name:'logout'}" role="button" class="dropdown-item notify-item">
+
+          <!-- <router-link @click="console.log('lokman logout')" role="button" class="dropdown-item notify-item">
             <i class="mdi mdi-logout me-1"></i>
             <span>Logout</span>
-          </router-link>
+          </router-link> -->
+          <a @click="authStore.logout" role="button" class="dropdown-item notify-item">
+            <i class="mdi mdi-logout me-1"></i>
+            <span>Logout</span>
+          </a>
         </div>
       </li>
 

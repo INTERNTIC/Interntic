@@ -8,19 +8,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Offer
- * 
- * @property int $id
- * @property string $theme
- * @property string $details
- * @property string $duration
- * @property int $internship_responsible_id
- * 
- * @property InternshipResponsible $internship_Responsible
- *
- * @package App\Models
- */
 class Offer extends Model
 {
 	protected $table = 'offers';
@@ -37,7 +24,7 @@ class Offer extends Model
 		'internship_responsible_id'
 	];
 
-	public function internship_Responsible()
+	public function internship_responsible()
 	{
 		return $this->belongsTo(InternshipResponsible::class, 'internship_responsible_id');
 	}

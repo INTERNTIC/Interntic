@@ -79,7 +79,7 @@ onMounted(async () => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing3');
+
 
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,

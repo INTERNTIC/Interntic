@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/AuthStore";
 import Login from "../pages/Login.vue";
 import Dashboard from "../pages/Dashboard.vue";
 import SignUp from "../pages/SignUp.vue";
@@ -19,86 +20,26 @@ import Offers from '../components/internshipResponsible/ManageOffers.vue';
 import DepartmentHeadManageInternshipRequests from '../components/departmentHead/ManageInternshipRequests.vue';
 import ManageInternshipResponsibleAccounts from '../components/departmentHead/ManageInternshipResponsibleAccounts.vue';
 // END departemntHead
+// Student
+import StudentInternshipRequests from '../components/student/ManageInternshipRequests.vue';
+import StudentOffers from '../components/student/Offers.vue';
+// END Student
 import Statistiques from "../components/dashboard/Statistiques.vue";
-import axios from "axios";
-import shared from "@/shared.js"
-
-
-
-const wrongGuard =(to,from,next)=>{
-    if (!shared.guards.includes(to.params.guard)) {
-      defaultLoginGuard(to,from,next)
-      return
-    }
-    next()
-    return
-}
-
-
-const checkIfAuth= async()=>{
-  const sessionToken = window.sessionStorage.getItem('token')
-    const sessionGuard = window.sessionStorage.getItem('guard')
-    if(sessionToken && sessionGuard){
-      // await checkUserToken(sessionToken,sessionGuard)
-    }else{
-      const localToken = window.localStorage.getItem('token')
-      const localGuard = window.localStorage.getItem('guard')
-      if(localToken && localGuard){
-        // await checkUserToken(localToken,localGuard)
-      }
-    }
-}
-
-
-const defaultLoginGuard =(to,from,next)=>{
-  const sessionGuard = window.sessionStorage.getItem('guard')
-  const localGuard = window.localStorage.getItem('guard')
-  if(sessionGuard || localGuard){
-    next({ name: "login", params: { guard: sessionGuard==null?localGuard:sessionGuard} })
-  }else{
-    next({ name: "login", params: { guard: 'student'} })
-  }
-}
-const login= async(to,from,next)=>{
-  
-  if(from.name=='login'){
-    next();
-    return;
-  }
-  await checkIfAuth()
-  if(true){
-  // if(isAuth){
-    next();
-    return;
-  }else{
-    defaultLoginGuard(to,from,next)
-  }
-}
-const redirectToDashboardIfAuth=async (to,from,next)=>{
-  if(from.name!='logout'){
-    await checkIfAuth()
-     if(isAuth){
-        next({name:"statistiques"});
-        return
-     }
-  }
-   next()
-   return
-}
-
+import {
+  redirectToDashboardIfAuth,
+  redirectToDefaultLoginGuard,
+  wrongGuard,
+  nextRouteIfAuth,
+} from "./authFunctions.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/:pathMatch(.*)*',name:"PageNotFound", component: PageNotFound },
+    { path: '/:pathMatch(.*)*', name: "PageNotFound", component: PageNotFound },
     {
       path: "/",
       name: "dashboard",
       component: Dashboard,
-      beforeEnter:[login],
-      meta: {
-        needsAuth: true,
-      },
       children: [
         {
           path: "/",
@@ -106,74 +47,108 @@ const router = createRouter({
           component: Statistiques,
         },
         {
-          path: "Department-head/Manage/Student/Account",
-          name: "manageStudentsAccounts",
-          component: ManageStudentsAccounts,
+          path: "/departemnt_head",
+          meta: {
+            guard: "departemnt_head"
+          },
+          children: [
+            {
+              path: "Department-head/Manage/Student/Account",
+              name: "manageStudentsAccounts",
+              component: ManageStudentsAccounts,
+            },
+            {
+              path: "Department-head/Manage/Student/Request",
+              name: "departmentHeadManageInternshipRequests",
+              component: DepartmentHeadManageInternshipRequests,
+            },
+            {
+              path: "Department-head/Manage/Internship-responsible/Account",
+              name: "manageInternshipResponsibleAccounts",
+              component: ManageInternshipResponsibleAccounts,
+            },
+          ]
         },
+        // internship responsible part
         {
-          path: "Department-head/Manage/Student/Request",
-          name: "departmentHeadManageInternshipRequests",
-          component: DepartmentHeadManageInternshipRequests,
+          path: "/internship_responsible",
+          meta: {
+            guard: "internship_responsible"
+          },
+          children: [
+            {
+              path: "Internship-responsible/Manage/Student/Request",
+              name: "internshipResponsibleManageInternshipRequests",
+              component: InternshipResponsibleManageInternshipRequests,
+            },
+            {
+              path: "Internship-responsible/Assess/Students",
+              name: "assessStudents",
+              component: AssessStudents,
+            },
+            {
+              path: "Internship-responsible/Students",
+              name: "allStudents",
+              component: InternshipResponsibleAllStudents,
+            },
+            {
+              path: "Internship-responsible/Assessments",
+              name: "assessments",
+              component: Assessments,
+            },
+            {
+              path: "Internship-responsible/Marks",
+              name: "marks",
+              component: Marks,
+            },
+            {
+              path: "Internship-responsible/Offers",
+              name: "offers",
+              component: Offers,
+            },
+          ]
+
         },
+        // student part 
+
         {
-          path: "Department-head/Manage/Internship-responsible/Account",
-          name: "manageInternshipResponsibleAccounts",
-          component: ManageInternshipResponsibleAccounts,
+          path: "/student",
+          meta: {
+            guard: "student"
+          }, children: [
+            {
+              path: "Student/Internship-requests",
+              name: "studentInternshipRequests",
+              component: StudentInternshipRequests,
+            },
+            {
+              path: "Student/Offers",
+              name: "studentOffers",
+              component: StudentOffers,
+            },
+          ]
         },
-        {
-          path: "Internship-responsible/Manage/Student/Request",
-          name: "internshipResponsibleManageInternshipRequests",
-          component: InternshipResponsibleManageInternshipRequests,
-        },
-        {
-          path: "Internship-responsible/Assess/Students",
-          name: "assessStudents",
-          component: AssessStudents,
-        },
-        {
-          path: "Internship-responsible/Students",
-          name: "allStudents",
-          component: InternshipResponsibleAllStudents,
-        },
-        {
-          path: "Internship-responsible/Assessments",
-          name: "assessments",
-          component: Assessments,
-        },
-        {
-          path: "Internship-responsible/Marks",
-          name: "marks",
-          component: Marks,
-        },
-        {
-          path: "Internship-responsible/Offers",
-          name: "offers",
-          component: Offers,
-        },
+
       ]
     },
+
+
     {
       path: "/login/:guard",
       name: "login",
       component: Login,
-      beforeEnter:[wrongGuard,redirectToDashboardIfAuth],
-      meta: {
-        notAllowedForAuth : true
-      }
-    },
-    {
-      path: "/logout",
-      name: "logout",
-      component: Logout,
+      beforeEnter: [
+        wrongGuard,
+        redirectToDashboardIfAuth
+      ],
     },
     {
       path: "/signUp",
       name: "signUp",
       component: SignUp,
-      beforeEnter:[redirectToDashboardIfAuth],
+      beforeEnter: [redirectToDashboardIfAuth],
       meta: {
         notAPage: true,
-        notAllowedForAuth:true
       },
       children: [
         {
@@ -191,39 +166,23 @@ const router = createRouter({
   ],
 });
 
-let isAuth = false;
-
 
 
 
 router.beforeEach(async (to, from, next) => {
-  
+
   if (to.meta.notApage) {
     next({ name: "PageNotFound" })
     return
   }
+  const authStore = useAuthStore();
+  if (to.name !== 'login' && !authStore.authUser) {
+    // came from a different page or try to refresh 
+    // state is cleard and is not going to login
+    await nextRouteIfAuth(to, from, next)
+  }
+
   next()
 })
-const checkUserToken = async (token, guard) => {
-  const config = {
-    headers: {
-      'auth-token': token,
-    }
-  }
-  await axios.post('/api/loginWithToken/', {}, config).then((response) => {
-    isAuth = true;
-    window.sessionStorage.setItem('authUser', JSON.stringify(response.data.data))
-    window.sessionStorage.setItem('token', response.data.data.token)
-    window.sessionStorage.setItem('guard', guard)
-  }).catch((error) => {
-    isAuth = false;
-    if (error.response) {
-      if (error.response.status == 401) {
-      }
-    }
-  })
-}
-
-
 
 export default router;

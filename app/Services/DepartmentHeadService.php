@@ -20,14 +20,13 @@ class DepartmentHeadService
     public function acceptTheInternshipRequest_DepartmentHead(Request $request, InternshipRequest $internshipRequest, InternshipResponsibleService $internshipResponsibleService)
     {
         $internshipResponsible_email = $internshipRequest->internshipResponsible_email;
-        $company_id=$internshipRequest->company;
-
+        $company_id=$internshipRequest->company->id;
+        
         $data=$internshipResponsibleService->findOrCreate($internshipResponsible_email,$company_id);
 
         $this->sendEmail($data, $internshipResponsible_email, 'CreatingInternshipResponsibleAccount', 'Creating Internship Responsible Account');
         $internshipRequest->status = config('global.internship_request_status.accepted_by_department_head');
         $internshipRequest->save();
-
 
         return $this->returnSuccessMessage('Internship Request Accepted Successfully');
     }

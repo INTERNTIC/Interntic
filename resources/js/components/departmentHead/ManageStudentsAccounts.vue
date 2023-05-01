@@ -6,19 +6,16 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import useManageStudent from '@/composables/ManageStudent.js';
 import StudentModelForm from './StudentModelForm.vue';
 import shared from "@/shared";
-const { getStudents, storeStudent, destroyStudent, updateStudent, students, getMajorsOfLevel, getLevels, levels, majors, generalErrorMsg, generalSuccessMsg, editErrors, errors } = useManageStudent();
-const studentExemple = {
-    first_name: "",
-    last_name: "",
-    student_card_number: "",
-    birthday: "",
-    place_of_birth: "",
-    phone_number: "",
-    social_security_num: "",
-    level_id: "",
-    major_id: "",
-}
-const defultStudentExemple = {
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+}from "@/axiosClient";
+const { getStudents, storeStudent, destroyStudent,
+     updateStudent, students, getMajorsOfLevel, 
+     getLevels, levels, majors } = useManageStudent();
+const student = {
+    id:"",
     first_name: "",
     last_name: "",
     student_card_number: "",
@@ -30,17 +27,20 @@ const defultStudentExemple = {
     major_id: "",
 }
 
-const currentStudent = ref({ ...studentExemple, ...{ "id": "" } })
-const studentModel = ref(studentExemple)
+const currentStudent = ref(_.cloneDeep(student))
 let principleTable = null;
 let secondaryTable = null;
 
 const isSecondaryTableActive = ref(false)
 $(document).on('click', 'tr button', async (e) => {
     let student_id = e.currentTarget.getAttribute('student_id')
-    if(student_id!=undefined) {
-       currentStudent.value = students.value.find(st => st.id == student_id);
-        await getMajorsOfLevel(currentStudent.value.level_id )
+    let button_role = e.currentTarget.getAttribute('button-role')
+    if (button_role=="edit") {
+        window.scrollTo(0, 0);
+    }
+    if (student_id != undefined) {
+        currentStudent.value = students.value.find(st => st.id == student_id);
+        await getMajorsOfLevel(currentStudent.value.level_id)
     }
 });
 const principleColumns =
@@ -56,8 +56,7 @@ const principleColumns =
         {
             data: null,
             render: function (data, type, row) {
-                return ` <button   student_id='${data.id}'  type="button" class="btn btn-warning btn-sm me-2" data-bs-toggle="modal"
-                        data-bs-target="#full-width-modal"><i class="mdi mdi-wrench"></i></button>
+                return ` <button   student_id='${data.id}'button-role="edit"  type="button" class="btn btn-warning btn-sm me-2" ><i class="mdi mdi-wrench"></i></button>
                         <button  button_type="delete" student_id='${data.id}' type="button" class="btn btn-danger btn-sm " data-bs-toggle="modal"
                         data-bs-target="#fill-danger-modal"><i
                             class="mdi mdi-window-close"></i></button>`;
@@ -78,8 +77,7 @@ const secondaryColumns =
         {
             data: null,
             render: function (data, type, row) {
-                return ` <button  student_id='${data.id}'  type="button" class="btn btn-warning btn-sm me-2" data-bs-toggle="modal"
-                        data-bs-target="#full-width-modal"><i class="mdi mdi-wrench"></i></button>
+                return ` <button student_id='${data.id}' button-role="edit"  type="button" class="btn btn-warning btn-sm me-2" ><i class="mdi mdi-wrench"></i></button>
                         <button  student_id='${data.id}' type="button" class="btn btn-danger btn-sm " data-bs-toggle="modal"
                         data-bs-target="#fill-danger-modal"><i
                             class="mdi mdi-window-close"></i></button>`;
@@ -89,16 +87,6 @@ const secondaryColumns =
 
 
 watch(
-    () => studentModel.value.level_id, () => {
-        // $("select").val($("select option:first").val());
-        if (studentModel.value.level_id != '') {
-            console.log('student level change');
-            console.log(studentModel.value.level_id);
-            getMajorsOfLevel(studentModel.value.level_id)
-        }
-    },
-)
-watch(
     () => currentStudent.value.level_id, () => {
         // $("select").val($("select option:first").val());
         if (currentStudent.value.level_id != '') {
@@ -107,9 +95,13 @@ watch(
     },
 )
 
-const addStudent = async () => {
+const saveStudent = async () => {
 
-    await storeStudent(studentModel.value)
+    if(currentStudent.value.id==""){
+        await storeStudent(currentStudent.value)
+    }else{
+        await updateStudent(currentStudent.value)
+    }
     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getStudents();
@@ -117,24 +109,9 @@ const addStudent = async () => {
         if (isSecondaryTableActive.value) {
             shared.refreshTable(secondaryTable, students.value)
         }
-        Object.assign(studentModel.value, defultStudentExemple);
-        $('form').trigger("reset");
-
+         currentStudent.value = _.cloneDeep(student)
     }
 
-}
-
-const saveStudent = async () => {
-    await updateStudent(currentStudent.value)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
-    if (generalSuccessMsg.value != '') {
-        await getStudents()
-        shared.refreshTable(principleTable, students.value)
-        if (isSecondaryTableActive.value) {
-            shared.refreshTable(secondaryTable, students.value)
-        }
-        $('#full-width-modal').modal('hide')
-    }
 }
 const deleteStudent = async (student) => {
     await destroyStudent(student.id)
@@ -146,7 +123,7 @@ const deleteStudent = async (student) => {
             shared.refreshTable(secondaryTable, students.value)
         }
     }
-    Object.assign(currentStudent.value, defultStudentExemple);
+    currentStudent.value = _.cloneDeep(student)
 }
 
 
@@ -154,12 +131,9 @@ onMounted(async () => {
     await getStudents()
     await getLevels()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
-    import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
-        import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
-            import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    console.log('nothing3');
-                    // import('@/assets/js/pages/demo.datatable-init.js').then(() => {
-
+        import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
+            import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
+                import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
 
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
@@ -231,10 +205,10 @@ const showSecondaryTable = (TableStatus) => {
                     </p>
                     <div class="tab-content">
                         <div class="tab-pane show active" id="floating-preview">
-                            <StudentModelForm v-bind:studentModel="studentModel" :errors="errors" :majors="majors"
+                            <StudentModelForm v-bind:studentModel="currentStudent" :errors="errors" :majors="majors"
                                 :levels="levels" />
                             <div>
-                                <button @click="addStudent()" type="submit" class="btn btn-primary">Submit</button>
+                                <button @click="saveStudent" type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </div> <!-- end tab-content-->
@@ -316,8 +290,9 @@ const showSecondaryTable = (TableStatus) => {
                             </p>
                             <div class="tab-content">
                                 <div class="tab-pane show active" id="floating-preview">
-                                    <StudentModelForm v-bind:studentModel="currentStudent" :errors="editErrors"
-                                        :majors="majors" :levels="levels" />
+                                    <!-- TODO fix edit student errors -->
+                                    <!-- <StudentModelForm v-bind:studentModel="currentStudent" :errors="errors" :majors="majors"
+                                        :levels="levels" /> -->
                                 </div>
                             </div>
                         </div>
@@ -332,7 +307,7 @@ const showSecondaryTable = (TableStatus) => {
     </FullWidthModal>
 
 
-   
+
     <DangerModal>
         <template v-slot:body>
             Are you sure you want to delete student <b>{{ currentStudent.first_name }} {{ currentStudent.last_name }} </b>

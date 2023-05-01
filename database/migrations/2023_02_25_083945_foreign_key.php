@@ -32,7 +32,7 @@ return new class extends Migration
         });
 
         Schema::table('internship_requests', function (Blueprint $table){
-            $table->foreign('student_id')->references('id')->on('students');   
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');   
         });
 
         Schema::table('department_refuses', function (Blueprint $table){

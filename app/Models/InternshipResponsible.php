@@ -63,30 +63,30 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 		return self::where('email', '=', $email)->first();
 	}
 
-	public function studentsIntershipRequests()
+	public function internshipsWaiting()
 	{
 		return $this->company->internship_Requests->where('status', config('global.internship_request_status.accepted_by_department_head'))->where('internshipResponsible_email', $this->email);
 	}
 
 
-	public function studentsIntershipRequestsId()
+	public function internshipsWaitingId()
 	{
-		return $this->studentsIntershipRequests()->pluck('id')->toArray();
+		return $this->internshipsWaiting()->pluck('id')->toArray();
 	}
 
-	public function studentsInterships()
+	public function internshipsIAccepted()
 	{
 		return $this->company->internship_Requests->where('status', config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email', $this->email);
 	}
 
-	public function studentsIntershipIds()
+	public function internshipsIAcceptedId()
 	{
-		return $this->studentsInterships()->pluck('id')->toArray();
+		return $this->internshipsIAccepted()->pluck('id')->toArray();
 	}
 
 	public function studentsMark()
 	{
-		return Mark::whereIn("internship_request_id", $this->studentsIntershipIds())->get();
+		return Mark::whereIn("internship_request_id", $this->internshipsIAcceptedId())->get();
 	}
 
 	public function notAssessedStudentToday()

@@ -18,8 +18,9 @@ class AssessmentController extends Controller
     {
         // internship respo
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-            $authorizedInternshipsIds = InternshipResponsible::find(auth()->id())->studentsIntershipIds();
+            $authorizedInternshipsIds = InternshipResponsible::find(auth()->id())->internshipsIAcceptedId();
             $assessments=Assessment::allAssessments($authorizedInternshipsIds);
+            
             return $this->returnData(AssessmentResource::collection($assessments));     
         }
     }

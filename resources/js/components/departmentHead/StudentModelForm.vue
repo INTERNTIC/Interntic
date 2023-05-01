@@ -46,14 +46,14 @@ const props = defineProps({ studentModel:Object, errors:Object, majors:Array, le
                 :showError="errors.hasOwnProperty('social_security_num')" label="Social Security Number"
                 placeholder="Enter Social Security Number" inputType="text" />
         </div>
-        <div class="col-lg-6 mb-3">
+        <div class="col-lg-6 ">
             <SelectInput propertyOfValue="id" property-of-show="name" placeholder="Select Student Level"
                 :floatingTheme="true" v-model="studentModel.level_id" :errorText="shared.getErrorText(errors, 'level_id')"
                 :showError="errors.hasOwnProperty('level_id')" label="Select Student Level" :options="levels">
             </SelectInput>
         </div>
 
-        <div class="col-lg-6 mb-3">
+        <div class="col-lg-6">
             <SelectInput propertyOfValue="id" property-of-show="name" placeholder="Select Student Major"
                 :floatingTheme="true" v-model="studentModel.major_id" :errorText="shared.getErrorText(errors, 'major_id')"
                 :showError="errors.hasOwnProperty('major_id')" label="Select Student Major" :options="majors" >

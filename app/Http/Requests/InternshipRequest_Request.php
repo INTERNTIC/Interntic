@@ -32,9 +32,8 @@ class InternshipRequest_Request extends FormRequest
         'status'=>['boolean'],
 		'start_at'=>['required','date','before:end_at' ],
 		'end_at'=>['required','date','after:start_at'],
-        'student_id'=>['required'],
-        'company_name'=>['required'],
-        'company_location'=>['required']
+        'student_id'=>['required','exists:students,id'],
+        'company_id'=>['required','exists:companies,id'],
         ];
     }
 }
