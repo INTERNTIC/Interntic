@@ -5,7 +5,7 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import useInternshipRequest from '@/composables/InternshipRequests.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import {useLoading} from 'vue-loading-overlay'
@@ -87,7 +87,7 @@ const principleColumns =
 const handelRequest = async (decision) => {
     if (decision == 'refuse' || decision == 'refuse_definitively') {
         if (judgement.value.cause_id == "") {
-            shared.errorNotify('please select a valid cause id');
+            errorNotify('please select a valid cause id');
             return
         }
         $('#danger-header-modal').modal('hide')
@@ -101,10 +101,10 @@ const submitHandeledRequest = async () => {
         color: 'green',
     });
     await manageInternshipRequests(judgement.value, currentInternshipsRequest.value.id)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getInternshipRequests()
-        shared.refreshTable(principleTable, studentsRequests.value)
+        refreshTable(principleTable, studentsRequests.value)
         currentInternshipsRequest.value = internshipsRequestExemple
     }
     loader.hide()
@@ -265,11 +265,11 @@ onMounted(async () => {
     <DangerModalOutline>
         <template v-slot:body>
             <SelectInput propertyOfValue="id" property-of-show="cause" placeholder="Select Refuse Cause"
-                v-model="judgement.cause_id" :errorText="shared.getErrorText(errors, 'cause_id')"
+                v-model="judgement.cause_id" :errorText="getErrorText(errors, 'cause_id')"
                 :showError="errors.hasOwnProperty('cause_id')" label="Select Refuse Cause" :options="companyRefuseCauses" />
             <div v-if="createNewCause" class="col-lg-6 mt-2">
                 <CustomInput v-model="newCause.cause" label="New Cause" placeholder="Enter New Cause"
-                    :errorText="shared.getErrorText(errors, 'cause')" :showError="errors.hasOwnProperty('cause')" />
+                    :errorText="getErrorText(errors, 'cause')" :showError="errors.hasOwnProperty('cause')" />
                 <button @click="saveRefuseCause" type="button" class="btn btn-info">Submit</button>
                 <button @click="createNewCause = false" type="button" class="btn btn-light">Cancel</button>
 

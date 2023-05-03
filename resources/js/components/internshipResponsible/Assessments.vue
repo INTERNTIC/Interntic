@@ -6,7 +6,7 @@ import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import TimePicker from '@/components/form/TimePicker.vue';
 import UseAssessment from '@/composables/Assessment.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import FloatingInput from '../form/FloatingInput.vue';
@@ -59,10 +59,10 @@ $(document).on('click', 'tr button', async (e) => {
 const saveAssessment = async () => {
     getTimeFromRange()
     await updateAssessment(currentAssessment.value.id, currentAssessment.value)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getAssessment();
-        shared.refreshTable(principleTable, assessments.value)
+        refreshTable(principleTable, assessments.value)
         currentAssessment.value = Object.create(assessmentExemple)
         rangeTime.value = null
         $('#edit-assessment-modal').modal('hide')
@@ -70,10 +70,10 @@ const saveAssessment = async () => {
 }
 const deleteAssessment = async () => {
     await destroyAssessment(currentAssessment.value.id)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getAssessment();
-        shared.refreshTable(principleTable, assessments.value)
+        refreshTable(principleTable, assessments.value)
         currentAssessment.value = Object.create(assessmentExemple)
     }
 }
@@ -248,7 +248,7 @@ onMounted(async () => {
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentAssessment.the_date"
-                                        :errorText="shared.getErrorText(errors, 'the_date')"
+                                        :errorText="getErrorText(errors, 'the_date')"
                                         :showError="errors.hasOwnProperty('the_date')" label="The Date" inputType="date"
                                         placeholder="Enter The Date" />
                                 </div>
@@ -256,7 +256,7 @@ onMounted(async () => {
 
                                 <div class="col-lg-6">
                                     <TimePicker v-model="rangeTime"
-                                        :errorText="shared.getErrorText(errors, 'enter_time') + ' / ' + shared.getErrorText(errors, 'left_time')"
+                                        :errorText="getErrorText(errors, 'enter_time') + ' / ' + getErrorText(errors, 'left_time')"
                                         :showError="errors.hasOwnProperty('enter_time') || errors.hasOwnProperty('left_time')"
                                         label="Enter Time / Left Time" placeholder="Enter the range"
                                         :mark="`current range : ${currentAssessment.enter_time} - ${currentAssessment.left_time}`" />
@@ -265,7 +265,7 @@ onMounted(async () => {
                                 <div class="col-lg-6">
                                     <CustomTextAria 
                                     v-model="currentAssessment.note"
-                                        :errorText="shared.getErrorText(errors, 'note')"
+                                        :errorText="getErrorText(errors, 'note')"
                                         :showError="errors.hasOwnProperty('note')" label="Enter a Note"
                                         placeholder="Enter a Note" />
                                 </div>

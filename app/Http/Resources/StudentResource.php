@@ -28,6 +28,7 @@ class StudentResource extends JsonResource
             'major' => $this->level_major->major->name,
             'level_id' => strval($this->level_major->level->id),
             'major_id' => strval($this->level_major->major->id),
+            'guard' => 'student',
         ];
     }
 }

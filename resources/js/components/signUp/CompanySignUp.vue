@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import CustomInput from '../form/CustomInput.vue';
 import useAuth from '../../composables/Auth';
-import shared from '../../shared.js'
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 const formModel = ref({
     first_name:'',
     last_name:'',
@@ -45,12 +45,12 @@ const { companySignUp, errors } = useAuth();
                                             <form @submit.prevent="companySignUp(formModel)">
                                                 <div class="row">
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.first_name" label="First Name" :errorText="shared.getErrorText(errors,'first_name')"
+                                                        <CustomInput v-model="formModel.first_name" label="First Name" :errorText="getErrorText(errors,'first_name')"
                                                         :showError="errors.hasOwnProperty('first_name')" placeholder="Enter First Name" inputType="text" />
                                                     </div>
                                                 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.last_name" label="Last Name" :errorText="shared.getErrorText(errors,'last_name')"
+                                                        <CustomInput v-model="formModel.last_name" label="Last Name" :errorText="getErrorText(errors,'last_name')"
                                                         :showError="errors.hasOwnProperty('last_name')" placeholder="Enter Last Name" inputType="text" />
                                                    
                                                     </div>
@@ -60,39 +60,39 @@ const { companySignUp, errors } = useAuth();
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.email" label="Email Address" :errorText="shared.getErrorText(errors,'email')"
+                                                        <CustomInput v-model="formModel.email" label="Email Address" :errorText="getErrorText(errors,'email')"
                                                         :showError="errors.hasOwnProperty('email')" placeholder="Enter Email Address" inputType="email" />
                                                    
                                                     </div>
 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.phone" label="Phone" :errorText="shared.getErrorText(errors,'phone')"
+                                                        <CustomInput v-model="formModel.phone" label="Phone" :errorText="getErrorText(errors,'phone')"
                                                         :showError="errors.hasOwnProperty('phone')" placeholder="Enter Phone Number" inputType="text" />
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.password" label="Pasword" :errorText="shared.getErrorText(errors,'password')"
+                                                        <CustomInput v-model="formModel.password" label="Pasword" :errorText="getErrorText(errors,'password')"
                                                         :showError="errors.hasOwnProperty('password')" placeholder="Enter Pasword" inputType="password" />
                                                    
                                                     </div>
 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.confirm_password" label="Confirm Password" :errorText="shared.getErrorText(errors,'confirm_password')"
+                                                        <CustomInput v-model="formModel.confirm_password" label="Confirm Password" :errorText="getErrorText(errors,'confirm_password')"
                                                         :showError="errors.hasOwnProperty('confirm_password')" placeholder="Enter Confirm Password" inputType="password" />
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.company_name" label="Company Name" :errorText="shared.getErrorText(errors,'company_name')"
+                                                        <CustomInput v-model="formModel.company_name" label="Company Name" :errorText="getErrorText(errors,'company_name')"
                                                         :showError="errors.hasOwnProperty('company_name')" placeholder="Enter Company Name" inputType="text" />
                                                    
                                                     </div>
                                                     
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.company_location" label="Company Location" :errorText="shared.getErrorText(errors,'company_location')"
+                                                        <CustomInput v-model="formModel.company_location" label="Company Location" :errorText="getErrorText(errors,'company_location')"
                                                         :showError="errors.hasOwnProperty('company_location')" placeholder="Enter Company Location" inputType="text" />
                                                     </div>
                                                 </div>

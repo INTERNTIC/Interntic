@@ -19,7 +19,7 @@ class StudentCvItem extends Model
 	];
 
 	protected $fillable = [
-		'deatails',
+		'details',
 		'image',
 		'student_id'
 	];

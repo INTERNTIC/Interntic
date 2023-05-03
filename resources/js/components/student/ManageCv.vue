@@ -1,0 +1,259 @@
+<script setup>
+import { onMounted, ref, computed } from 'vue';
+import DangerModalOutline from '../modal/DangerModalOutline.vue';
+import FullWidthModal from '@/components/modal/FullWidthModal.vue';
+import CustomInput from '@/components/form/CustomInput.vue';
+import useInternshipRequest from '@/composables/InternshipRequests.js';
+import SelectInput from '../form/SelectInput.vue';
+import { Notify, getErrorText, refreshTable } from "@/newShared";
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+} from "@/axiosClient";
+
+import useCv_item from '@/composables/Cv_Item';
+
+const cvItemDetails = ref(null)
+const {
+    getCvItems,
+    storeCvItem,
+    updateCvItem,
+    destroyCvItem,
+    cvItems,
+} = useCv_item();
+
+const cv_itemObject = {
+    id: "",
+    details: `
+    <h3><span class="ql-size-large">Hello World!</span></h3><p><br></p><h3>This is an simple editable area.</h3> <p><br></p><ul>    <li>        Select a text to reveal the toolbar.    </li>    <li>        Edit rich document on-the-fly, so elastic!    </li></ul><p><br></p><p>    End of simple area</p>
+    `,
+}
+
+const currentCv_item = ref(_.cloneDeep(cv_itemObject))
+let formData = new FormData();
+// const saveNewCompany = async () => {
+//     await storeCompany(newCompany.value);
+//     if (generalErrorMsg.value == "") {
+//         await getCompanies();
+//         currentInternshipsRequest.value.company_id = newCompany.value.id
+//         addNewCompany.value = false;
+//     }
+// }
+
+
+const onFileChange = async (event) => {
+    formData = new FormData();
+    const files = event.target.files;
+    console.log(files.length);
+    for (let i = 0; i < files.length; i++) {
+        formData.append('image[]', files[i]);
+    }
+
+};
+const saveCvItem = async () => {
+
+    formData.append("details", document.querySelector('.ql-editor').innerHTML)
+    console.log(formData.entries);
+    console.log(formData.keys);
+    console.log(formData.values);
+    if (currentCv_item.value.id != "") {
+        await updateCvItem(currentCv_item.value.id, formData)
+    } else {
+        await storeCvItem(formData);
+    }
+
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalErrorMsg.value == "") {
+        await getCvItems();
+        currentCv_item.value = _.cloneDeep(cv_itemObject);
+        formData = new FormData();
+        $("#full-width-modal").modal("hide");
+    }
+}
+const openEditModal = async (cvItem) => {
+    currentCv_item.value = cvItem
+    document.querySelector(".ql-editor").innerHTML = `${cvItem.details}`;
+    $('#full-width-modal').modal('show')
+
+}
+const openDeleteModal = async (cvItemId) => {
+    currentCv_item.value.id = cvItemId
+    $("#danger-header-modal").modal("show");
+}
+const deleteCvItem = async () => {
+    await destroyCvItem(currentCv_item.value.id);
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalErrorMsg.value == "") {
+        await getCvItems();
+        currentCv_item.value = _.cloneDeep(cv_itemObject);
+        $("#danger-header-modal").modal("hide");
+    }
+}
+
+
+onMounted(async () => {
+    await getCvItems()
+
+    import('@/assets/js/vendor/quill.min.js').then(() => {
+        import('@/assets/js/pages/demo.quilljs.js').then(() => {
+            import('@/assets/js/vendor/dropzone.min.js').then(() => {
+                import('@/assets/js/ui/component.fileupload.js').then(() => {
+                })
+            })
+        })
+    })
+
+
+    import('@/assets/css/vendor/quill.bubble.css')
+});
+
+
+const selectedFile = ref(null);
+
+
+
+
+
+</script>
+<template>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <h4 class="page-title">Manage Students</h4>
+                <div>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#full-width-modal">Add a New Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div v-for="cvItem in cvItems" :key="cvItem.id">
+            <div style="background: #e4e4e4;" class="card">
+
+                <!-- <button type="button" class="btn btn-success" >Add a Request</button> -->
+                <div class="card-body position-relative">
+
+                    <div class="menu-icon-container" role="button">
+
+                        <div class="dropdown">
+                            <div role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="dripicons-menu lead"></i>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div @click="openEditModal(cvItem)" class="dropdown-item" role="bttun">Edit</div>
+                                <div @click="openDeleteModal(cvItem.id)" class="dropdown-item" role="buttn">Delete</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-html="cvItem.details">
+                    </div>
+                    <div v-if="cvItem.image" :id="`carouselExampleControls_${cvItem.id}`" class="carousel slide"
+                        data-bs-ride="carousel">
+                        <div class="carousel-inner" role="listbox">
+
+                            <div v-for="(image, index) in cvItem.image.split('|')" :class="{ 'active': index == 0 }"
+                                class="carousel-item">
+
+                                <img style="height: 500px;object-fit: contain;" class="rounded mx-auto d-block img-fluid"
+                                    :src="`/uploads/${image}`" alt="First slide">
+                            </div>
+
+                        </div>
+                        <a class="carousel-control-prev" :href="`#carouselExampleControls_${cvItem.id}`" role="button"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" :href="`#carouselExampleControls_${cvItem.id}`" role="button"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <!-- <ul class="pagination pagination-rounded mb-0 justify-content-center">
+                                <li class="page-item">
+                                    <button class="page-link" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </button>
+                                </li>
+                            </ul> -->
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                    </div>
+
+
+                </div> <!-- end card-body -->
+            </div>
+        </div>
+    </div> <!-- end row-->
+    <!-- Full width modal -->
+    <FullWidthModal>
+        <template v-slot:body>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Internship Offer</h4>
+                            <p class="text-muted font-14">
+                                Enter Internship offer Details
+                            </p>
+                            <div class="row">
+                                <div id="bubble-editor">
+                                    <div v-html="currentCv_item.details">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <input type="file" @change="onFileChange" class="form-control" multiple>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-slot:buttons>
+
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <button @click="saveCvItem" type="button" class="btn btn-success">Save</button>
+            <!-- <button @click="applyAnImage" type="button" class="btn btn-success">Apply an Image</button> -->
+
+        </template>
+    </FullWidthModal>
+
+    <DangerModalOutline>
+        <template v-slot:body>
+            are you sure you want to continue?
+        </template>
+        <template v-slot:buttons>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <button @click="deleteCvItem" type="button" class="btn btn-danger" data-bs-dismiss="modal">Continue</button>
+        </template>
+    </DangerModalOutline>
+</template>
+<style scoped>
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+    width: 3rem;
+    height: 3rem;
+}
+
+.carousel-control-next:hover,
+.carousel-control-prev:hover {}
+
+.menu-icon-container {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+}
+</style>
+
+
+
+
+
+
+
+

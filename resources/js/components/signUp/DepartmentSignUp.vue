@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import CustomInput from '../form/CustomInput.vue';
 import useAuth from '../../composables/Auth';
-import shared from '../../shared.js'
+import shared from '../../js'
 const formModel = ref({
     first_name:'',
     last_name:'',
@@ -47,12 +47,12 @@ const { departmentSignUp, errors } = useAuth();
                                             <form @submit.prevent="departmentSignUp(formModel)">
                                                 <div class="row">
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.first_name" label="First Name" :errorText="shared.getErrorText(errors,'first_name')"
+                                                        <CustomInput v-model="formModel.first_name" label="First Name" :errorText="getErrorText(errors,'first_name')"
                                                         :showError="errors.hasOwnProperty('first_name')" placeholder="Enter First Name" inputType="text" />
                                                     </div>
                                                 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.last_name" label="Last Name" :errorText="shared.getErrorText(errors,'last_name')"
+                                                        <CustomInput v-model="formModel.last_name" label="Last Name" :errorText="getErrorText(errors,'last_name')"
                                                         :showError="errors.hasOwnProperty('last_name')" placeholder="Enter Last Name" inputType="text" />
                                                    
                                                     </div>
@@ -62,39 +62,39 @@ const { departmentSignUp, errors } = useAuth();
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.email" label="Email Address" :errorText="shared.getErrorText(errors,'email')"
+                                                        <CustomInput v-model="formModel.email" label="Email Address" :errorText="getErrorText(errors,'email')"
                                                         :showError="errors.hasOwnProperty('email')" placeholder="Enter Email Address" inputType="email" />
                                                    
                                                     </div>
 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.phone" label="Phone" :errorText="shared.getErrorText(errors,'phone')"
+                                                        <CustomInput v-model="formModel.phone" label="Phone" :errorText="getErrorText(errors,'phone')"
                                                         :showError="errors.hasOwnProperty('phone')" placeholder="Enter Phone Number" inputType="text" />
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.password" label="Pasword" :errorText="shared.getErrorText(errors,'password')"
+                                                        <CustomInput v-model="formModel.password" label="Pasword" :errorText="getErrorText(errors,'password')"
                                                         :showError="errors.hasOwnProperty('password')" placeholder="Enter Pasword" inputType="password" />
                                                    
                                                     </div>
 
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.confirm_password" label="Confirm Password" :errorText="shared.getErrorText(errors,'confirm_password')"
+                                                        <CustomInput v-model="formModel.confirm_password" label="Confirm Password" :errorText="getErrorText(errors,'confirm_password')"
                                                         :showError="errors.hasOwnProperty('confirm_password')" placeholder="Enter Confirm Password" inputType="password" />
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-6">
 
-                                                        <CustomInput v-model="formModel.department_name" label="Department Name" :errorText="shared.getErrorText(errors,'.department_name')"
+                                                        <CustomInput v-model="formModel.department_name" label="Department Name" :errorText="getErrorText(errors,'.department_name')"
                                                         :showError="errors.hasOwnProperty('.department_name')" placeholder="Enter Department Name" inputType="text" />
                                                    
                                                     </div>
                                                     
                                                     <div class="col-lg-6">
-                                                        <CustomInput v-model="formModel.department_short_cut" label="Department Short Cut" :errorText="shared.getErrorText(errors,'department_short_cut')"
+                                                        <CustomInput v-model="formModel.department_short_cut" label="Department Short Cut" :errorText="getErrorText(errors,'department_short_cut')"
                                                         :showError="errors.hasOwnProperty('department_short_cut')" placeholder="Enter Department Short Cut" inputType="text" />
                                                     </div>
                                                 </div>

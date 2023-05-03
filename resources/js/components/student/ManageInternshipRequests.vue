@@ -4,7 +4,7 @@ import DangerModalOutline from '../modal/DangerModalOutline.vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import useInternshipRequest from '@/composables/InternshipRequests.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SelectInput from '../form/SelectInput.vue';
 import {
     generalErrorMsg,
@@ -54,7 +54,7 @@ const saveInternshipsRequest = async () => {
     } else {
         await updateInternshipRequest(currentInternshipsRequest.value.id, currentInternshipsRequest.value)
     }
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == "") {
         await getInternshipRequests();
         currentInternshipsRequest.value = _.cloneDeep(internshipsRequestObject);
@@ -73,7 +73,7 @@ const openDeleteModal = async (internships_request_id) => {
 }
 const deleteInternshipRequest = async () => {
     await destroyInternshipRequest(currentInternshipsRequest.value.id);
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == "") {
         await getInternshipRequests();
         currentInternshipsRequest.value = _.cloneDeep(internshipsRequestObject);
@@ -138,54 +138,55 @@ onMounted(async () => {
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.theme"
-                                        :errorText="shared.getErrorText(errors, 'theme')"
+                                        :errorText="getErrorText(errors, 'theme')"
                                         :showError="errors.hasOwnProperty('theme')" label="Enter The Theme"
                                         placeholder="Enter The Theme" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.internshipResponsible_email"
-                                        :errorText="shared.getErrorText(errors, 'internshipResponsible_email')"
+                                        :errorText="getErrorText(errors, 'internshipResponsible_email')"
                                         :showError="errors.hasOwnProperty('internshipResponsible_email')"
                                         label="Enter internship Responsible's email"
                                         placeholder="Enter internship Responsible's email" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.start_at"
-                                        :errorText="shared.getErrorText(errors, 'start_at')"
+                                        :errorText="getErrorText(errors, 'start_at')"
                                         :showError="errors.hasOwnProperty('start_at')" label="Start at" inputType="date"
                                         placeholder="Start at Date" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.end_at"
-                                        :errorText="shared.getErrorText(errors, 'end_at')"
+                                        :errorText="getErrorText(errors, 'end_at')"
                                         :showError="errors.hasOwnProperty('end_at')" label="End at" inputType="date"
                                         placeholder="End at Date" />
                                 </div>
-                                <div v-if="addNewCompany" class="col-lg-6">
-                                    <CustomInput v-model="newCompany.name" label="Company Name"
-                                        placeholder="Enter Company Name" :errorText="shared.getErrorText(errors, 'name')"
-                                        :showError="errors.hasOwnProperty('name')" />
-                                </div>
-                                <div v-if="addNewCompany" class="col-lg-6">
-                                    <CustomInput v-model="newCompany.location" label="Company Location"
-                                        placeholder="Enter Company Location"
-                                        :errorText="shared.getErrorText(errors, 'location')"
-                                        :showError="errors.hasOwnProperty('location')" />
-                                </div>
-                                <div v-if="addNewCompany" class="col-lg-6">
+                                <template v-if="addNewCompany">
+                                    <div v-if="addNewCompany" class="col-lg-6">
+                                        <CustomInput v-model="newCompany.name" label="Company Name"
+                                            placeholder="Enter Company Name" :errorText="getErrorText(errors, 'name')"
+                                            :showError="errors.hasOwnProperty('name')" />
+                                    </div>
+                                    <div v-if="addNewCompany" class="col-lg-6">
+                                        <CustomInput v-model="newCompany.location" label="Company Location"
+                                            placeholder="Enter Company Location"
+                                            :errorText="getErrorText(errors, 'location')"
+                                            :showError="errors.hasOwnProperty('location')" />
+                                    </div>
+                                    <div v-if="addNewCompany" class="col-lg-6">
+    
+                                        <button @click="saveNewCompany" type="button" class="btn btn-info me-2">Submit</button>
+                                        <button @click="addNewCompany = false" type="button"
+                                            class="btn btn-light">Cancel</button>
+                                    </div>
+                                </template>
 
-                                    <button @click="saveNewCompany" type="button" class="btn btn-info me-2">Submit</button>
-                                    <button @click="addNewCompany = false" type="button"
-                                        class="btn btn-light">Cancel</button>
-                                </div>
 
-
-                                <div v-if="!addNewCompany" class="col-lg-6">
-
+                                <div v-else class="col-lg-6">
                                     <SelectInput propertyOfValue="id" property-of-show="name" dividing=","
                                         second-property-of-show="location" placeholder="Select a Company"
                                         v-model="currentInternshipsRequest.company_id"
-                                        :errorText="shared.getErrorText(errors, 'company_id')"
+                                        :errorText="getErrorText(errors, 'company_id')"
                                         :showError="errors.hasOwnProperty('company_id')" label="Select a Company"
                                         :options="companies" />
 

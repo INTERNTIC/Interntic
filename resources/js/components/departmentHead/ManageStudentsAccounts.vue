@@ -5,7 +5,7 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 
 import useManageStudent from '@/composables/ManageStudent.js';
 import StudentModelForm from './StudentModelForm.vue';
-import shared from "@/shared";
+import {Notify,refreshTable} from "@/newShared";
 import {
     generalErrorMsg,
     generalSuccessMsg,
@@ -102,12 +102,12 @@ const saveStudent = async () => {
     }else{
         await updateStudent(currentStudent.value)
     }
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getStudents();
-        shared.refreshTable(principleTable, students.value)
+        refreshTable(principleTable, students.value)
         if (isSecondaryTableActive.value) {
-            shared.refreshTable(secondaryTable, students.value)
+            refreshTable(secondaryTable, students.value)
         }
          currentStudent.value = _.cloneDeep(student)
     }
@@ -115,12 +115,12 @@ const saveStudent = async () => {
 }
 const deleteStudent = async (student) => {
     await destroyStudent(student.id)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
         await getStudents()
-        shared.refreshTable(principleTable, students.value)
+        refreshTable(principleTable, students.value)
         if (isSecondaryTableActive.value) {
-            shared.refreshTable(secondaryTable, students.value)
+            refreshTable(secondaryTable, students.value)
         }
     }
     currentStudent.value = _.cloneDeep(student)
@@ -172,7 +172,7 @@ onMounted(async () => {
 
 const showSecondaryTable = (TableStatus) => {
     if (TableStatus) {
-        shared.refreshTable(secondaryTable, students.value)
+        refreshTable(secondaryTable, students.value)
     }
     isSecondaryTableActive.value = TableStatus
 }

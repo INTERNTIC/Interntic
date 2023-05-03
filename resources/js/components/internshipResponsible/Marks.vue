@@ -7,7 +7,7 @@ import CustomInput from '@/components/form/CustomInput.vue';
 import TimePicker from '@/components/form/TimePicker.vue';
 import useMark from '@/composables/Mark.js';
 import useInternshipRequest from '@/composables/InternshipRequests.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import FloatingInput from '../form/FloatingInput.vue';
@@ -93,10 +93,10 @@ const saveStudentMarks = async () => {
     }else{
         await updateMark(currentStudentMarks.value.id, currentStudentMarks.value)
     }
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
         await getInternshipsIAccepted();
-        shared.refreshTable(principleTable, studentsRequests.value)
+        refreshTable(principleTable, studentsRequests.value)
         currentStudentMarks.value = _.cloneDeep(MarksExemple)
         $('#full-width-modal').modal('hide')
 
@@ -105,10 +105,10 @@ const saveStudentMarks = async () => {
 
 const deleteMarks = async () => {
     await destroyMark(currentStudentMarks.value.id)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
         await getInternshipsIAccepted();
-        shared.refreshTable(principleTable, studentsRequests.value)
+        refreshTable(principleTable, studentsRequests.value)
         currentStudentMarks.value = _.cloneDeep(MarksExemple)
         $('#danger-header-modal').modal('hide')
 
@@ -252,26 +252,26 @@ onMounted(async () => {
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentStudentMarks.skills"
-                                        :errorText="shared.getErrorText(errors, 'skills')"
+                                        :errorText="getErrorText(errors, 'skills')"
                                         :showError="errors.hasOwnProperty('skills')" label="skills"
                                         inputType="number" placeholder="Enter Student skills" />
                                     <CustomInput v-model="currentStudentMarks.discipline"
-                                        :errorText="shared.getErrorText(errors, 'discipline')"
+                                        :errorText="getErrorText(errors, 'discipline')"
                                         :showError="errors.hasOwnProperty('discipline')" label="Discipline"
                                         inputType="number" placeholder="Enter Student Discipline" />
                                     <CustomInput v-model="currentStudentMarks.initiative"
-                                        :errorText="shared.getErrorText(errors, 'initiative')"
+                                        :errorText="getErrorText(errors, 'initiative')"
                                         :showError="errors.hasOwnProperty('initiative')" label="initiative"
                                         inputType="number" placeholder="Enter Student initiative" />
 
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentStudentMarks.creativity"
-                                        :errorText="shared.getErrorText(errors, 'creativity')"
+                                        :errorText="getErrorText(errors, 'creativity')"
                                         :showError="errors.hasOwnProperty('creativity')" label="creativity"
                                         inputType="number" placeholder="Enter Student creativity" />
                                     <CustomInput v-model="currentStudentMarks.knowledge"
-                                        :errorText="shared.getErrorText(errors, 'knowledge')"
+                                        :errorText="getErrorText(errors, 'knowledge')"
                                         :showError="errors.hasOwnProperty('knowledge')" label="knowledge"
                                         inputType="number" placeholder="Enter Student knowledge" />
                                 </div>

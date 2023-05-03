@@ -55,4 +55,8 @@ class Student extends Model
 	{
 		return $this->internship_requests->where("status",0);
 	}
+	public function passedInternships()
+	{
+		return $this->internship_requests->where("status",5);
+	}
 }

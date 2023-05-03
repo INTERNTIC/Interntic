@@ -24,8 +24,8 @@ class StudentCvItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'deatails'=>['required', 'string'],
-            'image'=>['image','mimes:jpeg,png,jpg,gif']
+            'details'=>['string'],
+            'image.*'=>["required",'image','mimes:jpeg,png,jpg,gif']
         ];
     }
 }

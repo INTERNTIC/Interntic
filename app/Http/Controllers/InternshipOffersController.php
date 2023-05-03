@@ -13,17 +13,21 @@ use Illuminate\Support\Facades\Validator;
 class InternshipOffersController extends Controller
 {
     use GeneralTrait;
-    
-        public function displayOffers()
-        {
-            if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-                $user_id = Auth::guard('internship_responsible')->id();
-                $offers = Offer::where('internship_responsible_id', $user_id)->paginate(3);
-            } else if (Auth::getDefaultDriver() == config('global.student_guard')) {
-                $offers=Offer::paginate(3);
-            }
-            return $this->returnData( OfferResource::collection($offers));
+
+    public function displayOffers()
+    {
+        if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
+            $user_id = Auth::guard('internship_responsible')->id();
+            $offers = Offer::where('internship_responsible_id', $user_id)->paginate(3);
+        } else if (Auth::getDefaultDriver() == config('global.student_guard')) {
+            $offers = Offer::paginate(5);
         }
+        return  OfferResource::collection($offers);
+        // of you want to add custom key value to the collection
+        // return  OfferResource::collection($offers)->additional( [
+        //     'key' => "value",
+        // ]);
+    }
     public function addOffer(OfferRequest $request)
     {
         $user = Auth::guard('internship_responsible')->user();

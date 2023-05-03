@@ -5,7 +5,7 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import useOffer from '@/composables/Offer.js';
-import shared from "@/shared";
+import useInternshipRequest from '@/composables/InternshipRequests.js';
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
@@ -14,14 +14,17 @@ import {
     generalErrorMsg,
     generalSuccessMsg,
     errors
-}from "@/axiosClient";
-
+} from "@/axiosClient";
+import {Notify,getErrorText} from "@/newShared" 
 
 const {
     getOffers,
     offersPagination,
     offers,
-    } = useOffer();
+} = useOffer();
+const {
+    storeInternshipRequest
+} = useInternshipRequest();
 
 const internshipsRequestObject = {
     id: '',
@@ -32,8 +35,13 @@ const internshipsRequestObject = {
     end_at: '',
     company_id: ""
 }
+const offerObject = {
+    internship_responsible_email: '',
+    theme: '',
+}
 
 const currentInternshipsRequest = ref(_.cloneDeep(internshipsRequestObject))
+// const currentOffer = ref(_.cloneDeep(offerObject))
 
 // const saveOffer = async () => {
 //     if (currentOffer.value.id == '') {
@@ -41,7 +49,7 @@ const currentInternshipsRequest = ref(_.cloneDeep(internshipsRequestObject))
 //     } else {
 //         await updateOffer(currentOffer.value.id, currentOffer.value)
 //     }
-//     shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+//     Notify(generalSuccessMsg.value, generalErrorMsg.value)
 //     if (generalErrorMsg.value == "") {
 //         await getOffers();
 //         currentOffer.value = _.cloneDeep(OfferObject)
@@ -49,15 +57,40 @@ const currentInternshipsRequest = ref(_.cloneDeep(internshipsRequestObject))
 //     }
 // }
 const openSelectModal = (offer) => {
-    currentInternshipsRequest.value.theme=offer.theme;
-    currentInternshipsRequest.value.internshipResponsible_email=offer.internship_responsible.email;
-    currentInternshipsRequest.value.company_id=offer.internship_responsible.company_id;
+    offerObject.theme = offer.theme;
+    offerObject.internship_responsible_email = offer.internship_responsible.email
+    currentInternshipsRequest.value.theme = offer.theme;
+    currentInternshipsRequest.value.internshipResponsible_email = offer.internship_responsible.email;
+    currentInternshipsRequest.value.company_id = offer.internship_responsible.company_id;
     $('#full-width-modal').modal('show')
 }
 
+const applyInternshipsRequest = async () => {
+    await storeInternshipRequest(currentInternshipsRequest.value)
+
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalSuccessMsg.value != '') {
+         currentInternshipsRequest.value = _.cloneDeep(internshipsRequestObject)
+    }
+}
 const isActive = computed(
     () => function (page_index) {
-        return offersPagination.value.current_page == page_index;
+        return offersPagination.value.meta?.current_page == page_index;
+    }
+)
+const isPaginationActive = computed(
+    () => {
+        return offersPagination.value.links?.next != offersPagination.value.links?.prev;
+    }
+)
+const nextLink = computed(
+    () => {
+        return offersPagination.value.links?.next
+    }
+)
+const prevLink = computed(
+    () => {
+        return offersPagination.value.links?.prev
     }
 )
 onMounted(async () => {
@@ -89,27 +122,26 @@ onMounted(async () => {
                     <p class="text-muted font-14">{{ offer.duration }}</p>
                     <p class=" font-14">{{ offer.details }}</p>
                     <div>
-                        <button type="button" @click="openSelectModal(offer)" class="btn btn-warning me-2">Select</button>
+                        <button type="button" @click="openSelectModal(offer)" class="btn btn-warning me-2">Apply</button>
 
                     </div>
                 </div> <!-- end card-body -->
             </div>
         </div>
-        <nav>
+        <nav v-if="isPaginationActive">
             <ul class="pagination pagination-rounded mb-0 justify-content-center">
                 <li class="page-item">
-                    <a class="page-link" role="button" @click="getOffers(offersPagination.prev_page_url)"
-                        aria-label="Previous">
+                    <button :disabled="prevLink == null" class="page-link" @click="getOffers(prevLink)" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
-                    </a>
+                    </button>
                 </li>
-                <li v-for="page_index in offersPagination.last_page" class="page-item"
+                <li v-for="page_index in offersPagination.meta?.last_page" class="page-item"
                     :class="{ 'active': isActive(page_index) }"><a class="page-link"
                         @click="getOffers(`/displayOffers?page=${page_index}`)" role="button">{{ page_index }}</a></li>
                 <li class="page-item">
-                    <a class="page-link" role="button" @click="getOffers(offersPagination.next_page_url)" aria-label="Next">
+                    <button :disabled="nextLink == null" class="page-link" @click="getOffers(nextLink)" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </nav>
@@ -127,28 +159,29 @@ onMounted(async () => {
                             </p>
 
                             <div class="row">
+                                {{ currentInternshipsRequest }}
                                 <div class="col-lg-6">
-                                    <CustomInput v-model="currentInternshipsRequest.theme"
-                                        :errorText="shared.getErrorText(errors, 'theme')"
-                                        :showError="errors.hasOwnProperty('theme')" label="Enter The Theme"
-                                        placeholder="Enter The Theme" />
+                                    <CustomInput :modelValue="offerObject.theme"
+                                        :errorText="getErrorText(errors, 'theme')"
+                                        :showError="errors.hasOwnProperty('theme')" label="The Theme"
+                                        placeholder="The Theme" />
                                 </div>
                                 <div class="col-lg-6">
-                                    <CustomInput v-model="currentInternshipsRequest.internshipResponsible_email"
-                                        :errorText="shared.getErrorText(errors, 'internshipResponsible_email')"
+                                    <CustomInput :modelValue="offerObject.internship_responsible_email"
+                                        :errorText="getErrorText(errors, 'internshipResponsible_email')"
                                         :showError="errors.hasOwnProperty('internshipResponsible_email')"
-                                        label="Enter internship Responsible's email"
-                                        placeholder="Enter internship Responsible's email" />
+                                        label="internship Responsible's email"
+                                        placeholder="internship Responsible's email" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.start_at"
-                                        :errorText="shared.getErrorText(errors, 'start_at')"
+                                        :errorText="getErrorText(errors, 'start_at')"
                                         :showError="errors.hasOwnProperty('start_at')" label="Start at" inputType="date"
                                         placeholder="Start at Date" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.end_at"
-                                        :errorText="shared.getErrorText(errors, 'end_at')"
+                                        :errorText="getErrorText(errors, 'end_at')"
                                         :showError="errors.hasOwnProperty('end_at')" label="End at" inputType="date"
                                         placeholder="End at Date" />
                                 </div>
@@ -163,13 +196,19 @@ onMounted(async () => {
         </template>
         <template v-slot:buttons>
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button @click="saveInternshipsRequest" type="button" class="btn btn-success">Save</button>
+            <button @click="applyInternshipsRequest" type="button" class="btn btn-success">Apply</button>
         </template>
     </FullWidthModal>
 </template>
-<style>
+<style scoped>
 @import "@/assets/css/vendor/dataTables.bootstrap5.css";
 @import "@/assets/css/vendor/responsive.bootstrap5.css";
+
+button[disabled] {
+    color: gray;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 </style>
 
 

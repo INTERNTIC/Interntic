@@ -23,6 +23,8 @@ import ManageInternshipResponsibleAccounts from '../components/departmentHead/Ma
 // Student
 import StudentInternshipRequests from '../components/student/ManageInternshipRequests.vue';
 import StudentOffers from '../components/student/Offers.vue';
+import StudentCv from '../components/student/ManageCv.vue';
+import PassedInternships from '../components/student/PassedInternships.vue';
 // END Student
 import Statistiques from "../components/dashboard/Statistiques.vue";
 import {
@@ -47,23 +49,23 @@ const router = createRouter({
           component: Statistiques,
         },
         {
-          path: "/departemnt_head",
+          path: "/Department-head",
           meta: {
-            guard: "departemnt_head"
+            guard: "department_head"
           },
           children: [
             {
-              path: "Department-head/Manage/Student/Account",
+              path: "Manage/Student/Account",
               name: "manageStudentsAccounts",
               component: ManageStudentsAccounts,
             },
             {
-              path: "Department-head/Manage/Student/Request",
+              path: "Manage/Student/Request",
               name: "departmentHeadManageInternshipRequests",
               component: DepartmentHeadManageInternshipRequests,
             },
             {
-              path: "Department-head/Manage/Internship-responsible/Account",
+              path: "Manage/Internship-responsible/Account",
               name: "manageInternshipResponsibleAccounts",
               component: ManageInternshipResponsibleAccounts,
             },
@@ -71,38 +73,38 @@ const router = createRouter({
         },
         // internship responsible part
         {
-          path: "/internship_responsible",
+          path: "/Internship-responsible",
           meta: {
             guard: "internship_responsible"
           },
           children: [
             {
-              path: "Internship-responsible/Manage/Student/Request",
+              path: "Manage/Student/Request",
               name: "internshipResponsibleManageInternshipRequests",
               component: InternshipResponsibleManageInternshipRequests,
             },
             {
-              path: "Internship-responsible/Assess/Students",
+              path: "Assess/Students",
               name: "assessStudents",
               component: AssessStudents,
             },
             {
-              path: "Internship-responsible/Students",
+              path: "Students",
               name: "allStudents",
               component: InternshipResponsibleAllStudents,
             },
             {
-              path: "Internship-responsible/Assessments",
+              path: "Assessments",
               name: "assessments",
               component: Assessments,
             },
             {
-              path: "Internship-responsible/Marks",
+              path: "Marks",
               name: "marks",
               component: Marks,
             },
             {
-              path: "Internship-responsible/Offers",
+              path: "Offers",
               name: "offers",
               component: Offers,
             },
@@ -112,19 +114,29 @@ const router = createRouter({
         // student part 
 
         {
-          path: "/student",
+          path: "/Student",
           meta: {
             guard: "student"
           }, children: [
             {
-              path: "Student/Internship-requests",
+              path: "Internship-requests",
               name: "studentInternshipRequests",
               component: StudentInternshipRequests,
             },
             {
-              path: "Student/Offers",
+              path: "Offers",
               name: "studentOffers",
               component: StudentOffers,
+            },
+            {
+              path: "Cv",
+              name: "studentCv",
+              component: StudentCv,
+            },
+            {
+              path: "Internships/Passed",
+              name: "passedInternships",
+              component: PassedInternships,
             },
           ]
         },
@@ -167,19 +179,25 @@ const router = createRouter({
 });
 
 
-
-
 router.beforeEach(async (to, from, next) => {
 
   if (to.meta.notApage) {
     next({ name: "PageNotFound" })
     return
   }
+  
   const authStore = useAuthStore();
   if (to.name !== 'login' && !authStore.authUser) {
     // came from a different page or try to refresh 
     // state is cleard and is not going to login
     await nextRouteIfAuth(to, from, next)
+  }
+  if (to.meta.guard) {
+    if (authStore.userGuard != null && authStore.userGuard != to.meta.guard) {
+      console.log("noooooooooooooooooo ", to.meta.guard, authStore.userGuard);
+      next({ name: "statistiques" })
+      return
+    }
   }
 
   next()

@@ -116,6 +116,7 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::post('/internshipRequests/manage/{internshipRequest}', [InternshipRequestController::class, "manageTheInternshipRequest"]);
     Route::get('/internships/students/', [InternshipRequestController::class, "internshipsIAccepted"]);
     Route::get('/internships/students/not-assessed', [InternshipRequestController::class, "studentInternshipsNotAssessedToday"]);
+    Route::get('/internships/passed', [InternshipRequestController::class, "myPassedInternships"]);
 
     Route::apiResource('accountRequests', AccountRequestController::class, ['only' => ['index','show', 'destroy']]);
     Route::post('accountRequests/manage/{accountRequest}', [AccountRequestController::class,'manageAccountRequest']);

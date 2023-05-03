@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
+use App\Http\Resources\StudentResource;
 use App\Models\DepartmentHead;
 use App\Models\InternshipResponsible;
 use App\Models\PasswordReset;
@@ -44,6 +45,12 @@ class AuthController extends Controller
                 return $this->returnError('Invalid credentials');
             }
             $user = Auth::guard($guard)->user();
+            if(Auth::getDefaultDriver()=="student"){
+                $user=$user->student;
+                $user->token = $token;
+                $user->guard = $guard;
+                return $this->returnData(new StudentResource($user));
+            }
 
             $user->token = $token;
             $user->guard = $guard;
@@ -63,6 +70,13 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = JWTAuth::fromUser($user);
             $guard=Auth::getDefaultDriver();
+            if($guard=="student"){
+                $user=$user->student;
+                $user->token = $token;
+                $user->guard = $guard;
+                return $this->returnData(new StudentResource($user));
+            }
+
             $user->token = $token;
             $user->guard = $guard;
 

@@ -33,11 +33,11 @@ class InternshipRequestController extends Controller
         if (Auth::getDefaultDriver() == config('global.department_head_guard')) {
             $internshipRequests = Department::find(auth()->user()->department_id)->internshipsWaiting;
         } elseif (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
+
             $internshipRequests = InternshipResponsible::find(auth()->user()->id)->internshipsWaiting();
         } elseif (Auth::getDefaultDriver() == config('global.student_guard')) {
             $internshipRequests = Student::find(auth()->user()->id)->waitingInternshipRequests();
         }
-  
         return $this->returnData(InternshipRequestResource::collection($internshipRequests));
     }
 
@@ -48,6 +48,12 @@ class InternshipRequestController extends Controller
         // TODO check if this request came with a hidden input called ...
         // this last showing if the request is in refused tables(compnay/Departement) to ne deleted form the table 
 
+        $isExistInternshipResponsible = InternshipResponsible::where("email", $request->internshipResponsible_email)->first();
+        if($isExistInternshipResponsible){
+            if ($isExistInternshipResponsible->company->id != $request->company_id) {
+                return $this->returnError("Company You choesed is Wrong the right company is ".$isExistInternshipResponsible->company->name ." ".$isExistInternshipResponsible->company->location);
+            }
+        }
         $internshipRequest = InternshipRequest::create($request->validated());
         return $this->returnData(new InternshipRequestResource($internshipRequest));
     }
@@ -132,14 +138,14 @@ class InternshipRequestController extends Controller
                 $request->validate([
                     'cause_id' => ['required', 'exists:department_causes,id']
                 ]);
-                // return  $departmentHeadService->refuseTheInternshipRequest_DepartmentHead($request, $internshipRequest);
+                return  $departmentHeadService->refuseTheInternshipRequest_DepartmentHead($request, $internshipRequest);
                 break;
 
             case "refuse_definitively":
                 $request->validate([
                     'cause_id' => ['required', 'exists:department_causes,id']
                 ]);
-                // return  $departmentHeadService->refuse_definitivelyTheInternshipRequest_DepartmentHead($request, $internshipRequest);
+                return  $departmentHeadService->refuse_definitivelyTheInternshipRequest_DepartmentHead($request, $internshipRequest);
                 break;
         }
     }
@@ -203,6 +209,15 @@ class InternshipRequestController extends Controller
         // todo the auth sould be interndhip respo
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
             $internshipRequests = InternshipResponsible::find(auth()->id())->notAssessedStudentToday();
+            return $this->returnData(InternshipRequestResource::collection($internshipRequests));
+        }
+        abort(403);
+    }
+    public function myPassedInternships()
+    {
+        // passed student internships
+        if (Auth::getDefaultDriver() == config('global.student_guard')) {
+            $internshipRequests = Student::find(auth()->id())->passedInternships();
             return $this->returnData(InternshipRequestResource::collection($internshipRequests));
         }
         abort(403);

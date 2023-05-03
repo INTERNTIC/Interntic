@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import CustomInput from '../form/CustomInput.vue';
 import PasswordInput from '../form/PasswordInput.vue';
 import useAuth from '../../composables/Auth';
-import shared from '../../shared.js'
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 
 const formModel = ref({
     email: '',
@@ -36,17 +36,17 @@ const { studentSignUp, errors } = useAuth();
 
                         <form @submit.prevent="studentSignUp(formModel)">
                             <CustomInput v-model="formModel.student_card" label="Student Card"
-                                :errorText="shared.getErrorText(errors, 'student_card')"
+                                :errorText="getErrorText(errors, 'student_card')"
                                 :showError="errors.hasOwnProperty('student_card')" placeholder="Enter Student Card Number"
                                 inputType="text" />
 
                             <CustomInput v-model="formModel.email" label="Email Address"
-                                :errorText="shared.getErrorText(errors, 'email')" :showError="errors.hasOwnProperty('email')"
+                                :errorText="getErrorText(errors, 'email')" :showError="errors.hasOwnProperty('email')"
                                 placeholder="Enter Email Address" inputType="email" />                       
 
                             <PasswordInput
                             v-model="formModel.confirm_password"
-                            :errorText="shared.getErrorText(errors, 'confirm_password')"
+                            :errorText="getErrorText(errors, 'confirm_password')"
                             lable="Password"
                             placeholder="Enter a Strong Password"
                             :showError="errors.hasOwnProperty('confirm_password')"
@@ -55,7 +55,7 @@ const { studentSignUp, errors } = useAuth();
                             />
                             <PasswordInput
                             v-model="formModel.password"
-                            :errorText="shared.getErrorText(errors, 'password')"
+                            :errorText="getErrorText(errors, 'password')"
                             lable="Confirm Password"
                             placeholder="Enter Passord Again"
                             :showError="errors.hasOwnProperty('password')"

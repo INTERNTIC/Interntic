@@ -17,8 +17,13 @@ export default function useInternshipRequest() {
         })
     }
     const getInternshipsIAccepted = async () => {
-       
         await axios.get('/internships/students').then((response) => {
+            studentsRequests.value = response.data.data
+        })
+    }
+    const getMyPassedInternships = async () => {
+        // As student
+        await axios.get('/internships/passed').then((response) => {
             studentsRequests.value = response.data.data
         })
     }
@@ -77,6 +82,7 @@ export default function useInternshipRequest() {
 
     return {
         getInternshipRequests,
+        getMyPassedInternships,
         getDepartmentRefuseCauses,
         getCompanyRefuseCauses,
         manageInternshipRequests,

@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router';
 import DangerNofitication from '../components/notification/DangerNofitication.vue';
 import { useAuthStore } from '../stores/AuthStore';
 import {getErrorText} from "@/newShared";
-// const {  authStore.authErrors, authStore.generalErrorMsg } = useAuth();
 const route = useRoute()
 const authStore = useAuthStore();
  

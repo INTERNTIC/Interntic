@@ -11,8 +11,8 @@ export default function useOffer() {
     const getOffers = async (url='/displayOffers') => {
         
         await axios.get(url).then((response) => {
-            offers.value = response.data.data.data
-            offersPagination.value=response.data.data
+            offers.value = response.data.data
+            offersPagination.value=response.data
         })
     }
     const storeOffer = async (offer) => {

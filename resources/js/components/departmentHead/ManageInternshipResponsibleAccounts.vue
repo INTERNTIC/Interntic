@@ -3,7 +3,8 @@ import { onMounted, ref, watch } from 'vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import useInternshipResponsibleAccount from '@/composables/InternshipResponsibleAccount.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
+
 import { useLoading } from 'vue-loading-overlay'
 
 const $loading = useLoading({
@@ -39,9 +40,9 @@ $(document).on('click', 'tr button', async (e) => {
         case 'accept':
         case 'refuse':
             await manageInternshipResponsibleAccount(decision.value, account_request_id)
-            shared.Notify(generalSuccessMsg.value,generalErrorMsg.value)
+            Notify(generalSuccessMsg.value,generalErrorMsg.value)
             await getInternshipResponsibleAccounts()
-            shared.refreshTable(principleTable,internshipResponsibleAccounts.value)
+            refreshTable(principleTable,internshipResponsibleAccounts.value)
             break;
     }
     button=null;

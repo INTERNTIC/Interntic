@@ -5,7 +5,7 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import useOffer from '@/composables/Offer.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
@@ -39,7 +39,7 @@ const saveOffer = async () => {
     } else {
         await updateOffer(currentOffer.value.id, currentOffer.value)
     }
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == "") {
         await getOffers();
         currentOffer.value = _.cloneDeep(OfferObject)
@@ -48,7 +48,7 @@ const saveOffer = async () => {
 }
 const deleteOffer = async () => {
     await destroyOffer(currentOffer.value.id);
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == "") {
         await getOffers();
         currentOffer.value = _.cloneDeep(OfferObject)
@@ -142,18 +142,18 @@ onMounted(async () => {
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentOffer.theme"
-                                        :errorText="shared.getErrorText(errors, 'theme')"
+                                        :errorText="getErrorText(errors, 'theme')"
                                         :showError="errors.hasOwnProperty('theme')" label="Enter The Theme"
                                         placeholder="Enter The Theme" />
                                     <CustomInput v-model="currentOffer.duration"
-                                        :errorText="shared.getErrorText(errors, 'duration')"
+                                        :errorText="getErrorText(errors, 'duration')"
                                         :showError="errors.hasOwnProperty('duration')" label="Enter a Duration"
                                         placeholder="Enter a Duration" />
                                 </div>
                                 <div class="col-lg-6">
 
                                     <CustomTextAria v-model="currentOffer.details"
-                                        :errorText="shared.getErrorText(errors, 'details')"
+                                        :errorText="getErrorText(errors, 'details')"
                                         :showError="errors.hasOwnProperty('details')" label="Enter a Details"
                                         placeholder="Enter a Details" />
                                 </div>

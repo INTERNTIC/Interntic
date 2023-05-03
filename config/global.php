@@ -8,9 +8,9 @@ return[
     "not_seen"=>0,
     "accepted_by_department_head"=>1,
     "refused_by_department_head"=>2,
-    "accepted_by_internship_responsible"=>3,
-    "refused_by_internship_responsible"=>4,
-    "refused_definitively"=>5,
+    "refused_by_internship_responsible"=>3,
+    "accepted_by_internship_responsible"=>4,
+    "accepted_by_student"=>5,
 ],
 ];
 ?>

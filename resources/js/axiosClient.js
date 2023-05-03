@@ -24,8 +24,12 @@ export const handleError = (error) => {
         
     } else if (error.response.status == 403) {
         console.log('unaithrized');
-        router.push({ name: "PageNotFound" })
+        // router.push({ name: "PageNotFound" })
+    } else if (error.response.status == 401) {
+        console.log('unAuth');
+        // router.push({ name: "login",params:{guard:localStorage.getItem("guard")} })
     } else {
+
         generalErrorMsg.value = "Oppps !! Something went wrong";
     }
 }
@@ -51,7 +55,7 @@ axios.interceptors.response.use(
         if (error.response) {
             handleError(error)
         }
-        // return Promise.reject(generalErrorMsg.value)
-       
+        return error;
+        // return Promise.reject(error)
     },
 );

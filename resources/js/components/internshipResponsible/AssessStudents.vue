@@ -4,7 +4,7 @@ import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
 import TimePicker from '@/components/form/TimePicker.vue';
 import useAssessment from '@/composables/Assessment.js';
-import shared from "@/shared";
+import {Notify,getErrorText,refreshTable} from "@/newShared";
 
 import { useLoading } from 'vue-loading-overlay'
 
@@ -74,10 +74,10 @@ const saveAssessment = async () => {
     assessment.value.internship_request_id = currentInternship.value.id
     getTimeFromRange()
     await storeAssessment(assessment.value)
-    shared.Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
         await getStudentInternshipsNotAssessed();
-        shared.refreshTable(principleTable, studentInternshipsNotAssessed.value)
+        refreshTable(principleTable, studentInternshipsNotAssessed.value)
         currentInternship.value = Object.create(internshipsExemple)
     }
     assessment.value = Object.create(assessmentExemple)
@@ -275,7 +275,7 @@ onMounted(async () => {
 
                                 <div class="col-lg-6">
                                     <CustomInput v-model="assessment.the_date"
-                                        :errorText="shared.getErrorText(errors, 'the_date')"
+                                        :errorText="getErrorText(errors, 'the_date')"
                                         :showError="errors.hasOwnProperty('the_date')" label="The Date" inputType="date"
                                         placeholder="Enter The Date" />
                                 </div>
@@ -283,13 +283,13 @@ onMounted(async () => {
 
                                 <div class="col-lg-6">
                                     <TimePicker v-model="rangeTime"
-                                        :errorText="shared.getErrorText(errors, 'enter_time') + ' / ' + shared.getErrorText(errors, 'left_time')"
+                                        :errorText="getErrorText(errors, 'enter_time') + ' / ' + getErrorText(errors, 'left_time')"
                                         :showError="errors.hasOwnProperty('enter_time') || errors.hasOwnProperty('left_time')"
                                         label="Enter Time / Left Time" placeholder="Enter the range" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomTextAria v-model="assessment.note"
-                                        :errorText="shared.getErrorText(errors, 'note')"
+                                        :errorText="getErrorText(errors, 'note')"
                                         :showError="errors.hasOwnProperty('note')" label="Enter a Note"
                                         placeholder="Enter a Note" />
                                 </div>

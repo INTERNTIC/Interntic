@@ -20,9 +20,6 @@ class StudentController extends Controller
 
     public function addStudentInfo(Request $request)
     {
-
-        return $this->returnError('balaa',403);
-
        Validator::make($request->all(),[
             'first_name'=>'required',
             'last_name'=>'required',
