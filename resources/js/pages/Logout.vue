@@ -1,13 +1,17 @@
-<!-- <script setup>
-import useAuth from '@/composables/Auth.js';
+<script setup>
 import { onBeforeMount } from 'vue';
-import { useRouter } from 'vue-router';
-const router=useRouter();
-const { logout } = useAuth();
-onBeforeMount(async () => {
-    await logout();
-    
+
+import useAuth from "@/composables/Auth.js"
+const {
+    logout
+}=useAuth()
+
+onBeforeMount( async() => {
+   await logout();
 })
+
 </script>
+
 <template>
-</template> -->
+
+</template>

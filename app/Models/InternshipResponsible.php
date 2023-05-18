@@ -65,34 +65,44 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 
 	public function internshipsWaiting()
 	{
+		// Wating is same as accepted by department head
 		return $this->company->internship_Requests->where('status', config('global.internship_request_status.accepted_by_department_head'))->where('internshipResponsible_email', $this->email);
 	}
-
 
 	public function internshipsWaitingId()
 	{
 		return $this->internshipsWaiting()->pluck('id')->toArray();
 	}
 
-	public function internshipsIAccepted()
+	public function internshipsIAcceptedByInternshipResponsible()
 	{
-		return $this->company->internship_Requests->where('status', '>=',config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email', $this->email);
+		return $this->company->internship_Requests->where('status', '=',config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email', $this->email);
 	}
 
-	public function internshipsIAcceptedId()
+	public function internshipsIAcceptedByInternshipResponsibleId()
 	{
-		return $this->internshipsIAccepted()->pluck('id')->toArray();
+		return $this->internshipsIAcceptedByInternshipResponsible()->pluck('id')->toArray();
+	}
+
+	public function internshipsIAcceptedByStudent()
+	{
+		return $this->company->internship_Requests->where('status', '=',config('global.internship_request_status.accepted_by_student'))->where('internshipResponsible_email', $this->email);
+	}
+
+	public function internshipsIAcceptedByStudentId()
+	{
+		return $this->internshipsIAcceptedByStudent()->pluck('id')->toArray();
 	}
 
 	public function studentsMark()
 	{
-		return Mark::whereIn("internship_request_id", $this->internshipsIAcceptedId())->get();
+		return Mark::whereIn("internship_request_id", $this->internshipsIAcceptedByStudentId())->get();
 	}
 
 	public function notAssessedStudentToday()
 	{
 		// get all internships then remove that have assessment with currnt date
-		return InternshipRequest::where('internship_requests.status', config('global.internship_request_status.accepted_by_internship_responsible'))
+		return InternshipRequest::where('internship_requests.status', config('global.internship_request_status.accepted_by_student'))
 			->where('internship_requests.internshipResponsible_email', $this->email)
 			->whereNotIn(
 				'id',

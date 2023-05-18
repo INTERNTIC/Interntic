@@ -13,9 +13,12 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^37.1.0",
+        "@ckeditor/ckeditor5-vue": "^5.1.0",
         "@kyvg/vue3-notification": "^2.9.0",
         "@vitejs/plugin-vue": "^4.0.0",
         "@vuepic/vue-datepicker": "^4.3.0",
+        "@vueup/vue-quill": "^1.1.1",
         "datatables.net-bs5": "^1.13.3",
         "datatables.net-responsive-bs5": "^2.4.0",
         "datatables.net-select": "^1.6.1",

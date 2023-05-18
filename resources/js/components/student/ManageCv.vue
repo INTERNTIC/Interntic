@@ -1,10 +1,12 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
+
 import useInternshipRequest from '@/composables/InternshipRequests.js';
 import SelectInput from '../form/SelectInput.vue';
+// import CKEditor from '@ckeditor/ckeditor5-vue';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Notify, getErrorText, refreshTable } from "@/newShared";
 import {
     generalErrorMsg,
@@ -14,7 +16,21 @@ import {
 
 import useCv_item from '@/composables/Cv_Item';
 
-const cvItemDetails = ref(null)
+const ckConfig = ref({
+    toolbar: {
+        items: [
+            'selectAll', '|',
+            'heading', '|',
+            'bold', 'italic', '|',
+            'bulletedList', 'numberedList', '|',
+            'outdent', 'indent', '|',
+            'undo', 'redo',
+            'link', 'blockQuote', 'insertTable', 'mediaEmbed', '|'
+        ],
+        shouldNotGroupWhenFull: true
+    }
+});
+
 const {
     getCvItems,
     storeCvItem,
@@ -30,33 +46,22 @@ const cv_itemObject = {
     `,
 }
 
+
 const currentCv_item = ref(_.cloneDeep(cv_itemObject))
+
 let formData = new FormData();
-// const saveNewCompany = async () => {
-//     await storeCompany(newCompany.value);
-//     if (generalErrorMsg.value == "") {
-//         await getCompanies();
-//         currentInternshipsRequest.value.company_id = newCompany.value.id
-//         addNewCompany.value = false;
-//     }
-// }
 
 
 const onFileChange = async (event) => {
     formData = new FormData();
     const files = event.target.files;
-    console.log(files.length);
     for (let i = 0; i < files.length; i++) {
         formData.append('image[]', files[i]);
     }
 
 };
 const saveCvItem = async () => {
-
-    formData.append("details", document.querySelector('.ql-editor').innerHTML)
-    console.log(formData.entries);
-    console.log(formData.keys);
-    console.log(formData.values);
+    formData.append("details", currentCv_item.value.details)
     if (currentCv_item.value.id != "") {
         await updateCvItem(currentCv_item.value.id, formData)
     } else {
@@ -73,7 +78,6 @@ const saveCvItem = async () => {
 }
 const openEditModal = async (cvItem) => {
     currentCv_item.value = cvItem
-    document.querySelector(".ql-editor").innerHTML = `${cvItem.details}`;
     $('#full-width-modal').modal('show')
 
 }
@@ -92,23 +96,23 @@ const deleteCvItem = async () => {
 }
 
 
+const editor = ClassicEditor;
 onMounted(async () => {
     await getCvItems()
+    window.addEventListener('keydown', handleKeyDown);
 
-    import('@/assets/js/vendor/quill.min.js').then(() => {
-        import('@/assets/js/pages/demo.quilljs.js').then(() => {
-            import('@/assets/js/vendor/dropzone.min.js').then(() => {
-                import('@/assets/js/ui/component.fileupload.js').then(() => {
-                })
-            })
-        })
-    })
-
-
-    import('@/assets/css/vendor/quill.bubble.css')
 });
 
-
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+})
+// in the ckEditor plugin there is an error when trying to delete an empty text 
+// so i disable the delete button effect on this component
+function handleKeyDown(event) {
+    if (event.keyCode === 46) { // 46 is the key code for the delete key
+        event.preventDefault(); // Prevent the default behavior of the delete key
+    }
+}
 const selectedFile = ref(null);
 
 
@@ -130,7 +134,7 @@ const selectedFile = ref(null);
     </div>
     <div class="row">
         <div v-for="cvItem in cvItems" :key="cvItem.id">
-            <div style="background: #e4e4e4;" class="card">
+            <div class="card">
 
                 <!-- <button type="button" class="btn btn-success" >Add a Request</button> -->
                 <div class="card-body position-relative">
@@ -150,34 +154,44 @@ const selectedFile = ref(null);
                     </div>
                     <div v-html="cvItem.details">
                     </div>
-                    <div v-if="cvItem.image" :id="`carouselExampleControls_${cvItem.id}`" class="carousel slide"
+
+
+                    <div v-if="cvItem.image" :id="`carouselExampleFade_${cvItem.id}`" class="carousel slide carousel-fade"
                         data-bs-ride="carousel">
-                        <div class="carousel-inner" role="listbox">
+                        <div class="carousel-inner">
 
                             <div v-for="(image, index) in cvItem.image.split('|')" :class="{ 'active': index == 0 }"
                                 class="carousel-item">
 
-                                <img style="height: 500px;object-fit: contain;" class="rounded mx-auto d-block img-fluid"
+                                <img style="height: 300px;object-fit: contain;" class="rounded mx-auto d-block img-fluid"
                                     :src="`/uploads/${image}`" alt="First slide">
                             </div>
 
                         </div>
-                        <a class="carousel-control-prev" :href="`#carouselExampleControls_${cvItem.id}`" role="button"
+                        <a class="carousel-control-prev" :href="`#carouselExampleFade_${cvItem.id}`" role="button"
                             data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
+                            <ul class="pagination pagination-rounded mb-0 justify-content-center">
+                                <li class="page-item">
+                                    <button class="page-link" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </button>
+                                </li>
+                            </ul>
+
 
                             <span class="visually-hidden">Previous</span>
                         </a>
-                        <a class="carousel-control-next" :href="`#carouselExampleControls_${cvItem.id}`" role="button"
+                        <a class="carousel-control-next" :href="`#carouselExampleFade_${cvItem.id}`" role="button"
                             data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <!-- <ul class="pagination pagination-rounded mb-0 justify-content-center">
+                            <!-- <span class="carousel-control-next-icon" aria-hidden="true"></span> -->
+                            <ul class="pagination pagination-rounded mb-0 justify-content-center">
                                 <li class="page-item">
                                     <button class="page-link" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </button>
                                 </li>
-                            </ul> -->
+                            </ul>
                             <span class="visually-hidden">Next</span>
                         </a>
                     </div>
@@ -199,9 +213,9 @@ const selectedFile = ref(null);
                                 Enter Internship offer Details
                             </p>
                             <div class="row">
-                                <div id="bubble-editor">
-                                    <div v-html="currentCv_item.details">
-                                    </div>
+                                <div>
+                                    <ckeditor :editor="editor" v-model="currentCv_item.details" :config="ckConfig">
+                                    </ckeditor>
                                 </div>
                             </div>
                             <div class="row mt-2">
@@ -240,18 +254,31 @@ const selectedFile = ref(null);
     height: 3rem;
 }
 
-.carousel-control-next:hover,
-.carousel-control-prev:hover {}
+.carousel-inner {
+
+    border-radius: 0.3rem;
+}
 
 .menu-icon-container {
     position: absolute;
     right: 1rem;
     top: 0.5rem;
 }
+
+.page-link {
+    background: unset;
+    border: 1px solid black;
+}
+
+.page-link span {
+    font-size: 2rem;
+    padding: inherit;
+}
 </style>
 
 
 
+<!-- background: black; -->
 
 
 

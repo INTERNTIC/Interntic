@@ -6406,10 +6406,10 @@ textarea.form-control-lg{
     background-size:100% 100%
 }
 .carousel-control-prev-icon{
-    background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e")
+    background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'  d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e")
 }
 .carousel-control-next-icon{
-    background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")
+    background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'  d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")
 }
 .carousel-indicators{
     position:absolute;
@@ -11739,7 +11739,7 @@ body{
     font-weight:700
 }
 .side-nav .menuitem-active>a{
-    color:var(--ct-menu-item-active)!important
+    /* color:var(--ct-menu-item-active)!important */
 }
 [dir=ltr] .side-nav .side-nav-item .menu-arrow:before{
     content:"\f0141"!important
@@ -12060,7 +12060,7 @@ body[data-layout=detached] .leftside-menu .side-nav .side-nav-forth-level li.mm-
     color:var(--ct-menu-item-active)
 }
 body[data-layout=detached] .leftside-menu .side-nav .menuitem-active>a{
-    color:var(--ct-menu-item-active)!important
+    /* color:var(--ct-menu-item-active)!important */
 }
 body[data-layout=detached] .leftside-menu .side-nav .side-nav-title{
     color:var(--ct-menu-item)
@@ -12174,7 +12174,7 @@ body[data-leftbar-theme=light] .side-nav .side-nav-link:active,body[data-leftbar
     color:var(--ct-menu-item-hover)
 }
 body[data-leftbar-theme=light] .side-nav .menuitem-active>a{
-    color:var(--ct-menu-item-active)!important
+    /* color:var(--ct-menu-item-active)!important */
 }
 body[data-leftbar-theme=light] .side-nav .side-nav-title{
     color:var(--ct-menu-item)
@@ -12224,7 +12224,7 @@ body[data-leftbar-theme=dark] .side-nav .side-nav-link:active,body[data-leftbar-
     color:var(--ct-dark-menu-item-hover)
 }
 body[data-leftbar-theme=dark] .side-nav .menuitem-active>a{
-    color:var(--ct-dark-menu-item-active)!important
+    /* color:var(--ct-dark-menu-item-active)!important */
 }
 body[data-leftbar-theme=dark] .side-nav .side-nav-title{
     color:var(--ct-dark-menu-item)
@@ -16852,7 +16852,7 @@ body[data-layout-color=dark] .timeline-show .time-show-name{
     background-repeat:no-repeat;
     background-position:10px
 }
-.jq-icon-info{
+/* .jq-icon-info{
     background-image:url(data:image/png;
     base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=);
     background-color:#31708f;
@@ -16879,7 +16879,7 @@ body[data-layout-color=dark] .timeline-show .time-show-name{
     color:#dff0d8;
     background-color:#3c763d;
     border-color:#d6e9c6
-}
+} */
 .select2-container{
     -webkit-box-sizing:border-box;
     box-sizing:border-box;
@@ -17565,7 +17565,7 @@ body[data-layout-color=dark] .timeline-show .time-show-name{
     background-repeat:no-repeat;
     background-position:10px
 }
-.jq-icon-info{
+/* .jq-icon-info{
     background-image:url(data:image/png;
     base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=);
     background-color:#31708f;
@@ -17592,7 +17592,7 @@ body[data-layout-color=dark] .timeline-show .time-show-name{
     color:#dff0d8;
     background-color:#3c763d;
     border-color:#d6e9c6
-}
+} */
 /*! * Timepicker Component for Twitter Bootstrap * * Copyright 2013 Joris de Wit * * Contributors https://github.com/jdewit/bootstrap-timepicker/graphs/contributors * * For the full copyright and license information, please view the LICENSE * file that was distributed with this source code. */
 .bootstrap-timepicker{
     position:relative

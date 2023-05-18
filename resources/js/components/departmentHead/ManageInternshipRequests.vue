@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
+
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
 import useInternshipRequest from '@/composables/InternshipRequests.js';
 import SuccessModal from '../modal/SuccessModal.vue';
 import SelectInput from '../form/SelectInput.vue';
@@ -43,8 +43,8 @@ const internshipsRequestExemple = {
         last_name: '',
         birthday: '',
         place_of_birth: '',
-        phone_number: '',
-        student_card_number: '',
+        phone: '',
+        student_card: '',
         social_security_num: '',
         level: '',
         major: '',
@@ -71,7 +71,7 @@ const principleColumns =
                 return row.student.first_name + "  " + row.student.last_name;
             }
         },
-        { 'data': 'student.student_card_number' },
+        { 'data': 'student.student_card' },
         { 'data': 'student.major' },
         { 'data': 'student.level' },
         {
@@ -161,10 +161,10 @@ onMounted(async () => {
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item active">Manage Students Accounts</li>
+                        <li class="breadcrumb-item active">Manage Student Internships</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Manage Students</h4>
+                <h4 class="page-title">Manage Internships</h4>
             </div>
         </div>
     </div>
@@ -172,20 +172,10 @@ onMounted(async () => {
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">All Students</h4>
+                    <h4 class="header-title">Internships List</h4>
                     <p class="text-muted font-14">
-                        Here is a list of all students in the University
+                        Here is a list of unmanaged internship requests 
                     </p>
-                    <ul class="nav nav-tabs nav-bordered mb-3">
-                        <li class="nav-item">
-                            <a href="#basic-datatable-preview" data-bs-toggle="tab" aria-expanded="false"
-                                class="nav-link active">
-                                Preview
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
                             <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
                                 <thead>
                                     <tr>
@@ -198,12 +188,6 @@ onMounted(async () => {
                                 </thead>
 
                             </table>
-                        </div>
-
-                        <!-- end preview-->
-                    </div>
-                   
-
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
@@ -225,7 +209,7 @@ onMounted(async () => {
                                     <CustomInput
                                         :modelValue="`${currentInternshipsRequest.student.first_name} ${currentInternshipsRequest.student.last_name}`"
                                         :readonly="true" label="Student Full Name" inputType="text" />
-                                    <CustomInput :modelValue="currentInternshipsRequest.student.student_card_number"
+                                    <CustomInput :modelValue="currentInternshipsRequest.student.student_card"
                                         :readonly="true" label="Student Student Card" inputType="text" />
                                     <CustomInput :modelValue="currentInternshipsRequest.student.major" :readonly="true"
                                         label="Student Major" inputType="text" />

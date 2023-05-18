@@ -70,5 +70,9 @@ class InternshipRequest extends Model
 	{
 		return $this->hasMany(Assessment::class);
 	}
+	public function internship_responsible()
+	{
+		return InternshipResponsible::where("email",$this->internshipResponsible_email)->first();
+	}
 		
 }

@@ -12,7 +12,7 @@ trait GeneralTrait
 
 
     public function returnError($msg,$code=450,$errors=[])  
-
+         
     {
         return response()->json([
             'status' => false,
@@ -21,7 +21,6 @@ trait GeneralTrait
             'errors' => $errors
         ],$code);
     }
-
 
     public function returnSuccessMessage($msg, $code = 200)
     {

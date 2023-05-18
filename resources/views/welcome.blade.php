@@ -27,11 +27,13 @@
     
     <script defer src="/assets/js/vendor.min.js" ></script>
     <script defer src="/assets/js/app.min.js" ></script>
-    @vite(['resources/js/app.js','resources/css/app.css'])
+    @vite(['resources/js/app.js'])
 </head>
 <body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid" data-rightbar-onstart="true">
     <div id="app" v-cloak>
     </div>
 </body>
-
+<script>
+   
+</script>
 </html>

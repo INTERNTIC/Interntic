@@ -14,7 +14,7 @@ class Student extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'level_major_id' => 'int'
+		'level_major_id' => 'int',
 	];
 
 	protected $dates = [
@@ -51,12 +51,25 @@ class Student extends Model
 	{
 		return $this->hasMany(StudentCvItem::class);
 	}
-	public function waitingInternshipRequests()
+	public function waitingInternshipsForDepartment()
 	{
-		return $this->internship_requests->where("status",0);
+		return $this->internship_requests->where("status",config("global.internship_request_status.not_seen"));
+	}
+	public function internshipsIAcceptedByDepartmentHead()
+	{
+		return $this->internship_requests->where("status",config("global.internship_request_status.accepted_by_department_head"));
+	}
+	public function internshipsIAcceptedByInternshipResponsible()
+	{
+		return $this->internship_requests->where("status",config("global.internship_request_status.accepted_by_internship_responsible"));
 	}
 	public function passedInternships()
 	{
 		return $this->internship_requests->where("status",5);
+	}
+	public function refusedInternships()
+	{
+		$status=[config('global.internship_request_status.refused_by_department_head'),config('global.internship_request_status.refused_by_internship_responsible')];
+		return $this->internship_requests->whereIn("status",$status);
 	}
 }

@@ -32,10 +32,6 @@ class StudentAccount extends Authenticatable implements JWTSubject , MustVerifyE
 	public $incrementing = false;
 	public $timestamps = false;
 
-	protected $casts = [
-		'id' => 'int',
-		'email_verified' => 'int'
-	];
 
 	protected $hidden = [
 		'password',

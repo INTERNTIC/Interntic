@@ -1,7 +1,8 @@
 
 import { ref } from "vue"
 
-export default function useInternshipResponsibleAccount() {
+export default ()=> {
+
     const internshipResponsibleAccounts = ref([])
 
     const getInternshipResponsibleAccounts = async () => {
@@ -14,10 +15,6 @@ export default function useInternshipResponsibleAccount() {
         
         await axios.post('/accountRequests/manage/' + internship_request_id, decision)
     }
-
-    
-
-
 
     return {
         getInternshipResponsibleAccounts,

@@ -4,41 +4,31 @@ namespace App\Http\Requests;
 
 use App\Models\InternshipResponsible;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class InternshipResponsibleRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
     public function attributes(): array
-{
-    return [
-        'phone' => 'phone number',
-    ];
-}
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
+    {
+        return [
+            'phone' => 'phone number',
+        ];
+    }
     public function rules()
     {
-        $internshipResponsible=$this->route('internshipResponsible')?? new InternshipResponsible();
-        // TO DO  update password problem
+        $internshipResponsible = $this->route('internshipResponsible') ?? new InternshipResponsible();
+        // Password is not required if this is an update
         return [
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>['required','unique:internship_responsibles,email,'.$internshipResponsible->email],
-            'password'=>['required','min:6'],
-            'phone'=>['required','unique:internship_responsibles,phone,'.$internshipResponsible->phone],
-            'company_id'=>['required','exists:companies,id'],
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => ['required', 'unique:internship_responsibles,email,' . $internshipResponsible->id],
+            'password' => [Rule::requiredIf(!$internshipResponsible->id), 'min:6'],
+            'phone' => ['required', 'unique:internship_responsibles,phone,' . $internshipResponsible->id],
+            'company_id' => ['required', 'exists:companies,id'],
         ];
     }
 }

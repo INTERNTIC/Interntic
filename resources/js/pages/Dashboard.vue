@@ -1,8 +1,8 @@
 <script setup>
-import Sidebar from '../components/general/Sidebar.vue';
-import Topbar from '../components/general/Topbar.vue';
-import Content from '../components/general/Content.vue';
-import SettingSidebar from '../components/general/SettingSidebar.vue';
+import Sidebar from '../components/dashboardComponents/Sidebar.vue';
+import Topbar from '../components/dashboardComponents/Topbar.vue';
+import Content from '../components/dashboardComponents/Content.vue';
+import SettingSidebar from '../components/dashboardComponents/SettingSidebar.vue';
 
 import { useAuthStore } from '../stores/AuthStore';
 const AuthStore = useAuthStore();

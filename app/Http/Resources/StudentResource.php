@@ -21,14 +21,16 @@ class StudentResource extends JsonResource
             'email'=> isset($this->student_account)?$this->student_account->email:null,
             'birthday' => date_format(date_create($this->birthday), 'Y-m-d'),
             'place_of_birth' => $this->place_of_birth,
-            'phone_number' => $this->phone,
-            'student_card_number' => $this->student_card,
+            'phone' => $this->phone,
+            'student_card' => $this->student_card,
             'social_security_num' => $this->social_security_num,
             'level' => $this->level_major->level->name,
             'major' => $this->level_major->major->name,
             'level_id' => strval($this->level_major->level->id),
             'major_id' => strval($this->level_major->major->id),
-            'guard' => 'student',
+            'level_major_id' =>$this->level_major_id ,
+            'token'=>$this->token,
+            'guard'=>$this->guard
         ];
     }
 }

@@ -29,7 +29,7 @@ class InternshipRequest_Request extends FormRequest
         return [
 		'internshipResponsible_email'=>['required', 'email'],
 		'theme'=>['required', 'string'],
-        'status'=>['boolean'],
+        'status'=>['in:0,1,2,3,4,5'],
 		'start_at'=>['required','date','before:end_at' ],
 		'end_at'=>['required','date','after:start_at'],
         'student_id'=>['required','exists:students,id'],

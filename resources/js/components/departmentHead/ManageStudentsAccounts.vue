@@ -1,9 +1,9 @@
 <script setup>
-import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import DangerModal from '../modal/DangerModal.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 
-import useManageStudent from '@/composables/ManageStudent.js';
+
+import useStudent from '@/composables/Student.js';
 import StudentModelForm from './StudentModelForm.vue';
 import {Notify,refreshTable} from "@/newShared";
 import {
@@ -13,15 +13,15 @@ import {
 }from "@/axiosClient";
 const { getStudents, storeStudent, destroyStudent,
      updateStudent, students, getMajorsOfLevel, 
-     getLevels, levels, majors } = useManageStudent();
+     getLevels, levels, majors } = useStudent();
 const student = {
     id:"",
     first_name: "",
     last_name: "",
-    student_card_number: "",
+    student_card: "",
     birthday: "",
     place_of_birth: "",
-    phone_number: "",
+    phone: "",
     social_security_num: "",
     level_id: "",
     major_id: "",
@@ -50,7 +50,7 @@ const principleColumns =
                 return row.first_name + "  " + row.last_name;
             }
         },
-        { 'data': 'student_card_number' },
+        { 'data': 'student_card' },
         { 'data': 'major' },
         { 'data': 'level' },
         {
@@ -70,7 +70,7 @@ const secondaryColumns =
                 return row.first_name + "  " + row.last_name;
             }
         },
-        { 'data': 'phone_number' },
+        { 'data': 'phone' },
         { 'data': 'social_security_num' },
         { 'data': 'birthday' },
         { 'data': 'place_of_birth' },
@@ -308,7 +308,8 @@ const showSecondaryTable = (TableStatus) => {
 
 
 
-    <DangerModal>
+    <DangerModal
+    modal_heading="Delete Student">
         <template v-slot:body>
             Are you sure you want to delete student <b>{{ currentStudent.first_name }} {{ currentStudent.last_name }} </b>
         </template>

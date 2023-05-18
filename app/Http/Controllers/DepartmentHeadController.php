@@ -3,134 +3,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DepartmentHeadRequest;
 use App\Models\DepartmentHead;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use App\Traits\GeneralTrait;
 
-class DepartmentHeadController extends Controller 
-
+class DepartmentHeadController extends Controller
 {
     use GeneralTrait;
 
-    public function addDepartmentHead(Request $request)
+    public function addDepartmentHead(DepartmentHeadRequest $request)
     {
-        Validator::make($request->all(),[
-
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>['required','email','ends_with:univ-constantine2.dz','unique:department_heads'],
-            'password'=>['required','min:6'],
-            'department_name'=>'required',
-
-        ])->validate();
-
-        $department_id=DB::table('departments')->where('name',$request->department_name)->value('id');
-
-        if($department_id==false)
-        {
-            return $this->returnError('Make sure about the department name');
-        }
-
-        DepartmentHead::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email'=>$request->email,
-            'password'=>Hash::make($request->password),
-            'department_id'=>$department_id,
-        ]);
+        DepartmentHead::create($request->except("password")+["password"=>bcrypt($request->password)]);
     }
 
     public function displayDepartmentHeads()
     {
-        $department_heads=DB::table('department_heads')->get();
-        if($department_heads==false)
-        {
-            return $this->returnError('No department head to display');
-        }
+        $department_heads=DepartmentHead::all();
         return $this->returnData($department_heads);
     }
 
-    public function getDepartmentHead($id)
+    public function getDepartmentHead($departmentHead)
     {
-        $department_head=DB::table('department_heads')->where('id',$id)->get();
-
-        if($department_head==false)
-        {
-            return $this->returnError('Something went wrong');
-        }
-
-        return $this->returnData($department_head);
+        return $this->returnData($departmentHead);
     }
 
-    public function editDepartmentHead(Request $request)
+    public function editDepartmentHead(DepartmentHeadRequest $request,DepartmentHead $departmentHead)
     {
-        $departmentHead= DepartmentHead::find($request->id);
-
-        if($departmentHead==false) {
-            return $this->returnError('Department head not found');
-        }
-
-        $department_id=DB::table('departments')->where('name',$request->department_name)->value('id');
-
-        if($department_id==false)
-        {
-            return $this->returnError('Make sure about the department name');
-        }
-
-        Validator::make($request->all(),[
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>['required','email','ends_with:univ-constantine2.dz','unique:department_heads'],
-            'department_name'=>'required',
-        ])->validate();
-        
-        $departmentHead->update([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email'=>$request->email,
-            'department_id'=>$department_id,
-        ]);
+        $departmentHead->update($request->except("password"));
     }
 
-    public function deleteDepartmentHead($id)
+    public function deleteDepartmentHead($departmentHead)
     {
-        $department_head = DepartmentHead::find($id);
-
-        if ($department_head==false) 
-        {
-            return $this->returnError('Something went wrong');
-        }
-
-        $department_head->delete();
+        $departmentHead->delete();
         return $this->returnSuccessMessage('Department head deleted successfully');
     }
 
-    public function departmentheadResetPasword(Request $request,$id)
-    {
-        Validator($request->all(),[
-            'old_password'=>'required',
-            'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required|min:6'
-        ])->validate();
+    // public function departmentheadResetPasword(Request $request,$department_head)
+    // {
+    //     Validator($request->all(),[
+    //         'old_password'=>'required',
+    //         'password' => 'required|min:6|confirmed',
+    //         'password_confirmation' => 'required|min:6'
+    //     ])->validate();
 
-        $department_head=DepartmentHead::find($id);
-        if($department_head==false)
-        {
-            return $this->returnError('Something went wrong');
-        }
-       if (Hash::check($request->old_password, $department_head->password)) {
-            $department_head->update([
-                'password'=>Hash::make($request->password),
-            ]);
-        }
-        else
-        {
-            return $this->returnError('Old password is incorrect');
-        }
-        return $this->returnSuccessMessage('Password updated successfully');
-    }
+
+    //     if($department_head==false)
+    //     {
+    //         return $this->returnError('Something went wrong');
+    //     }
+    //    if (Hash::check($request->old_password, $department_head->password)) {
+    //         $department_head->update([
+    //             'password'=>Hash::make($request->password),
+    //         ]);
+    //     }
+    //     else
+    //     {
+    //         return $this->returnError('Old password is incorrect');
+    //     }
+    //     return $this->returnSuccessMessage('Password updated successfully');
+    // }
 }

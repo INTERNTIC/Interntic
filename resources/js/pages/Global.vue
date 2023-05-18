@@ -1,8 +1,10 @@
 <script setup>
-import { onMounted,onBeforeMount } from 'vue';
-// import { useAuthStore } from '../stores/AuthStore';
-// const AuthStore = useAuthStore();
+import { onMounted } from 'vue';
 
+const body = document.querySelector('body');
+onMounted(() => {
+  body.classList.remove('loading')
+})
 
 </script>
 <template>

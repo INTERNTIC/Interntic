@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
+
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
 import useOffer from '@/composables/Offer.js';
 import useInternshipRequest from '@/composables/InternshipRequests.js';
 import SuccessModal from '../modal/SuccessModal.vue';
@@ -41,21 +41,7 @@ const offerObject = {
 }
 
 const currentInternshipsRequest = ref(_.cloneDeep(internshipsRequestObject))
-// const currentOffer = ref(_.cloneDeep(offerObject))
 
-// const saveOffer = async () => {
-//     if (currentOffer.value.id == '') {
-//         await storeOffer(currentOffer.value);
-//     } else {
-//         await updateOffer(currentOffer.value.id, currentOffer.value)
-//     }
-//     Notify(generalSuccessMsg.value, generalErrorMsg.value)
-//     if (generalErrorMsg.value == "") {
-//         await getOffers();
-//         currentOffer.value = _.cloneDeep(OfferObject)
-//         $('#full-width-modal').modal('hide')
-//     }
-// }
 const openSelectModal = (offer) => {
     offerObject.theme = offer.theme;
     offerObject.internship_responsible_email = offer.internship_responsible.email
@@ -71,6 +57,7 @@ const applyInternshipsRequest = async () => {
     Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalSuccessMsg.value != '') {
          currentInternshipsRequest.value = _.cloneDeep(internshipsRequestObject)
+         $('#full-width-modal').modal('hide')
     }
 }
 const isActive = computed(
@@ -159,17 +146,18 @@ onMounted(async () => {
                             </p>
 
                             <div class="row">
-                                {{ currentInternshipsRequest }}
                                 <div class="col-lg-6">
                                     <CustomInput :modelValue="offerObject.theme"
                                         :errorText="getErrorText(errors, 'theme')"
                                         :showError="errors.hasOwnProperty('theme')" label="The Theme"
+                                        :readonly="true"
                                         placeholder="The Theme" />
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput :modelValue="offerObject.internship_responsible_email"
                                         :errorText="getErrorText(errors, 'internshipResponsible_email')"
                                         :showError="errors.hasOwnProperty('internshipResponsible_email')"
+                                        :readonly="true"
                                         label="internship Responsible's email"
                                         placeholder="internship Responsible's email" />
                                 </div>
@@ -201,9 +189,6 @@ onMounted(async () => {
     </FullWidthModal>
 </template>
 <style scoped>
-@import "@/assets/css/vendor/dataTables.bootstrap5.css";
-@import "@/assets/css/vendor/responsive.bootstrap5.css";
-
 button[disabled] {
     color: gray;
     opacity: 0.5;

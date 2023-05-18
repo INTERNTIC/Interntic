@@ -1,27 +1,20 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
-import UseAssessment from '@/composables/Assessment.js';
+import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
+
+
+import useInternshipRequest from '@/composables/InternshipRequests.js';
+import useGneratePdf from '@/composables/GneratePdf.js';
+import {useLoading} from 'vue-loading-overlay';
+import {Notify} from "@/newShared";
 import {
     generalErrorMsg,
     generalSuccessMsg,
     errors
-}from "@/axiosClient";
-const {
-        getStudentInternshipsNotAssessed,
-        getInternshipsIAccepted,
-        getAssessment,
-        storeAssessment,
-        updateAssessment,
-        destroyAssessment,
-
-        assessments,
-        studentInternshipsNotAssessed,
-        studentInternships,
-
-} = UseAssessment();
-
+} from "@/axiosClient";
+const $loading = useLoading({});
+const { getInternshipsAcceptedByInternshipResponsible, getInternshipsAcceptedByStudent, internshipsAcceptedByInternshipResponsible, studentsRequests } = useInternshipRequest()
+const { downloadPdf } = useGneratePdf()
 const internshipsExemple = {
     id: '',
     student_id: '',
@@ -36,8 +29,8 @@ const internshipsExemple = {
         email: "",
         birthday: '',
         place_of_birth: '',
-        phone_number: '',
-        student_card_number: '',
+        phone: '',
+        student_card: '',
         social_security_num: '',
         level: '',
         major: '',
@@ -48,26 +41,37 @@ const internshipsExemple = {
         name: '',
         location: '',
     },
-}
-const MarkExemple = {
-    id: '',
-    discipline: "",
-    skills: "",
-    initiative: "",
-    creativity: "",
-    knowledge: "",
-    internship_request_id: "",
+    marks: {
+        discipline: "",
+        skills: "",
+        initiative: "",
+        creativity: "",
+        knowledge: "",
+    }
 }
 const currentInternship = ref(Object.create(internshipsExemple))
-const currentMark = ref(Object.create(MarkExemple))
-let principleTable=null;
+let principleTable = null;
 
 
 
 $(document).on('click', 'tr button', async (e) => {
     const internship_id = e.currentTarget.getAttribute('internship_id')
-    currentInternship.value = studentInternships.value.find(internship => internship.id == internship_id);
+    const arrayConcat = [].concat(studentsRequests.value, internshipsAcceptedByInternshipResponsible.value);
+    currentInternship.value = arrayConcat.find(internship => internship.id == internship_id);
 });
+
+const getPdf = async () => {
+    const loader = $loading.show({color: 'green'});
+    await downloadPdf(currentInternship.value.id)
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalErrorMsg.value == '') {
+        $('#document-modal').modal('hide')
+        currentInternship.value=_.cloneDeep(internshipsExemple)
+    }
+    loader.hide();
+
+
+}
 
 const principleColumns =
     [
@@ -76,18 +80,35 @@ const principleColumns =
                 return row.student.first_name + "  " + row.student.last_name;
             }
         },
-        { 'data': 'student.student_card_number' },
-        { 'data': 'student.major' },
+        { 'data': 'student.student_card' },
+        {
+            'data': 'null', render: function (data, type, row) {
+                const str=row.textStatus.replace(/_/g, " ");
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+        },
+        { 'data': 'student.level' },
         { 'data': 'student.level' },
         {
             data: null,
             render: function (data, type, row) {
-                return ` 
-                    <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#full-width-modal">View</button>
-                    <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#evaluate-modal">Marks</button>
-                    `;
+                if (data.status == 5) {
+                    return ` 
+                        <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#full-width-modal">View</button>
+    
+                        <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#mark-modal">Marks</button>
+                        <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#document-modal">Print Documents</button>
+                        `;
+                } else {
+                    return ` 
+                        <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#full-width-modal">View</button>
+                        `;
+
+                }
             }
         },
     ];
@@ -99,12 +120,12 @@ const principleColumns =
 
 
 onMounted(async () => {
-    await getInternshipsIAccepted()
+    await getInternshipsAcceptedByInternshipResponsible()
+    await getInternshipsAcceptedByStudent()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    $('.timepicker').timepicker({});
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
                         language: {
@@ -116,7 +137,7 @@ onMounted(async () => {
                         drawCallback: function () {
                             $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
                         },
-                        data: studentInternships.value,
+                        data: [].concat(studentsRequests.value, internshipsAcceptedByInternshipResponsible.value),
                         columns: principleColumns
                     });
 
@@ -136,10 +157,10 @@ onMounted(async () => {
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item active">Manage Students Accounts</li>
+                        <li class="breadcrumb-item active"> Students </li>
                     </ol>
                 </div>
-                <h4 class="page-title">Manage Students</h4>
+                <h4 class="page-title">Students</h4>
             </div>
         </div>
     </div>
@@ -149,36 +170,21 @@ onMounted(async () => {
                 <div class="card-body">
                     <h4 class="header-title">All Students</h4>
                     <p class="text-muted font-14">
-                        Here is a list of all students in the University
+                        Here is a list of all students that internship responsible accepted their request
                     </p>
-                    <ul class="nav nav-tabs nav-bordered mb-3">
-                        <li class="nav-item">
-                            <a href="#basic-datatable-preview" data-bs-toggle="tab" aria-expanded="false"
-                                class="nav-link active">
-                                Preview
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Card Number</th>
-                                        <th>Major</th>
-                                        <th>Level</th>
-                                        <th data-orderable="false">Action</th>
-                                    </tr>
-                                </thead>
 
-                            </table>
-                        </div>
-
-                        <!-- end preview-->
-                    </div>
-                   
-
+                    <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Card Number</th>
+                                <th>Status</th>
+                                <th>Major</th>
+                                <th>Level</th>
+                                <th data-orderable="false">Action</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
@@ -199,8 +205,8 @@ onMounted(async () => {
                                     <CustomInput
                                         :modelValue="`${currentInternship.student.first_name} ${currentInternship.student.last_name}`"
                                         :readonly="true" label="Student Full Name" />
-                                    <CustomInput :modelValue="currentInternship.student.student_card_number"
-                                        :readonly="true" label="Student Student Card" />
+                                    <CustomInput :modelValue="currentInternship.student.student_card" :readonly="true"
+                                        label="Student Student Card" />
                                     <CustomInput :modelValue="currentInternship.student.major" :readonly="true"
                                         label="Student Major" />
                                     <CustomInput :modelValue="currentInternship.student.email" :readonly="true"
@@ -233,6 +239,53 @@ onMounted(async () => {
             <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
         </template>
     </FullWidthModal>
+
+    <FullWidthModal modalId="mark-modal" v-if="currentInternship.marks">
+        <template v-slot:body>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Mark Information </h4>
+                            <p class="text-muted font-14">
+                                Manage Student Mark
+                            </p>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <CustomInput v-model="currentInternship.marks.skills" :readonly="true" label="skills"
+                                        inputType="number" placeholder="Student skills" />
+                                    <CustomInput v-model="currentInternship.marks.discipline" :readonly="true"
+                                        label="Discipline" inputType="number" placeholder="Student Discipline" />
+                                    <CustomInput v-model="currentInternship.marks.initiative" :readonly="true"
+                                        label="initiative" inputType="number" placeholder="Student initiative" />
+
+                                </div>
+                                <div class="col-lg-6">
+                                    <CustomInput v-model="currentInternship.marks.creativity" :readonly="true"
+                                        label="creativity" inputType="number" placeholder="Student creativity" />
+                                    <CustomInput v-model="currentInternship.marks.knowledge" :readonly="true"
+                                        label="knowledge" inputType="number" placeholder="Student knowledge" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-slot:buttons>
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+        </template>
+    </FullWidthModal>
+    <InfoModalOutline modalId="document-modal" modal_heading="Document Print" v-if="currentInternship.marks">
+        <template v-slot:body>
+
+            <button  type="button" @click="getPdf()" class="btn btn-dark">Get Certeficate</button>
+
+        </template>
+        <template v-slot:buttons>
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+        </template>
+    </InfoModalOutline>
 </template>
 <style>
 @import "@/assets/css/vendor/dataTables.bootstrap5.css";

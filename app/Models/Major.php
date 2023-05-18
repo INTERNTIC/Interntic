@@ -9,17 +9,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Major
- * 
- * @property int $id
- * @property string $name
- * @property string $short_cut
- * 
- * @property Collection|Level[] $levels
- *
- * @package App\Models
- */
 class Major extends Model
 {
 	protected $table = 'majors';
@@ -36,10 +25,13 @@ class Major extends Model
 		return $this->belongsToMany(Level::class)
 					->withPivot('id');
 	}
+	public function level_major()
+	{
+		return $this->hasMany(LevelMajor::class);
+	}
 	public function departments()
 	{
-		return $this->belongsToMany(Department::class)
-					->withPivot('id');
+		return $this->belongsTo(Department::class);
 	}
 	public function students()
     {

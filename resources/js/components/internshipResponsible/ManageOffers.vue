@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
+
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
 import useOffer from '@/composables/Offer.js';
 import {Notify,getErrorText,refreshTable} from "@/newShared";
 import SuccessModal from '../modal/SuccessModal.vue';
@@ -63,11 +63,25 @@ const openEditModal = (offer) => {
     $('#full-width-modal').modal('show')
 }
 
+const isPaginationActive = computed(
+    () => {
+        return offersPagination.value.links?.next != offersPagination.value.links?.prev;
+    }
+)
 const isActive = computed(
     () => function (page_index) {
-        return offersPagination.value.current_page == page_index;
+        return offersPagination.value.meta.current_page == page_index;
     }
-    //   (page_index) => `${offersPagination.current_page==page_index}`
+)
+const nextLink = computed(
+    () => {
+        return offersPagination.value.links?.next
+    }
+)
+const prevLink = computed(
+    () => {
+        return offersPagination.value.links?.prev
+    }
 )
 onMounted(async () => {
     await getOffers()
@@ -86,16 +100,11 @@ onMounted(async () => {
                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#full-width-modal">Add Offer</button>
                 </div>
-                <!-- <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item active">Manage Students Accounts</li>
-                    </ol>
-                </div> -->
             </div>
         </div>
     </div>
     <div class="row">
-            <div v-for="offer in offers" :key="offer.id" class="col-lg-6">
+        <div v-for="offer in offers" :key="offer.id" class="col-lg-6">
             <div  class="card">
                 <div class="card-body">
                     <h4 class="header-title">{{ offer.theme }}</h4>
@@ -110,19 +119,20 @@ onMounted(async () => {
                 </div> <!-- end card-body -->
         </div>
         </div>
-        <nav >
+    
+        <nav v-if="isPaginationActive" >
             <ul class="pagination pagination-rounded mb-0 justify-content-center">
                 <li class="page-item">
-                    <a class="page-link" role="button" @click="getOffers(offersPagination.prev_page_url)" aria-label="Previous">
+                    <button :disabled="prevLink == null"  class="page-link" role="button" @click="getOffers(prevLink)" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
-                    </a>
+                    </button>
                 </li>
-                <li v-for="page_index in offersPagination.last_page" class="page-item" :class="{ 'active': isActive(page_index) }"><a
+                <li v-for="page_index in offersPagination.meta.last_page" class="page-item" :class="{ 'active': isActive(page_index) }"><a
                         class="page-link" @click="getOffers(`/displayOffers?page=${page_index}`)" role="button">{{ page_index }}</a></li>
                 <li class="page-item">
-                    <a class="page-link" role="button" @click="getOffers(offersPagination.next_page_url)" aria-label="Next">
+                    <button :disabled="nextLink== null" class="page-link" role="button" @click="getOffers(nextLink)" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </nav>
@@ -179,9 +189,12 @@ onMounted(async () => {
         </template>
     </DangerModalOutline>
 </template>
-<style>
-@import "@/assets/css/vendor/dataTables.bootstrap5.css";
-@import "@/assets/css/vendor/responsive.bootstrap5.css";
+<style scoped>
+button[disabled] {
+    color: gray;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 </style>
 
 

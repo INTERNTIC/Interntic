@@ -9,10 +9,14 @@ export const wrongGuard = (to, from, next) => {
   }
 }
 export const redirectToDefaultLoginGuard = (to, from, next) => {
-  let guard = localStorage.getItem('guard')
-  // if guard is null set it to defult guard
-  guard = guard ?? "student";
-  next({ name: "login", params: { guard: guard } })
+  if(to.name!="login"){   
+    let guard = localStorage.getItem('guard')
+    // if guard is null set it to defult guard
+    guard = guard ?? "student";
+    next({ name: "login", params: { guard: guard } })
+  }else{
+    next()
+  }
 }
 
 export const redirectToDashboardIfAuth = async (to, from, next) => {

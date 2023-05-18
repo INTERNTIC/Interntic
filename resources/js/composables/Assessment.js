@@ -1,6 +1,6 @@
 import { ref } from "vue"
 
-export default function useInternship() {
+export default ()=>{
     
     const studentInternshipsNotAssessed = ref([])
     const studentInternships = ref([])
@@ -30,7 +30,6 @@ export default function useInternship() {
     }
     return {
         getStudentInternshipsNotAssessed,
-        // getInternshipsIAccepted,
         getAssessment,
         storeAssessment,
         updateAssessment,

@@ -12,20 +12,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-/**
- * Class DepartmentHead
- * 
- * @property int $id
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $password
- * @property int $department_id
- * 
- * @property Department $department
- *
- * @package App\Models
- */
 class DepartmentHead extends Authenticatable implements JWTSubject
 {
 	protected $table = 'department_heads';

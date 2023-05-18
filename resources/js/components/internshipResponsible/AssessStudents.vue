@@ -1,11 +1,10 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
-import TimePicker from '@/components/form/TimePicker.vue';
+
+
+import MyTimePicker from '@/components/form/MyTimePicker.vue';
 import useAssessment from '@/composables/Assessment.js';
 import {Notify,getErrorText,refreshTable} from "@/newShared";
-
 import { useLoading } from 'vue-loading-overlay'
 
 import CustomTextAria from '../form/CustomTextAria.vue';
@@ -38,8 +37,8 @@ const internshipsExemple = {
         email: "",
         birthday: '',
         place_of_birth: '',
-        phone_number: '',
-        student_card_number: '',
+        phone: '',
+        student_card: '',
         social_security_num: '',
         level: '',
         major: '',
@@ -102,7 +101,7 @@ const principleColumns =
                 return row.student.first_name + "  " + row.student.last_name;
             }
         },
-        { 'data': 'student.student_card_number' },
+        { 'data': 'student.student_card' },
         { 'data': 'student.major' },
         { 'data': 'student.level' },
         {
@@ -130,7 +129,7 @@ onMounted(async () => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    $('.timepicker').timepicker({});
+                    
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
                         language: {
@@ -163,10 +162,10 @@ onMounted(async () => {
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item active">Manage Students Accounts</li>
+                        <li class="breadcrumb-item active">Manage Students Assessments</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Manage Students</h4>
+                <h4 class="page-title">Manage Assessments</h4>
             </div>
         </div>
     </div>
@@ -174,38 +173,22 @@ onMounted(async () => {
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title">All Students</h4>
+                    <h4 class="header-title">Students List</h4>
                     <p class="text-muted font-14">
-                        Here is a list of all students in the University
-                    </p>
-                    <ul class="nav nav-tabs nav-bordered mb-3">
-                        <li class="nav-item">
-                            <a href="#basic-datatable-preview" data-bs-toggle="tab" aria-expanded="false"
-                                class="nav-link active">
-                                Preview
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Card Number</th>
-                                        <th>Major</th>
-                                        <th>Level</th>
-                                        <th data-orderable="false">Action</th>
-                                    </tr>
-                                </thead>
+                        Here is a List of Students Who Were did not taken Attendance Today
+                    </p>                    
+                    <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Card Number</th>
+                                <th>Major</th>
+                                <th>Level</th>
+                                <th data-orderable="false">Action</th>
+                            </tr>
+                        </thead>
 
-                            </table>
-                        </div>
-
-                        <!-- end preview-->
-                    </div>
-
-
+                    </table>
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
@@ -227,7 +210,7 @@ onMounted(async () => {
                                     <CustomInput
                                         :modelValue="`${currentInternship.student.first_name} ${currentInternship.student.last_name}`"
                                         :readonly="true" label="Student Full Name" inputType="text" />
-                                    <CustomInput :modelValue="currentInternship.student.student_card_number"
+                                    <CustomInput :modelValue="currentInternship.student.student_card"
                                         :readonly="true" label="Student Student Card" inputType="text" />
                                     <CustomInput :modelValue="currentInternship.student.major" :readonly="true"
                                         label="Student Major" inputType="text" />
@@ -282,10 +265,11 @@ onMounted(async () => {
 
 
                                 <div class="col-lg-6">
-                                    <TimePicker v-model="rangeTime"
+                                    <MyTimePicker v-model="rangeTime"
                                         :errorText="getErrorText(errors, 'enter_time') + ' / ' + getErrorText(errors, 'left_time')"
                                         :showError="errors.hasOwnProperty('enter_time') || errors.hasOwnProperty('left_time')"
                                         label="Enter Time / Left Time" placeholder="Enter the range" />
+                                   
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomTextAria v-model="assessment.note"

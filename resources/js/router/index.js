@@ -4,10 +4,12 @@ import Login from "../pages/Login.vue";
 import Dashboard from "../pages/Dashboard.vue";
 import SignUp from "../pages/SignUp.vue";
 import Logout from "../pages/Logout.vue";
+import ResetPassword from "../pages/ResetPassword.vue";
+import UpdatePassword from "../pages/UpdatePassword.vue";
 import PageNotFound from "../pages/PageNotFound.vue";
+import UnauthorizedPage from "../pages/UnauthorizedPage.vue";
 import CompanySignUp from "../components/signUp/CompanySignUp.vue";
 import StudentSignUp from "../components/signUp/StudentSignUp.vue";
-import ManageStudentsAccounts from '../components/departmentHead/ManageStudentsAccounts.vue';
 // InternshipResponsible
 import InternshipResponsibleManageInternshipRequests from '../components/internshipResponsible/ManageInternshipRequests.vue';
 import AssessStudents from '../components/internshipResponsible/AssessStudents.vue';
@@ -15,57 +17,96 @@ import InternshipResponsibleAllStudents from '../components/internshipResponsibl
 import Assessments from '../components/internshipResponsible/Assessments.vue';
 import Marks from '../components/internshipResponsible/Marks.vue';
 import Offers from '../components/internshipResponsible/ManageOffers.vue';
+import InternshipResponsibleProfile from '../components/internshipResponsible/Profile.vue';
 // END InternshipResponsible
 // departemntHead
+import ManageStudentsAccounts from '../components/departmentHead/ManageStudentsAccounts.vue';
 import DepartmentHeadManageInternshipRequests from '../components/departmentHead/ManageInternshipRequests.vue';
 import ManageInternshipResponsibleAccounts from '../components/departmentHead/ManageInternshipResponsibleAccounts.vue';
+import DepartmentHeadProfile from '../components/departmentHead/Profile.vue';
 // END departemntHead
 // Student
 import StudentInternshipRequests from '../components/student/ManageInternshipRequests.vue';
 import StudentOffers from '../components/student/Offers.vue';
 import StudentCv from '../components/student/ManageCv.vue';
 import PassedInternships from '../components/student/PassedInternships.vue';
+import StudentProfile from "../components/student/Profile.vue";
+import RefusedInternships from "../components/student/RefusedInternships.vue";
+import AcceptedInternships from "../components/student/AcceptedInternships.vue";
 // END Student
 import Statistiques from "../components/dashboard/Statistiques.vue";
+import useAuth from "@/composables/Auth.js";
+import { guards } from "@/newShared";
+
 import {
   redirectToDashboardIfAuth,
-  redirectToDefaultLoginGuard,
   wrongGuard,
   nextRouteIfAuth,
+  redirectToDefaultLoginGuard
 } from "./authFunctions.js";
+const openPages=["login", "signUp"];
 
+const { getUserByToken,logout } = useAuth();
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/:pathMatch(.*)*', name: "PageNotFound", component: PageNotFound },
+    { path: '/unauthorized', name: "unauthorizedPage", component: UnauthorizedPage },
     {
       path: "/",
       name: "dashboard",
       component: Dashboard,
+      meta:{
+        needsAuth: true
+      },
       children: [
+        {
+          path: "/update-password",
+          name: "updatePassword",
+          component: UpdatePassword,
+        },
         {
           path: "/",
           name: "statistiques",
           component: Statistiques,
         },
         {
-          path: "/Department-head",
+          path: "/profile",
+          name: "profile",
+          component:  ()=> {
+            const authStore = useAuthStore();
+            switch (authStore.userGuard) {
+
+              case "internship_responsible":
+                return InternshipResponsibleProfile
+
+              case "department_head":
+                return DepartmentHeadProfile
+
+              case "student":
+                return StudentProfile;
+
+            }
+          }
+        },
+        {
+          path: "/department-head",
           meta: {
             guard: "department_head"
           },
           children: [
             {
-              path: "Manage/Student/Account",
+              path: "manage/student/account",
               name: "manageStudentsAccounts",
               component: ManageStudentsAccounts,
             },
             {
-              path: "Manage/Student/Request",
+              path: "manage/student/request",
               name: "departmentHeadManageInternshipRequests",
               component: DepartmentHeadManageInternshipRequests,
             },
             {
-              path: "Manage/Internship-responsible/Account",
+              path: "manage/internship-responsible/account",
               name: "manageInternshipResponsibleAccounts",
               component: ManageInternshipResponsibleAccounts,
             },
@@ -73,7 +114,7 @@ const router = createRouter({
         },
         // internship responsible part
         {
-          path: "/Internship-responsible",
+          path: "/internship-responsible",
           meta: {
             guard: "internship_responsible"
           },
@@ -84,27 +125,27 @@ const router = createRouter({
               component: InternshipResponsibleManageInternshipRequests,
             },
             {
-              path: "Assess/Students",
+              path: "assess/students",
               name: "assessStudents",
               component: AssessStudents,
             },
             {
-              path: "Students",
+              path: "students",
               name: "allStudents",
               component: InternshipResponsibleAllStudents,
             },
             {
-              path: "Assessments",
+              path: "assessments",
               name: "assessments",
               component: Assessments,
             },
             {
-              path: "Marks",
+              path: "marks",
               name: "marks",
               component: Marks,
             },
             {
-              path: "Offers",
+              path: "offers",
               name: "offers",
               component: Offers,
             },
@@ -114,17 +155,22 @@ const router = createRouter({
         // student part 
 
         {
-          path: "/Student",
+          path: "/student",
           meta: {
             guard: "student"
           }, children: [
             {
-              path: "Internship-requests",
+              path: "internships/refused",
+              name: "refusedInternships",
+              component: RefusedInternships,
+            },
+            {
+              path: "internships/requested",
               name: "studentInternshipRequests",
               component: StudentInternshipRequests,
             },
             {
-              path: "Offers",
+              path: "offers",
               name: "studentOffers",
               component: StudentOffers,
             },
@@ -134,31 +180,41 @@ const router = createRouter({
               component: StudentCv,
             },
             {
-              path: "Internships/Passed",
+              path: "internships/passed",
               name: "passedInternships",
               component: PassedInternships,
             },
+            {
+              path: "internships/accepted",
+              name: "acceptedInternships",
+              component: AcceptedInternships,
+            },
           ]
         },
-
+        
       ]
     },
-
+    {
+      path: "/reset-password",
+      name: "resetPassword",
+      component: ResetPassword,
+    },
 
     {
       path: "/login/:guard",
       name: "login",
       component: Login,
-      beforeEnter: [
-        wrongGuard,
-        redirectToDashboardIfAuth
-      ],
+    },
+    {
+      path: "/logout",
+      name: "logout",
+      component: Logout,
     },
     {
       path: "/signUp",
       name: "signUp",
       component: SignUp,
-      beforeEnter: [redirectToDashboardIfAuth],
+      // beforeEnter: [redirectToDashboardIfAuth],
       meta: {
         notAPage: true,
       },
@@ -181,24 +237,58 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 
+
   if (to.meta.notApage) {
     next({ name: "PageNotFound" })
     return
   }
-  
   const authStore = useAuthStore();
-  if (to.name !== 'login' && !authStore.authUser) {
-    // came from a different page or try to refresh 
-    // state is cleard and is not going to login
-    await nextRouteIfAuth(to, from, next)
+
+
+  if (authStore.authUser) {
+    if (openPages.includes(to.name)) {
+      next({ name: "statistiques" })
+      return
+    }
+  } else {
+
+    let token = sessionStorage.getItem('token') ?? localStorage.getItem('token');
+    // if token exist try to authenticate
+    if (token != null) {
+      await getUserByToken(token)
+      // check if user is authenticated (token was valid)   
+      if (authStore.authUser) {
+        if (openPages.includes(to.name)) {
+          next({ name: "statistiques" })
+          return
+        }
+      }
+    }
   }
+
   if (to.meta.guard) {
     if (authStore.userGuard != null && authStore.userGuard != to.meta.guard) {
-      console.log("noooooooooooooooooo ", to.meta.guard, authStore.userGuard);
+      console.log("noooooooooooooo to guard , userGaudAuth", to.meta.guard, authStore.userGuard);
       next({ name: "statistiques" })
       return
     }
   }
+
+  if (to.meta.needsAuth) {
+    if (!authStore.authUser) {
+      redirectToDefaultLoginGuard(to, from, next)
+      return
+    }
+  }
+
+  // this should be the last
+  if (to.name == "login") {
+    if (!guards.includes(to.params.guard)) {
+      redirectToDefaultLoginGuard(to, from, next)
+      return
+    }
+  }
+
 
   next()
 })

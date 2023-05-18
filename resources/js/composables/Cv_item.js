@@ -1,5 +1,5 @@
 import { ref } from "vue"
-export default function useCv_item() {
+export default ()=> {
 
 
     const cvItems = ref([])

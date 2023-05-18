@@ -9,6 +9,7 @@ use App\Http\Resources\MarkResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\InternshipResponsible;
 
+
 class MarkController extends Controller
 {
     // TODO fix authorizetion
@@ -26,7 +27,7 @@ class MarkController extends Controller
     {
         //validate responsible his requests 
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-            $authorized_ids = InternshipResponsible::find(auth()->id())->internshipsIAcceptedId();
+            $authorized_ids = InternshipResponsible::find(auth()->id())->internshipsIAcceptedByStudentId();
             if (in_array($request->internship_request_id, $authorized_ids)) {
                 $mark = Mark::create($request->validated());
                 return $this->returnData(new MarkResource($mark),"Saved Successfully");
@@ -44,7 +45,7 @@ class MarkController extends Controller
     public function update(MarkRequest $request, Mark $mark)
     {
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-            $authorized_ids = InternshipResponsible::find(auth()->id())->internshipsIAcceptedId();
+            $authorized_ids = InternshipResponsible::find(auth()->id())->internshipsIAcceptedByStudentId();
             if (in_array($request->internship_request_id, $authorized_ids)) {
                 $mark->update($request->validated());
                 return $this->returnData(new MarkResource($mark),"update Successfully");
@@ -60,4 +61,5 @@ class MarkController extends Controller
             return $this->returnSuccessMessage("Deleted Succssfully");
         }
     }
+   
 }

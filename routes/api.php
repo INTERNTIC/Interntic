@@ -16,6 +16,7 @@ use App\Http\Controllers\StudentCvItemController;
 use App\Http\Controllers\AccountRequestController;
 use App\Http\Controllers\DepartmentHeadController;
 use App\Http\Controllers\DepartmentCauseController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DepartmentRefuseController;
 use App\Http\Controllers\InternshipOffersController;
 use App\Http\Controllers\InternshipRequestController;
@@ -41,9 +42,11 @@ Route::controller(AuthController::class)->group(function () {
     Route::group(['middleware' => 'check.auth.guard'], function () {
         Route::get('/getUserByToken', "getUserByToken");
         Route::post('/logout', "logout");
+        Route::patch('/update-password', "updatePassword");
     });
-    Route::post('/askResetPassword/{guard}', 'askResetPassword');
-    Route::post('/resetPassword', 'resetPassword')->name('resetPassword');
+    Route::post('/forgetPassword/{guard}', 'forgetPassword');
+    Route::patch('/resetPassword', 'resetPassword')->name('resetPassword');
+   
 });
 Route::group(['middleware' => 'check.auth.guard'], function () {
     //Student part
@@ -58,9 +61,11 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     //Super admin part
     Route::post('/addDepartmentHead', [DepartmentHeadController::class, "addDepartmentHead"]);
     Route::get('/displayDepartmentHeads', [DepartmentHeadController::class, "displayDepartmentHeads"]);
-    Route::get('/getDepartmentHead/{id}', [DepartmentHeadController::class, "getDepartmentHead"]);
-    Route::post('/editDepartmentHead/{id}', [DepartmentHeadController::class, "editDepartmentHead"]);
-    Route::delete('/deleteDepartmentHead/{id}', [DepartmentHeadController::class, "deleteDepartmentHead"]);
+    Route::get('/getDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "getDepartmentHead"]);
+    Route::patch('/editDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "editDepartmentHead"]);
+    Route::delete('/deleteDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "deleteDepartmentHead"]);
+
+    
     Route::post('/superAdminResetPasword/{id}', [SuperAdminController::class, "superAdminResetPasword"]);
 
 
@@ -72,10 +77,10 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
 
     Route::post('/addStudentInfo', [StudentController::class, "addStudentInfo"]);
     Route::get('/displayStudents', [StudentController::class, "diplayStudents"]);
-    Route::get('/getStudent/{id}', [StudentController::class, "getStudent"]);
-    Route::patch('/editStudentInfo/{id}', [StudentController::class, "editStudentInfo"]);
-    Route::delete('/deleteStudent/{id}', [StudentController::class, "deleteStudent"]);
-    Route::post('/departmentheadResetPasword/{id}', [DepartmentHeadController::class, "departmentheadResetPasword"]);
+    Route::get('/getStudent/{student}', [StudentController::class, "getStudent"]);
+    Route::patch('/editStudentInfo/{student}', [StudentController::class, "editStudentInfo"]);
+    Route::delete('/deleteStudent/{student}', [StudentController::class, "deleteStudent"]);
+    Route::post('/departmentheadResetPasword/{department_head}', [DepartmentHeadController::class, "departmentheadResetPasword"]);
 
 
 
@@ -111,10 +116,15 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::apiResource('majors', MajorController::class);
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('studentCvItems', StudentCvItemController::class);
+    Route::get('/marks/generate-pdf/{internshipRequest}', [InternshipRequestController::class, "getPDF"]);
     Route::apiResource('marks', MarkController::class);
+    Route::apiResource('departments', DepartmentController::class);
 
     Route::post('/internshipRequests/manage/{internshipRequest}', [InternshipRequestController::class, "manageTheInternshipRequest"]);
-    Route::get('/internships/students/', [InternshipRequestController::class, "internshipsIAccepted"]);
+    Route::get('/internships/accepted-by-internship-responsible', [InternshipRequestController::class, "internshipsIAcceptedByInternshipResponsible"]);
+    Route::get('/internships/accepted-by-department-head', [InternshipRequestController::class, "internshipsIAcceptedByDepartmentHead"]);
+    Route::get('/internships/accepted-by-student', [InternshipRequestController::class, "internshipsIAcceptedByStudent"]);
+    Route::get('/internships/refused', [InternshipRequestController::class, "refusedInternships"]);
     Route::get('/internships/students/not-assessed', [InternshipRequestController::class, "studentInternshipsNotAssessedToday"]);
     Route::get('/internships/passed', [InternshipRequestController::class, "myPassedInternships"]);
 

@@ -1,24 +1,19 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
-import TimePicker from '@/components/form/TimePicker.vue';
+
+
+import MyTimePicker from '@/components/form/MyTimePicker.vue';
 import UseAssessment from '@/composables/Assessment.js';
-import {Notify,getErrorText,refreshTable} from "@/newShared";
-import SuccessModal from '../modal/SuccessModal.vue';
-import SelectInput from '../form/SelectInput.vue';
-import FloatingInput from '../form/FloatingInput.vue';
+import { Notify, getErrorText, refreshTable } from "@/newShared";
 import { useLoading } from 'vue-loading-overlay'
-import DatePicker from '../form/datePicker.vue';
 import CustomTextAria from '../form/CustomTextAria.vue';
 
 import {
     generalErrorMsg,
     generalSuccessMsg,
     errors
-}from "@/axiosClient";
+} from "@/axiosClient";
 
 const $loading = useLoading({
 });
@@ -103,7 +98,11 @@ const principleColumns =
             }
         },
         { 'data': 'the_date' },
-        { 'data': 'note' },
+        {
+            'data': 'null', render: function (data, type, row) {
+                return row.note??"/";
+            }
+        },
         {
             data: null,
             render: function (data, type, row) {
@@ -131,7 +130,7 @@ onMounted(async () => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
                 import('@/assets/js/vendor/responsive.bootstrap5.min.js').then(() => {
-                    $('.timepicker').timepicker({});
+
                     principleTable = $("#scroll-horizontal-datatable").DataTable({
                         scrollX: !0,
                         language: {
@@ -162,10 +161,10 @@ onMounted(async () => {
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item active">Manage Students Accounts</li>
+                        <li class="breadcrumb-item active">Manage Students Assessments</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Manage Students</h4>
+                <h4 class="page-title">Manage Assessments</h4>
             </div>
         </div>
     </div>
@@ -174,28 +173,22 @@ onMounted(async () => {
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="header-title">Students List Today</h4>
+                        <h4 class="header-title">Assessment List </h4>
                     </div>
-                    <p class="text-muted font-14 ">
-                        Here is a List of Students Who Were did not taken Attendance Today
-                    </p>                   
-                    <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Date</th>
-                                        <th>Note</th>
-                                        <th data-orderable="false">Action</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
+                    <p class="text-muted font-14">
+                        Here is a List of All Student Present Assessment
+                    </p>
 
-                        <!-- end preview-->
-                    </div>
-                   
+                    <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                                <th data-orderable="false">Action</th>
+                            </tr>
+                        </thead>
+                    </table>
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->
@@ -213,17 +206,26 @@ onMounted(async () => {
                                 Manage Student Assessments
                             </p>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="row">
 
-                                    <CustomInput :modelValue="currentAssessment.the_date" :readonly="true"
+                                    <div class="col" v-if="currentAssessment.the_date">
+                                        <CustomInput  :modelValue="currentAssessment.the_date" :readonly="true"
                                         label="The Date" />
-                                    <CustomInput :modelValue="currentAssessment.enter_time" :readonly="true"
+                                    </div>
+                                    <div class="col" v-if="currentAssessment.enter_time">
+                                        <CustomInput  :modelValue="currentAssessment.enter_time" :readonly="true"
                                         label="Enter Time" />
+                                    </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <CustomInput :modelValue="currentAssessment.left_time" :readonly="true"
+                                <div class="row">
+
+                                    <div class="col" v-if="currentAssessment.left_time">
+                                        <CustomInput  :modelValue="currentAssessment.left_time" :readonly="true"
                                         label="Left Time" />
-                                    <CustomInput :modelValue="currentAssessment.note" :readonly="true" label="Note" />
+                                    </div>
+                                    <div class="col" v-if="currentAssessment.note">
+                                        <CustomInput  :modelValue="currentAssessment.note" :readonly="true" label="Note" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -252,22 +254,20 @@ onMounted(async () => {
                                         :showError="errors.hasOwnProperty('the_date')" label="The Date" inputType="date"
                                         placeholder="Enter The Date" />
                                 </div>
-
-
                                 <div class="col-lg-6">
-                                    <TimePicker v-model="rangeTime"
-                                        :errorText="getErrorText(errors, 'enter_time') + ' / ' + getErrorText(errors, 'left_time')"
-                                        :showError="errors.hasOwnProperty('enter_time') || errors.hasOwnProperty('left_time')"
-                                        label="Enter Time / Left Time" placeholder="Enter the range"
-                                        :mark="`current range : ${currentAssessment.enter_time} - ${currentAssessment.left_time}`" />
+                                <MyTimePicker v-model="rangeTime"
+                                    :errorText="getErrorText(errors, 'enter_time') + ' / ' + getErrorText(errors, 'left_time')"
+                                    :showError="errors.hasOwnProperty('enter_time') || errors.hasOwnProperty('left_time')"
+                                    label="Enter Time / Left Time" placeholder="Enter the range"
+                                    :mark="`current range : ${currentAssessment.enter_time} - ${currentAssessment.left_time}`" />
+
+
                                 </div>
 
                                 <div class="col-lg-6">
-                                    <CustomTextAria 
-                                    v-model="currentAssessment.note"
-                                        :errorText="getErrorText(errors, 'note')"
-                                        :showError="errors.hasOwnProperty('note')" label="Enter a Note"
-                                        placeholder="Enter a Note" />
+                                    <CustomTextAria v-model="currentAssessment.note"
+                                        :errorText="getErrorText(errors, 'note')" :showError="errors.hasOwnProperty('note')"
+                                        label="Enter a Note" placeholder="Enter a Note" />
                                 </div>
                             </div>
                         </div>
@@ -293,7 +293,6 @@ onMounted(async () => {
             <button @click="deleteAssessment" type="button" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
         </template>
     </DangerModalOutline>
-
 </template>
 <style>
 @import "@/assets/css/vendor/dataTables.bootstrap5.css";

@@ -1,14 +1,25 @@
 <script setup>
-import { ref,onMounted,onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import CustomInput from '../components/form/CustomInput.vue';
+import CustomPasswordInput from '../components/form/CustomPasswordInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
 import { useRoute } from 'vue-router';
 import DangerNofitication from '../components/notification/DangerNofitication.vue';
-import { useAuthStore } from '../stores/AuthStore';
-import {getErrorText} from "@/newShared";
+// import { useAuthStore } from '../stores/AuthStore';
+import useAuth from "@/composables/Auth.js"
+import { getErrorText } from "@/newShared";
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+} from "@/axiosClient";
+
+const {
+    login
+} = useAuth()
 const route = useRoute()
-const authStore = useAuthStore();
- 
+// const authStore = useAuthStore();
+
 
 
 const rememberMe = ref(false)
@@ -47,27 +58,17 @@ onUnmounted(() => {
                                 <p class="text-muted mb-4">Enter your email address and password to access Dashboard.</p>
                             </div>
 
-                            <form @submit.prevent="authStore.login(route.params.guard, rememberMe, loginFormModel)">
-                                {{ loginFormModel }}
+                            <form @submit.prevent="login(route.params.guard, rememberMe, loginFormModel)">
                                 <CustomInput v-model="loginFormModel.email" label="Email Address"
-                                    :errorText="getErrorText(authStore.authErrors, 'email')" :showError="authStore.authErrors.hasOwnProperty('email')"
+                                    :errorText="getErrorText(errors, 'email')" :showError="errors.hasOwnProperty('email')"
                                     placeholder="Enter Email Address" inputType="email" />
-                                <div class="mb-3">
-                                    <router-link to="#" class="text-muted float-end"><small>Forgot your
-                                            password?</small></router-link>
-                                    <label for="password" class="form-label">Password</label>
-                                    <div class="input-group input-group-merge">
-                                        <input :class="{ 'is-invalid': authStore.authErrors.hasOwnProperty('password') }"
-                                            v-model="loginFormModel.password" type="password" id="password"
-                                            class="form-control" placeholder="Enter your password">
-                                        <div role="button" class="input-group-text" data-password="false">
-                                            <span class="password-eye"></span>
-                                        </div>
-                                        <div v-if="authStore.authErrors.hasOwnProperty('password')" class="invalid-feedback">
-                                            {{ getErrorText(authStore.authErrors, 'password') }}
-                                        </div>
-                                    </div>
-                                </div>
+
+                                <router-link to="#" class="text-muted float-end"><small>Forgot your
+                                        password?</small></router-link>
+                                <CustomPasswordInput v-model="loginFormModel.password" label="Password"
+                                    :errorText="getErrorText(errors, 'password')"
+                                    :showError="errors.hasOwnProperty('password')" placeholder="Enter your password" />
+
 
 
                                 <Checkbox label="Remember me" v-model="rememberMe" />
@@ -101,5 +102,5 @@ onUnmounted(() => {
     </footer>
 
 
-    <DangerNofitication :errorMsg="authStore.generalErrorMsg" />
+    <DangerNofitication :errorMsg="generalErrorMsg" />
 </template>

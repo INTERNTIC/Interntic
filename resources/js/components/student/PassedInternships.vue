@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
+
 import useInternshipRequest from '@/composables/InternshipRequests.js';
 import { Notify, getErrorText } from "@/newShared";
 import SelectInput from '../form/SelectInput.vue';
@@ -14,7 +14,7 @@ import {
 
 const {
     getMyPassedInternships,
-    studentsRequests,
+    passedInternships,
 } = useInternshipRequest();
 
 
@@ -36,7 +36,7 @@ onMounted(async () => {
         </div>
     </div>
     <div class="row">
-        <div v-for="internship in studentsRequests" :key="internship.id">
+        <div v-for="internship in passedInternships" :key="internship.id">
             <div class="card">
                 <div class="card-body ">
                     <div class="row">

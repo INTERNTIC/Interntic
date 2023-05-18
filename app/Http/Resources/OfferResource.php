@@ -14,12 +14,7 @@ class OfferResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-        'theme'=>$this->theme,
-		'details'=>$this->details,
-		'duration'=>$this->duration,
-		'internship_responsible_id'=>$this->internship_responsible_id,
-        'internship_responsible'=>$this->internship_responsible
-        ];
+        $addedData=['internship_responsible'=>$this->internship_responsible];
+        return array_merge(parent::toArray($request),$addedData);
     }
 }

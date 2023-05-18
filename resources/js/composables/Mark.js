@@ -1,13 +1,13 @@
 
 import { ref } from "vue"
 
-export default function useInternship() {
+export default ()=> {
+
     const studentMarks = ref([])
 
 
   
     const getStudentMarks = async () => {
-        
         await axios.get('/marks').then((response) => {
             studentMarks.value = response.data.data
         })
@@ -25,12 +25,12 @@ export default function useInternship() {
         
         await axios.delete('/marks/'+id)
     }
+
     return {
         getStudentMarks,
         storeMark,
         updateMark,
         destroyMark,
-
         studentMarks,
     }
 }

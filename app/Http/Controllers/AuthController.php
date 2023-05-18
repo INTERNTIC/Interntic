@@ -2,41 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthRequest;
-use App\Http\Resources\StudentResource;
-use App\Models\DepartmentHead;
-use App\Models\InternshipResponsible;
-use App\Models\PasswordReset;
-use App\Models\StudentAccount;
 use App\Models\SuperAdmin;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use App\Traits\GeneralTrait;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail; 
 use Illuminate\Support\Str;
-
+use App\Traits\GeneralTrait;
+use Illuminate\Http\Request;
+use App\Models\PasswordReset;
+use App\Models\DepartmentHead;
+use App\Models\StudentAccount;
+use App\Http\Requests\AuthRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Models\InternshipResponsible;
+use App\Http\Resources\StudentResource;
+use App\Http\Resources\DepartmentHeadResource;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use App\Http\Resources\InternshipResponsibleResource;
+use App\Traits\SendEmail;
 
 class AuthController extends Controller
 {
     use GeneralTrait;
+    use SendEmail;
 
-    public function login(AuthRequest $request, $guard) 
+    public function login(AuthRequest $request, $guard)
     {
-        $request->validated();
         if ($guard == 'student') {
-            $account = StudentAccount::where('email', $request->email)->get()->first();
-            if ($account==false) {
+            $account = StudentAccount::where('email', $request->email)->first();
+            if (!$account) {
                 return $this->returnError('Your Email is invalid');
             }
-            
+
             if ($account->email_verified == 0) {
-                return $this->returnError('Your account is invalid');
+                return $this->returnError('Your account is unverified');
             }
         }
-        
+
 
         $token = auth()->guard($guard)->attempt(['email' => $request->email, 'password' => $request->password]);
         Auth::shouldUse($guard); // this is auth guard currently
@@ -45,16 +44,25 @@ class AuthController extends Controller
                 return $this->returnError('Invalid credentials');
             }
             $user = Auth::guard($guard)->user();
-            if(Auth::getDefaultDriver()=="student"){
-                $user=$user->student;
-                $user->token = $token;
-                $user->guard = $guard;
-                return $this->returnData(new StudentResource($user));
-            }
-
             $user->token = $token;
             $user->guard = $guard;
-            return $this->returnData($user);
+
+
+            switch ($guard) {
+                case config("global.student_guard"):
+                    $student = $user->student;
+                    $student->token = $token;
+                    $student->guard = $guard;
+                    return $this->returnData(new StudentResource($student));
+
+
+                case config("global.department_head_guard"):
+                    return $this->returnData(new DepartmentHeadResource($user));
+
+
+                case config("global.internship_responsible_guard"):
+                    return $this->returnData(new InternshipResponsibleResource($user));
+            }
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage());
         }
@@ -68,20 +76,27 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
+            $guard = Auth::getDefaultDriver();
             $token = JWTAuth::fromUser($user);
-            $guard=Auth::getDefaultDriver();
-            if($guard=="student"){
-                $user=$user->student;
-                $user->token = $token;
-                $user->guard = $guard;
-                return $this->returnData(new StudentResource($user));
-            }
-
             $user->token = $token;
             $user->guard = $guard;
 
-            return $this->returnData($user);
+            switch ($guard) {
+                case config("global.student_guard"):
+                    $student = $user->student;
+                    $student->token = $token;
+                    $student->guard = $guard;
+                    return $this->returnData(new StudentResource($student));
+                    break;
 
+                case config("global.department_head_guard"):
+                    return $this->returnData(new DepartmentHeadResource($user));
+                    break;
+
+                case config("global.internship_responsible_guard"):
+                    return $this->returnData(new InternshipResponsibleResource($user));
+                    break;
+            }
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage(), $th->getCode());
         }
@@ -93,12 +108,11 @@ class AuthController extends Controller
     {
         try {
             $token = $request->bearerToken();
-            
-            if (!$token)
-            {
+
+            if (!$token) {
                 return $this->returnError('Something was wrong');
             }
-            JWTAuth::setToken($token)->invalidate(); 
+            JWTAuth::setToken($token)->invalidate();
             // Auth::logoutOtherDevices($token);
             return $this->returnSuccessMessage('Logged out Successfully');
         } catch (\Throwable $th) {
@@ -107,111 +121,97 @@ class AuthController extends Controller
     }
 
 
-
-
-    public function askResetPassword(Request $request,$guard)
+    public function getAccount($email, $guard)
     {
-        if($guard=='student')
-        {
-            $account= StudentAccount::where('email', $request->email)->get()->first();
-        }
-        else
-        {
-            if($guard=='department_head')
-            {
-                $account= DepartmentHead::where('email', $request->email)->get()->first();
-            }
-            else
-            {
-                if($guard=='super_admin')
-                {
-                    $account= SuperAdmin::where('email', $request->email)->get()->first();
-                }
-                else
-                {
-                    if($guard=='internship_responsibles')
-                    {
-                        $account= InternshipResponsible::where('email', $request->email)->get()->first();
-                    }
-                }
-            }
-        }
+        $account = null;
+        switch ($guard) {
+            case 'student':
+                $account = StudentAccount::where('email', $email)->first();
 
-        if($account==false) {
-            return $this->returnError('Make sure that you have an active account');
+            case 'department_head':
+                $account = DepartmentHead::where('email', $email)->first();
+
+            case 'super_admin':
+                $account = SuperAdmin::where('email', $email)->first();
+
+            case 'internship_responsible':
+                $account = InternshipResponsible::where('email', $email)->first();
         }
+        return $account??$this->returnError("wrong Email");
         
-        $email=$request->email;
-        $token = Str::random(64);
+    }
 
-        $data=[];
-        $data['token']=$token;
-        $data['guard']=$guard;
+    public function forgetPassword(Request $request, $guard)
+    {
+        // validate the request
+        try {
 
-    
-        Mail::send('resetPassword',$data ,function($message) use($email)
-        {
-            $message -> subject('Reset password');
-            $message->to($email);
-        });
+            $this->getAccount($request->email, $guard);
 
-        PasswordReset::create([
-            'email'=> $email,
-            'token'=> $token,
+            $email = $request->email;
+            $token = Str::random(64);
+
+            $data = [];
+            $data['token'] = $token;
+            $data['guard'] = $guard;
+
+
+            $this->sendEmail($data, $email, "resetPassword", "Reset password");
+
+            PasswordReset::create([
+                'email' => $email,
+                'token' => $token,
+            ]);
+            return $this->returnSuccessMessage("please check your inbox",);
+        } catch (\Throwable $th) {
+            return $this->returnError($th->getMessage());
+            return $this->returnError("please verify your Connection and try again",);
+        }
+    }
+
+
+
+    public function updatePassword(Request $request)
+    {
+
+        $request->validate([
+            "old_password" => ['required','current_password'],
+            'password' => ['required', "confirmed", 'min:6'],
+        ]);
+        
+
+        $user=auth()->user();
+
+        
+
+        $user->update([
+            'password' => bcrypt($request->password)
         ]);
 
-
+        return $this->returnSuccessMessage("password changed successfully");
     }
-
-
-
     public function resetPassword(Request $request)
     {
-        $token=$request->token;
-        $guard=$request->guard;
 
-        $resetAccount= PasswordReset::where('token', $token)->get()->first();
+        $request->validate([
+            // TODO guard should be in array
+            "token" => ['required', 'exists:password_resets,token'],
+            "guard" => ['required'],
+            "email" => ['required'],
+            'password' => ['required', "confirmed", 'min:6'],
+        ]);
+        $token = $request->token;
+        $guard = $request->guard;
 
-        if($guard=='student')
-        {
-            $account= StudentAccount::where('email', $resetAccount->email)->get()->first();
-        }
-        else
-        {
-            if($guard=='department_head')
-            {
-                $account= DepartmentHead::where('email', $resetAccount->email)->get()->first();
-            }
-            else
-            {
-                if($guard=='super_admin')
-                {
-                    $account= SuperAdmin::where('email', $resetAccount->email)->get()->first();
-                }
-            }
-        }
+        $resetAccount = PasswordReset::where('token', $token)->get()->first();
 
-        if ($resetAccount==false || $account==false) {
-            return $this->returnError('Try again');
-        }
+        $account = $this->getAccount($request->email, $guard);
 
-        if($request->password==$request->confirme_password)
-        {
-            Validator::make($request->all(),[                
-                'password'=>['required','min:6'],
-            ])->validate();
-            
-            $account->update([ 
-                'password'=>Hash::make($request->password)
-            ]);
-            
-            $resetAccount->delete();
-        }
-        else
-        {
-            return $this->returnError('Password does not much');
-        }
-        
+        $account->update([
+            'password' => bcrypt($request->password)
+        ]);
+
+        $resetAccount->delete();
+        return $this->returnSuccessMessage("password changed successfully");
     }
-
 }

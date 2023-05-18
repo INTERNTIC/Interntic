@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+import { onMounted, ref } from 'vue';
+
+
 import useInternshipResponsibleAccount from '@/composables/InternshipResponsibleAccount.js';
 import {Notify,getErrorText,refreshTable} from "@/newShared";
 
@@ -128,25 +128,18 @@ onMounted(async () => {
                     <p class="text-muted font-14">
                         Here is a list of all requested accounts
                     </p>
-                    <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Company Name</th>
-                                        <th>Company Location</th>
-                                        <th data-orderable="false">Action</th>
-                                    </tr>
-                                </thead>
 
-                            </table>
-                        </div>
+                    <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Company Name</th>
+                                <th>Company Location</th>
+                                <th data-orderable="false">Action</th>
+                            </tr>
+                        </thead>
 
-                        <!-- end preview-->
-                    </div>
-                    <!-- end tab-content-->
-
+                    </table>
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->

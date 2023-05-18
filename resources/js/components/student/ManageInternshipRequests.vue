@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import DangerModalOutline from '../modal/DangerModalOutline.vue';
-import FullWidthModal from '@/components/modal/FullWidthModal.vue';
-import CustomInput from '@/components/form/CustomInput.vue';
+
+
 import useInternshipRequest from '@/composables/InternshipRequests.js';
-import {Notify,getErrorText,refreshTable} from "@/newShared";
+import { Notify, getErrorText, refreshTable } from "@/newShared";
 import SelectInput from '../form/SelectInput.vue';
 import {
     generalErrorMsg,
@@ -25,6 +25,7 @@ const {
     updateInternshipRequest,
     destroyInternshipRequest,
     studentsRequests,
+
 } = useInternshipRequest();
 let addNewCompany = ref(false);
 
@@ -83,8 +84,8 @@ const deleteInternshipRequest = async () => {
 
 
 onMounted(async () => {
-    await getInternshipRequests()
-    await getCompanies()
+    await getInternshipRequests();
+    await getCompanies();
 });
 
 
@@ -95,7 +96,7 @@ onMounted(async () => {
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
-                <h4 class="page-title">Manage Students</h4>
+                <h4 class="page-title">Manage Internship Requests</h4>
                 <div>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#full-width-modal">Add a Request</button>
@@ -122,8 +123,8 @@ onMounted(async () => {
                 </div> <!-- end card-body -->
             </div>
         </div>
-    </div> <!-- end row-->
-    <!-- Full width modal -->
+    </div>
+  
     <FullWidthModal>
         <template v-slot:body>
             <div class="row">
@@ -174,8 +175,9 @@ onMounted(async () => {
                                             :showError="errors.hasOwnProperty('location')" />
                                     </div>
                                     <div v-if="addNewCompany" class="col-lg-6">
-    
-                                        <button @click="saveNewCompany" type="button" class="btn btn-info me-2">Submit</button>
+
+                                        <button @click="saveNewCompany" type="button"
+                                            class="btn btn-info me-2">Submit</button>
                                         <button @click="addNewCompany = false" type="button"
                                             class="btn btn-light">Cancel</button>
                                     </div>

@@ -76,12 +76,27 @@ class StudentCvItemController extends Controller
 
             }
         }
-        $addData = [
-            "image" => $studentCvItem->image."|".implode("|", $files)
-        ];
+        if(!$studentCvItem->image==""){
+            $addData = [
+                "image" =>  implode("|",$files)
+            ];
+        }else{
+            $imagesArray= explode("|",$studentCvItem->image);
+            $addData = [
+                "image" =>  implode("|",array_merge($imagesArray,$files))
+            ];
+        }
 
-        $studentCvItem->update($request->only("details")+$addData);
-        return $this->returnData($request->only('details') );
+    
+        
+        // if (!empty($files)) {
+        //     $addData = [
+        //         "image" => $studentCvItem->image . "|" . implode("|", $files)
+        //     ];
+        // }
+
+        $studentCvItem->update($request->only("details") + $addData);
+        return $this->returnData($request->only('details'));
     }
     public function destroy(StudentCvItem $studentCvItem)
     {

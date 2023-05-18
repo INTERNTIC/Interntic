@@ -1,7 +1,7 @@
 
 import { ref } from "vue"
-export default function useOffer() {
-  
+export default ()=> {
+
 
     const offers = ref([])
     const offersPagination = ref({})
