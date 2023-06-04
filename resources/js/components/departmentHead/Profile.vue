@@ -12,10 +12,10 @@ import {
     errors
 } from "@/axiosClient";
 const {
-    updateDepartment,
+    update_department,
 } = useDepartment();
 const {
-    updateDepartmentHead,
+    update_department_head,
 } = useDepartmentHead();
 
 const authStore = useAuthStore();
@@ -27,12 +27,12 @@ const full_name = computed(() => {
 })
 
 const saveDepartmentHead = async () => {
-    await updateDepartmentHead(currentDepartmentHead.value.id,currentDepartmentHead.value)
+    await update_department_head(currentDepartmentHead.value.id,currentDepartmentHead.value)
     Notify(generalSuccessMsg.value, generalErrorMsg.value)
 }
 
 const saveDepartment = async () => {
-    await updateDepartment(currentDepartmentHead.value.department.id,currentDepartmentHead.value.department)
+    await update_department(currentDepartmentHead.value.department.id,currentDepartmentHead.value.department)
     Notify(generalSuccessMsg.value, generalErrorMsg.value)
 }
 
@@ -58,7 +58,7 @@ const saveDepartment = async () => {
         <div class="col-xl-4 col-lg-5">
             <div class="card text-center">
                 <div class="card-body">
-                    <img src="assets/images/users/avatar-1.jpg" class="rounded-circle avatar-lg img-thumbnail"
+                    <img src="assets/images/users/department_head.png" class="rounded-circle avatar-lg img-thumbnail"
                         alt="profile-image">
 
                     <h4 class="mb-0 mt-2">{{full_name}}</h4>

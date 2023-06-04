@@ -6,8 +6,8 @@ import Checkbox from '../components/form/Checkbox.vue';
 import { useRoute } from 'vue-router';
 import DangerNofitication from '../components/notification/DangerNofitication.vue';
 // import { useAuthStore } from '../stores/AuthStore';
-import useAuth from "@/composables/Auth.js"
-import { getErrorText } from "@/newShared";
+import useAuth from "@/composables/Auth.js";
+import { getErrorText,Notify } from "@/newShared";
 import {
     generalErrorMsg,
     generalSuccessMsg,
@@ -17,7 +17,7 @@ import {
 const {
     login
 } = useAuth()
-const route = useRoute()
+const route = useRoute();
 // const authStore = useAuthStore();
 
 
@@ -30,6 +30,10 @@ const loginFormModel = ref({
 
 const body = document.querySelector('body');
 onMounted(() => {
+    if (route.query.message) {
+        generalSuccessMsg.value = route.query.message;
+        Notify(generalSuccessMsg.value, generalErrorMsg.value)   
+    }
     body.classList.add('authentication-bg')
 })
 onUnmounted(() => {
@@ -81,11 +85,11 @@ onUnmounted(() => {
                     </div>
                     <!-- end card -->
 
-                    <div class="row mt-3">
+                    <div class="row mt-3" v-if="route.params.guard!='department_head' && route.params.guard!='super_admin'">
                         <div class="col-12 text-center">
-                            <p class="text-muted">Don't have an account? <router-link :to="{ name: 'signUp' }"
-                                    class="text-muted ms-1"><b>Sign Up</b></router-link></p>
-                        </div> <!-- end col -->
+                            <p class="text-muted">Don't have an account? <router-link :to="`/sign-up/${route.params.guard}`"
+                                class="text-muted ms-1"><b>Sign Up</b></router-link></p>
+                        </div>
                     </div>
                     <!-- end row -->
 
@@ -98,7 +102,7 @@ onUnmounted(() => {
     <!-- end page -->
 
     <footer class="footer footer-alt">
-        2018 -2023 © Hyper - Coderthemes.com
+        2018 -2023 © L3 - INTERNTIC
     </footer>
 
 

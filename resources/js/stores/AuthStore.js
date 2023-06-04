@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
         is_student: false,
         is_internship_responsible: false,
         is_department_head: false,
+        is_super_admin: false,
     }),
     getters: {
     },

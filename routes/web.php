@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Models\DepartmentCause;
 use App\Models\InternshipRequest;
 use Illuminate\Support\Facades\Route;
 /*
@@ -16,22 +18,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/home', function () {
+    return view('home');
+});
 Route::view('/reset-password', 'welcome')->name('resetPassword.index');
-Route::get('/pdf',function(){
-    $internshipRequest=InternshipRequest::find(6);
-    $student = $internshipRequest->student;
-    // $internship_responsible = $internshipRequest->internship_responsible();
+// TODO fix RefusedInternshipRequest_department
+
+Route::get('/test',function(){
+    
     $data = [
-        "student_full_name" => $student->first_name . " " . $student->last_name,
-        "birthday" => date_format(date_create($student->birthday), 'Y-m-d'),
-        "place_of_birth" => $student->place_of_birth,
-        "duration" => "12 days",
-        "company_name" => $internshipRequest->company->name . " " . $internshipRequest->company->location,
-        "end_date" => date_format(date_create($internshipRequest->end_at), 'Y-m-d'),
-        "internship_responsible_full_name" => "internship_responsible_full_name",
-        // "internship_responsible_full_name" => $internship_responsible->first_name . " " . $internship_responsible->last_name,
+        "internship_request"=>InternshipRequest::find(3),
     ];
-    return view('certeficate.certaficate',$data);
+    return view('StudentValidateInternship',$data);
 });
 
 Route::view('{any}', 'welcome')->where('any','^(?!api/).*');

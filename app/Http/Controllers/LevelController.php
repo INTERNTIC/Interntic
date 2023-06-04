@@ -44,13 +44,7 @@ class LevelController extends Controller
         return $this->returnData($level);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Level  $level
-     * @return \Illuminate\Http\Response
-     */
+  
     public function update(Request $request, Level $level)
     {
         Validator::make($request->all(),[ 

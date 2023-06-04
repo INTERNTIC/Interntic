@@ -6,7 +6,6 @@ import {
     generalSuccessMsg,
     errors
 } from "@/axiosClient";
-import FloatingInput from '../components/form/FloatingInput.vue';
 import CustomPasswordInput from '../components/form/CustomPasswordInput.vue';
 import useAuth from "@/composables/auth.js";
 const { updatePassword } = useAuth()

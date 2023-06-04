@@ -2,34 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StudentCvItem;
-use App\Http\Requests\StudentCvItemRequest;
 use App\Traits\GeneralTrait;
+use App\Models\StudentCvItem;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StudentCvItemRequest;
+use App\Http\Resources\StudentCvItemResource;
+use App\Models\Student;
 
 class StudentCvItemController extends Controller
 {
     // TODO try to remove any js script in deatails input "Warning"
     use GeneralTrait;
 
-    public function index()
+    public function index(Student $student)
     {
-        return $this->returnData(StudentCvItem::all());
+        switch (Auth::getDefaultDriver()) {
+            case config('global.student_guard'):
+                $student_cvs = StudentCvItem::where("student_id", auth()->id())->get();
+                break;
+            case (config('global.student_guard') || config('global.student_guard')):
+                $student_cvs = StudentCvItem::where("student_id", $student->id)->get();
+                break;
+            default:
+                abort(403);
+                break;
+            }
+            return $this->returnData(StudentCvItemResource::collection($student_cvs));
     }
 
     public function store(StudentCvItemRequest $request)
     {
-        // TODO save mitliple img
-        // TODO count number of <br> to escape long posts 
-        // TODO try to avoid java script here
-
-        // $path = $request->file('image')->store('temp');
-        // $file = $request->file('image');
-        // $fileName = $file->getClientOriginalName();
-        // $file->move(public_path('uploads'), $fileName);
-
-
-
-
         $files = [];
 
         if ($request->file('image')) {
@@ -76,19 +78,19 @@ class StudentCvItemController extends Controller
 
             }
         }
-        if(!$studentCvItem->image==""){
+        if (!$studentCvItem->image == "") {
             $addData = [
-                "image" =>  implode("|",$files)
+                "image" =>  implode("|", $files)
             ];
-        }else{
-            $imagesArray= explode("|",$studentCvItem->image);
+        } else {
+            $imagesArray = explode("|", $studentCvItem->image);
             $addData = [
-                "image" =>  implode("|",array_merge($imagesArray,$files))
+                "image" =>  implode("|", array_merge($imagesArray, $files))
             ];
         }
 
-    
-        
+
+
         // if (!empty($files)) {
         //     $addData = [
         //         "image" => $studentCvItem->image . "|" . implode("|", $files)

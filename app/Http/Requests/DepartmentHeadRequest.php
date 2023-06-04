@@ -25,7 +25,7 @@ class DepartmentHeadRequest extends FormRequest
      */
     public function rules()
     {
-        $department_head = $this->route('departmentHead') ?? new DepartmentHead();
+        $department_head = $this->route('department_head') ?? new DepartmentHead();
         // Password is not required if this is an update
         return[
             'first_name'=>'required',

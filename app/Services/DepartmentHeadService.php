@@ -22,11 +22,11 @@ class DepartmentHeadService
         $internshipResponsible_email = $internshipRequest->internshipResponsible_email;
         $company_id=$internshipRequest->company->id;
         
-        $data=$internshipResponsibleService->findOrCreate($internshipResponsible_email,$company_id);
+        $internshipResponsibleService->create_account_if_not_found($internshipResponsible_email,$company_id);
 
-        $this->sendEmail($data, $internshipResponsible_email, 'CreatingInternshipResponsibleAccount', 'Creating Internship Responsible Account');
         $internshipRequest->status = config('global.internship_request_status.accepted_by_department_head');
         $internshipRequest->save();
+        $this->sendEmail([], $internshipRequest->student->student_account->email, 'Department_head_validate_a_request', 'Internship Request Approved by Department Head');
 
         return $this->returnSuccessMessage('Internship Request Accepted Successfully');
     }
@@ -48,28 +48,27 @@ class DepartmentHeadService
         ];
 
         $departmentRefuse = DepartmentRefuse::create($departmentRefuseRequest);
-        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest', 'Refused Internship Request');
+        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_department', 'Refused Internship Request');
         $internshipRequest->status = config('global.internship_request_status.refused_by_department_head');
         $internshipRequest->save();
 
 
         return $this->returnSuccessMessage('Internship Request Refused in order to be edited');
-        // TODO test this method of insert
     }
 
-    public function refuse_definitivelyTheInternshipRequest_DepartmentHead(Request $request, InternshipRequest $internshipRequest)
+    public function refuse_definitivelyTheInternshipRequest_DepartmentHead(Request $request, InternshipRequest $internship_request)
     {
-        $departmentCause = DepartmentCause::find($request->cause_id);
-        $student = Student::find($internshipRequest->student_id);
-        $studentAccount = StudentAccount::find($internshipRequest->student_id);
+        $department_cause = DepartmentCause::find($request->cause_id);
+        $student = Student::find($internship_request->student_id);
+        $studentAccount = StudentAccount::find($internship_request->student_id);
         $data = [
-            'departmentCause' => $departmentCause,
-            'internshipRequest' => $internshipRequest,
+            'department_cause' => $department_cause,
+            'internship_request' => $internship_request,
             'student' => $student
         ];
 
-        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest', 'Refused Internship Request');
-        $internshipRequest->delete();
+        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_department', 'Refused Internship Request');
+        $internship_request->delete();
         return $this->returnSuccessMessage('Internship Request Refused definitively');
     }
 }

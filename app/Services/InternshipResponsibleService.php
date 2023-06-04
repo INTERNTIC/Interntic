@@ -20,12 +20,11 @@ class InternshipResponsibleService
 {
     use SendEmail;
     use GeneralTrait;
-    public function findOrCreate($internshipResponsible_email, $company_id)
+    public function create_account_if_not_found($internshipResponsible_email, $company_id)
     {
         $internshipResponsible = InternshipResponsible::findByEmail($internshipResponsible_email);
 
-        if ($internshipResponsible == false) {
-
+        if (!$internshipResponsible) {
             $internshipResponsible_password = Str::random(10);
 
             $internshipResponsibleRequest = new InternshipResponsibleRequest();
@@ -38,27 +37,26 @@ class InternshipResponsibleService
                 'company_id' => $company_id,
             ]);
 
-            $validatedData=$internshipResponsibleRequest->validate($internshipResponsibleRequest->rules());
+            $validatedData = $internshipResponsibleRequest->validate($internshipResponsibleRequest->rules());
             $internshipResponsible =  InternshipResponsible::create($validatedData);
             $credentials = [
                 "email" => $internshipResponsible_email,
                 "password" => $internshipResponsible_password
             ];
             $data = [
-                'internshipResponsible' => $internshipResponsible,
+                // 'internship_responsible' => $internshipResponsible,
                 'credentials' => $credentials
             ];
+            $this->sendEmail($data, $internshipResponsible_email, 'CreatingInternshipResponsibleAccount', 'Creating Internship Responsible Account');
         } else {
-            $data = [
-                'internshipResponsible' => $internshipResponsible,
-            ];
+            $this->sendEmail([], $internshipResponsible_email, 'notify_internship_head_new_request', 'New internship request');
         }
-        return $data;
     }
     public function acceptTheInternshipRequest_InternshipResponsible(InternshipRequest $internshipRequest)
     {
         $studentAccount = StudentAccount::find($internshipRequest->student_id);
-        $this->sendEmail($internshipRequest->toArray(), $studentAccount->email, 'AcceptedStudentInternshipRequest', 'Accepted Student Internship Request');
+        $data = ["internship_request" => $internshipRequest];
+        $this->sendEmail($data, $studentAccount->email, 'AcceptedStudentInternshipRequest', 'Accepted Student Internship Request');
 
         $internshipRequest->status = config('global.internship_request_status.accepted_by_internship_responsible');
         $internshipRequest->save();
@@ -68,14 +66,13 @@ class InternshipResponsibleService
     public function refuseTheInternshipRequest_InternshipResponsible(Request $request, InternshipRequest $internshipRequest)
     {
         $companyCause = CompanyCause::find($request->cause_id);
-        $student = Student::find($internshipRequest->student_id);
         $studentAccount = StudentAccount::find($internshipRequest->student_id);
         $data = [
-            'companyCause' => $companyCause,
-            'internshipRequest' => $internshipRequest,
-            'student' => $student
+            'company_cause' => $companyCause,
+            'internship_request' => $internshipRequest,
+            'status' => false
         ];
-        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest', 'Refused Internship Request');
+        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_company', 'Refused Internship Request');
 
         $companyRefuseRequest = [
             'internship_request_id' => $internshipRequest->id,
@@ -88,22 +85,20 @@ class InternshipResponsibleService
 
 
         return $this->returnSuccessMessage('Internship Request Refused in order to be edited');
-        // TODO test this method of insert
     }
-    
+
 
     public function refuse_definitivelyTheInternshipRequest_InternshipResponsible(Request $request, InternshipRequest $internshipRequest)
     {
         $companyCause = CompanyCause::find($request->cause_id);
-        $student = Student::find($internshipRequest->student_id);
         $studentAccount = StudentAccount::find($internshipRequest->student_id);
         $data = [
-            'companyCause' => $companyCause,
-            'internshipRequest' => $internshipRequest,
-            'student' => $student
+            'company_cause' => $companyCause,
+            'internship_request' => $internshipRequest,
+            'status' => true
         ];
 
-        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest', 'Refused Internship Request');
+        $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_company', 'Refused Internship Request');
         $internshipRequest->delete();
         return $this->returnSuccessMessage('Internship Request Refused definitively');
     }

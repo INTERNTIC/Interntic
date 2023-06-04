@@ -56,7 +56,7 @@ const saveCompany = async () => {
         <div class="col-xl-4 col-lg-5">
             <div class="card text-center">
                 <div class="card-body">
-                    <img src="assets/images/users/avatar-1.jpg" class="rounded-circle avatar-lg img-thumbnail"
+                    <img src="assets/images/users/internship_responsible.png" class="rounded-circle avatar-lg img-thumbnail"
                         alt="profile-image">
 
                     <h4 class="mb-0 mt-2">{{full_name}}</h4>

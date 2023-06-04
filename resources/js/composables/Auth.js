@@ -28,6 +28,9 @@ const setAuthenticated = (response) => {
         case "department_head":
             authStore.is_department_head = true;
             break;
+        case "super_admin":
+            authStore.is_super_admin = true;
+            break;
     }
     // save guard for next login
     localStorage.setItem('guard', response.data.data.guard);
@@ -35,6 +38,12 @@ const setAuthenticated = (response) => {
 export default () => {
 
 
+    const student_sing_up = async (student) => {
+        await axios.post('/studentCreateAccount',student);
+    }
+    const internship_responsible_sign_up = async (internship_responsible) => {
+        await axios.post('/accountRequests',internship_responsible);
+    }
     const login = async (guard, rememberMe, credentials) => {
         if (guards.includes(guard)) {
 
@@ -54,7 +63,6 @@ export default () => {
             router.push({ name: "login", params: { guard: guard } })
 
         }
-
     }
     const getUserByToken = async (token) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -95,5 +103,7 @@ export default () => {
         getUserByToken,
         resetPassword,
         updatePassword,
+        student_sing_up,
+        internship_responsible_sign_up
     }
 }

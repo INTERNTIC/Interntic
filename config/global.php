@@ -12,5 +12,6 @@ return[
     "accepted_by_internship_responsible"=>4,
     "accepted_by_student"=>5,
 ],
+"guards"=>array("student","internship_responsible","department_head","super_admin"),
 ];
 ?>

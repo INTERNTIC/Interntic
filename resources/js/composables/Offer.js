@@ -9,7 +9,6 @@ export default ()=> {
 
     
     const getOffers = async (url='/displayOffers') => {
-        
         await axios.get(url).then((response) => {
             offers.value = response.data.data
             offersPagination.value=response.data

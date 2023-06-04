@@ -9,7 +9,8 @@ import UpdatePassword from "../pages/UpdatePassword.vue";
 import PageNotFound from "../pages/PageNotFound.vue";
 import UnauthorizedPage from "../pages/UnauthorizedPage.vue";
 import CompanySignUp from "../components/signUp/CompanySignUp.vue";
-import StudentSignUp from "../components/signUp/StudentSignUp.vue";
+import StudentSignUp from "@/components/signUp/StudentSignUp.vue";
+import StudentCvView from "../pages/StudentCv.vue";
 // InternshipResponsible
 import InternshipResponsibleManageInternshipRequests from '../components/internshipResponsible/ManageInternshipRequests.vue';
 import AssessStudents from '../components/internshipResponsible/AssessStudents.vue';
@@ -34,6 +35,11 @@ import StudentProfile from "../components/student/Profile.vue";
 import RefusedInternships from "../components/student/RefusedInternships.vue";
 import AcceptedInternships from "../components/student/AcceptedInternships.vue";
 // END Student
+// Super Admin 
+import ManageDepartment from '../components/super_admin/ManageDepartment.vue';
+import ManageDepartmentHeadAccount from '../components/super_admin/ManageDepartmentHeadAccount.vue';
+import SuperAdminProfile from '../components/super_admin/Profile.vue';
+
 import Statistiques from "../components/dashboard/Statistiques.vue";
 import useAuth from "@/composables/Auth.js";
 import { guards } from "@/newShared";
@@ -44,9 +50,9 @@ import {
   nextRouteIfAuth,
   redirectToDefaultLoginGuard
 } from "./authFunctions.js";
-const openPages=["login", "signUp"];
+const openPages = ["login", "signUp"];
 
-const { getUserByToken,logout } = useAuth();
+const { getUserByToken, logout } = useAuth();
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -56,7 +62,7 @@ const router = createRouter({
       path: "/",
       name: "dashboard",
       component: Dashboard,
-      meta:{
+      meta: {
         needsAuth: true
       },
       children: [
@@ -73,7 +79,7 @@ const router = createRouter({
         {
           path: "/profile",
           name: "profile",
-          component:  ()=> {
+          component: () => {
             const authStore = useAuthStore();
             switch (authStore.userGuard) {
 
@@ -85,6 +91,29 @@ const router = createRouter({
 
               case "student":
                 return StudentProfile;
+              case "super_admin":
+                return SuperAdminProfile;
+              default:
+                return PageNotFound;
+
+            }
+          }
+        },
+        {
+          path: "/student-cv/:student_id",
+          name: "student-cv",
+          component: () => {
+            const authStore = useAuthStore();
+            switch (authStore.userGuard) {
+
+              case "internship_responsible":
+                return StudentCvView
+
+              case "department_head":
+                return StudentCvView
+
+              case "student":
+                return UnauthorizedPage;
 
             }
           }
@@ -191,7 +220,26 @@ const router = createRouter({
             },
           ]
         },
-        
+        // Super admin part
+
+        {
+          path: "/super-admin",
+          meta: {
+            guard: "super_admin"
+          }, children: [
+            {
+              path: "department-haed/manage",
+              name: "manage_department_head_account",
+              component: ManageDepartmentHeadAccount,
+            },
+            {
+              path: "department/manage",
+              name: "manage_department",
+              component: ManageDepartment,
+            }
+          ]
+        },
+
       ]
     },
     {
@@ -211,26 +259,33 @@ const router = createRouter({
       component: Logout,
     },
     {
-      path: "/signUp",
-      name: "signUp",
+      path: "/sign-up",
+      name: "sign-up",
       component: SignUp,
-      // beforeEnter: [redirectToDashboardIfAuth],
-      meta: {
-        notAPage: true,
-      },
       children: [
         {
-          path: "/signUp",
-          name: "studentSignUp",
-          component: StudentSignUp,
+          //   const guard = to.params.guard;
+          //   switch (guard) {
+          //     case "internship_responsible":
+          //       return CompanySignUp;
+          //     case "department_head":
+          //       return StudentCvView
+          //     case "student":
+          //       return StudentSignUp
+          //     default:
+          //       return PageNotFound
+          // }
+          path: "student",
+          component: StudentSignUp
         },
         {
-          path: "/signUp/company",
-          name: "companySignUp",
-          component: CompanySignUp,
+          path: "internship_responsible",
+          component: CompanySignUp
+
         }
       ]
     }
+    // beforeEnter: [redirectToDashboardIfAuth],
   ],
 });
 

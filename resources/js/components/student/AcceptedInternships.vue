@@ -1,24 +1,56 @@
 <script setup>
 import { onMounted } from 'vue';
 import useInternshipRequest from '@/composables/InternshipRequests.js';
-
-
+import { useLoading } from 'vue-loading-overlay';
+import { Notify } from "@/newShared";
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+} from "@/axiosClient";
 const {
     getInternshipsAcceptedByDepartmentHead,
     getInternshipsAcceptedByInternshipResponsible,
     internshipsAcceptedByDepartmentHead,
     internshipsAcceptedByInternshipResponsible,
+    accept_internship,
+    destroyInternshipRequest
 } = useInternshipRequest();
 
+const $loading = useLoading({
+});
 
 
 onMounted(async () => {
     await getInternshipsAcceptedByInternshipResponsible();
     await getInternshipsAcceptedByDepartmentHead();
-    
+
 });
 
-
+const accept_my_internship = async (_internship_id) => {
+    const loader = $loading.show({
+        color: 'green',
+    });
+    await accept_internship(_internship_id);
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalErrorMsg.value == "") {
+        await getInternshipsAcceptedByInternshipResponsible();
+        await getInternshipsAcceptedByDepartmentHead();
+    }
+    loader.hide();
+}
+const delete_my_internship = async (_internship_id) => {
+    const loader = $loading.show({
+        color: 'green',
+    });
+    await destroyInternshipRequest(_internship_id);
+    Notify(generalSuccessMsg.value, generalErrorMsg.value)
+    if (generalErrorMsg.value == "") {
+        await getInternshipsAcceptedByInternshipResponsible();
+        await getInternshipsAcceptedByDepartmentHead();
+    }
+    loader.hide();
+}
 
 
 </script>
@@ -41,8 +73,11 @@ onMounted(async () => {
                     <p class="text-muted font-14">Internship Boss Email : {{ internship.internshipResponsible_email }} </p>
                     <p class="text-muted font-14">Company : <b> {{ internship.company.name }}</b> , <b>
                             {{ internship.company.location }}</b> </p>
-
-                </div> <!-- end card-body -->
+                    <div>
+                        <button @click="delete_my_internship(internship.id)" type="button"
+                            class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div v-for="internship in internshipsAcceptedByInternshipResponsible" :key="internship.id" class="col-md-6">
@@ -51,12 +86,18 @@ onMounted(async () => {
                     <h4 class="header-title">{{ internship.theme }}</h4>
                     <p class="font-14">from: <span class="text-muted"> {{ internship.start_at }}</span> to: <span
                             class="text-muted">{{ internship.end_at }}</span> </p>
-                            <p class="text-muted font-14">Status : {{ internship.textStatus }} </p>
+                    <p class="text-muted font-14">Status : {{ internship.textStatus }} </p>
                     <p class="text-muted font-14">Internship Boss Email : {{ internship.internshipResponsible_email }} </p>
                     <p class="text-muted font-14">Company : <b> {{ internship.company.name }}</b> , <b>
                             {{ internship.company.location }}</b> </p>
 
-                </div> <!-- end card-body -->
+                    <div>
+                        <button @click="delete_my_internship(internship.id)" type="button"
+                            class="btn btn-danger">Delete</button>
+                        <button @click="accept_my_internship(internship.id)" type="button"
+                            class="btn btn-warning ms-2">Validate</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

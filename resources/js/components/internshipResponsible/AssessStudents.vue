@@ -194,7 +194,7 @@ onMounted(async () => {
         </div><!-- end col-->
     </div> <!-- end row-->
     <!-- Full width modal -->
-    <FullWidthModal>
+    <FullWidthModal >
         <template v-slot:body>
             <div class="row">
                 <div class="col-12">
@@ -244,15 +244,14 @@ onMounted(async () => {
             <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
         </template>
     </FullWidthModal>
-    <FullWidthModal modalId="full-width-modal-assessment">
+    <FullWidthModal modal_heading="Assess Student" modalId="full-width-modal-assessment">
         <template v-slot:body>
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title">Assess Student </h4>
                             <p class="text-muted font-14">
-                                Assess Student
+                                Only date is required
                             </p>
                             <form class="row">
 

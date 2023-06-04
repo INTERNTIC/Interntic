@@ -12,19 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-/**
- * Class StudentAccount
- * 
- * @property int $id
- * @property string $email
- * @property string $password
- * @property string|null $token
- * @property int $email_verified
- * 
- * @property Student $student
- *
- * @package App\Models
- */
+
 class StudentAccount extends Authenticatable implements JWTSubject , MustVerifyEmail
 {
 	use Notifiable;

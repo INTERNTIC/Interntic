@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Traits\SendEmail;
 use App\Models\Department;
 use App\Models\CompanyCause;
 use App\Traits\GeneralTrait;
@@ -22,23 +21,29 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\InternshipResponsibleService;
 use App\Http\Requests\InternshipRequest_Request;
 use App\Http\Resources\InternshipRequestResource;
-
+use App\Services\StudentService;
 
 class InternshipRequestController extends Controller
 {
     public $decisions = ['accept', 'refuse', 'refuse_definitively'];
-    use GeneralTrait, SendEmail;
+    use GeneralTrait;
+
     public function index()
     {
-        // todo the auth sould be departemnt head or interndhip respo
-        if (Auth::getDefaultDriver() == config('global.department_head_guard')) {
-            $internshipRequests = Department::find(auth()->user()->department_id)->internshipsWaiting;
-            // $internshipRequests = Department::find(auth()->user()->department_id);
-        } elseif (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
+        switch (Auth::getDefaultDriver()) {
+            case config('global.department_head_guard'):
+                $internshipRequests = Department::find(auth()->user()->department_id)->internshipsWaiting();
+                break;
+            case config('global.internship_responsible_guard'):
+                $internshipRequests = InternshipResponsible::find(auth()->user()->id)->internshipsWaiting();
+                break;
+            case config('global.student_guard'):
+                $internshipRequests = Student::find(auth()->user()->id)->waitingInternshipsForDepartment();
+                break;
 
-            $internshipRequests = InternshipResponsible::find(auth()->user()->id)->internshipsWaiting();
-        } elseif (Auth::getDefaultDriver() == config('global.student_guard')) {
-            $internshipRequests = Student::find(auth()->user()->id)->waitingInternshipsForDepartment();
+            default:
+                abort(403);
+                break;
         }
         return $this->returnData(InternshipRequestResource::collection($internshipRequests));
     }
@@ -46,10 +51,6 @@ class InternshipRequestController extends Controller
 
     public function store(InternshipRequest_Request $request)
     {
-        // TODO only student
-        // TODO check if this request came with a hidden input called ...
-        // this last showing if the request is in refused tables(compnay/Departement) to ne deleted form the table 
-
         $isExistInternshipResponsible = InternshipResponsible::where("email", $request->internshipResponsible_email)->first();
         if ($isExistInternshipResponsible) {
             if ($isExistInternshipResponsible->company->id != $request->company_id) {
@@ -63,16 +64,15 @@ class InternshipRequestController extends Controller
 
     public function show(InternshipRequest $internshipRequest)
     {
-        if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-
-            $authorized_ids = InternshipResponsible::find(auth()->id())->studentsIntershipRequestsId();
-            abort_if(!in_array($internshipRequest->id, $authorized_ids), 403);
-        } else if (Auth::getDefaultDriver() == config('global.department_head_guard')) {
-            $authorized_ids = Department::find(auth()->user()->department_id)->studentsIntershipRequestsId();
-            abort_if(!in_array($internshipRequest->id, $authorized_ids), 403);
-        } else {
-            // student part
-            return 3;
+        switch (Auth::getDefaultDriver()) {
+            case config('global.internship_responsible_guard'):
+                $authorized_ids = InternshipResponsible::find(auth()->id())->studentsIntershipRequestsId();
+                abort_if(!in_array($internshipRequest->id, $authorized_ids), 403);
+                break;
+            case config('global.department_head_guard'):
+                $authorized_ids = Department::find(auth()->user()->department_id)->studentsIntershipRequestsId();
+                abort_if(!in_array($internshipRequest->id, $authorized_ids), 403);
+                break;
         }
         return $this->returnData(new InternshipRequestResource($internshipRequest));
     }
@@ -204,12 +204,12 @@ class InternshipRequestController extends Controller
         }
     }
 
-    public function internshipsIAcceptedByInternshipResponsible()
+    public function internshipsAcceptedByInternshipResponsible()
     {
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
-            $internshipRequests = InternshipResponsible::find(auth()->id())->internshipsIAcceptedByInternshipResponsible();
+            $internshipRequests = InternshipResponsible::find(auth()->id())->internshipsAcceptedByInternshipResponsible();
         } else if (Auth::getDefaultDriver() == config('global.student_guard')) {
-            $internshipRequests = Student::find(auth()->id())->internshipsIAcceptedByInternshipResponsible();
+            $internshipRequests = Student::find(auth()->id())->internshipsAcceptedByInternshipResponsible();
         }
         return $this->returnData(InternshipRequestResource::collection($internshipRequests));
     }
@@ -237,8 +237,8 @@ class InternshipRequestController extends Controller
         // todo the auth sould be interndhip respo
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
             $internshipRequests = InternshipResponsible::find(auth()->id())->internshipsIAcceptedByStudent();
+            return $this->returnData(InternshipRequestResource::collection($internshipRequests));
         }
-        return $this->returnData(InternshipRequestResource::collection($internshipRequests));
     }
 
     public function studentInternshipsNotAssessedToday()
@@ -279,9 +279,22 @@ class InternshipRequestController extends Controller
         if (!in_array($internshipRequest->id, $authorized_ids)) {
             abort(403);
         }
-        $res=$PDFGenerateService->get_pdf($internshipRequest);
+        $res = $PDFGenerateService->get_pdf($internshipRequest);
         return $this->returnData($res, 'PDF generated successfully!');
 
         // return $this->returnData(InternshipRequestResource::collection($internshipRequests));
+    }
+    public function accept_my_internship(InternshipRequest $internshipRequest, StudentService $student_service)
+    {
+        // passed student internships
+        if (!Auth::getDefaultDriver() == config('global.student_guard')) {
+            abort(403);
+        }
+        $authorized_ids = Student::find(auth()->id())->internshipsAcceptedByInternshipResponsibleId();
+        if (!in_array($internshipRequest->id, $authorized_ids)) {
+            abort(403);
+        }
+        $student_service->accept_internship($internshipRequest);
+        return $this->returnSuccessMessage("Done");
     }
 }

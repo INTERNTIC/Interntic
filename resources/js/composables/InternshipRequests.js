@@ -62,7 +62,6 @@ export default () => {
         await axios.patch('/internshipRequests/' + id, internshipRequest)
     }
     const destroyInternshipRequest = async (id) => {
-
         await axios.delete('/internshipRequests/' + id)
     }
 
@@ -70,6 +69,10 @@ export default () => {
     const manageInternshipRequests = async (decision, internship_request_id) => {
 
         await axios.post('/internshipRequests/manage/' + internship_request_id, decision)
+    }
+    const accept_internship = async (internship_request_id) => {
+        // only student
+        await axios.post('/internships/accept/' + internship_request_id,)
     }
 
 
@@ -110,6 +113,7 @@ export default () => {
         getDepartmentRefuseCauses,
         getCompanyRefuseCauses,
         manageInternshipRequests,
+        accept_internship,
         storeDepartmentRefuseCause,
         storeCompanyRefuseCause,
         getInternshipsAcceptedByInternshipResponsible,

@@ -5,8 +5,8 @@ import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 
 import useInternshipRequest from '@/composables/InternshipRequests.js';
 import useGneratePdf from '@/composables/GneratePdf.js';
-import {useLoading} from 'vue-loading-overlay';
-import {Notify} from "@/newShared";
+import { useLoading } from 'vue-loading-overlay';
+import { Notify } from "@/newShared";
 import {
     generalErrorMsg,
     generalSuccessMsg,
@@ -61,12 +61,12 @@ $(document).on('click', 'tr button', async (e) => {
 });
 
 const getPdf = async () => {
-    const loader = $loading.show({color: 'green'});
+    const loader = $loading.show({ color: 'green' });
     await downloadPdf(currentInternship.value.id)
     Notify(generalSuccessMsg.value, generalErrorMsg.value)
     if (generalErrorMsg.value == '') {
         $('#document-modal').modal('hide')
-        currentInternship.value=_.cloneDeep(internshipsExemple)
+        currentInternship.value = _.cloneDeep(internshipsExemple)
     }
     loader.hide();
 
@@ -83,7 +83,7 @@ const principleColumns =
         { 'data': 'student.student_card' },
         {
             'data': 'null', render: function (data, type, row) {
-                const str=row.textStatus.replace(/_/g, " ");
+                const str = row.textStatus.replace(/_/g, " ");
                 return str.charAt(0).toUpperCase() + str.slice(1);
             }
         },
@@ -93,15 +93,17 @@ const principleColumns =
             data: null,
             render: function (data, type, row) {
                 if (data.status == 5) {
-                    return ` 
-                        <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#full-width-modal">View</button>
-    
+                    let buttons = `
+                    <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#full-width-modal">View</button>`;
+                    if (data.marks) {
+                        buttons += `
                         <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
                         data-bs-target="#mark-modal">Marks</button>
                         <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#document-modal">Print Documents</button>
-                        `;
+                        data-bs-target="#document-modal">Print Certificate</button>`;
+                    }
+                    return buttons;
                 } else {
                     return ` 
                         <button internship_id='${data.id}'  type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal"
@@ -240,8 +242,8 @@ onMounted(async () => {
         </template>
     </FullWidthModal>
 
-    <FullWidthModal modalId="mark-modal" v-if="currentInternship.marks">
-        <template v-slot:body>
+    <FullWidthModal modalId="mark-modal" >
+        <template v-if="currentInternship.marks" v-slot:body>
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -276,10 +278,10 @@ onMounted(async () => {
             <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
         </template>
     </FullWidthModal>
-    <InfoModalOutline modalId="document-modal" modal_heading="Document Print" v-if="currentInternship.marks">
+    <InfoModalOutline modalId="document-modal" modal_heading="Document Print">
         <template v-slot:body>
 
-            <button  type="button" @click="getPdf()" class="btn btn-dark">Get Certeficate</button>
+            <button type="button" @click="getPdf()" class="btn btn-dark">Get Certeficate</button>
 
         </template>
         <template v-slot:buttons>

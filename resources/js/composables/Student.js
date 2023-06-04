@@ -3,9 +3,20 @@ import { ref } from "vue"
 export default ()=> {
     // TODO trancfere lervel to a file and majors to its file
     const students = ref([])
+    const student = ref({})
     const levels = ref([])
     const majors = ref([])
 
+    const getStudents = async () => {
+        await axios.get('/displayStudents').then((response) => {
+            students.value = response.data.data
+        })
+    }
+    const get_student = async (student_id) => {
+        await axios.get('/getStudent/'+student_id).then((response) => {
+            student.value = response.data.data
+        })
+    }
     const storeStudent = async (credentials) => {
         await axios.post('/addStudentInfo', credentials)
     
@@ -16,11 +27,6 @@ export default ()=> {
         await axios.patch('/editStudentInfo/' + student.id, student)
     }
 
-    const getStudents = async () => {
-        await axios.get('/displayStudents').then((response) => {
-            students.value = response.data.data
-        })
-    }
     const destroyStudent = async (student_id) => {
         
         await axios.delete('/deleteStudent/' + student_id)
@@ -42,6 +48,7 @@ export default ()=> {
     }
     return {
         getStudents,
+        get_student,
         storeStudent,
         getMajorsOfLevel,
         getLevels,
@@ -49,6 +56,7 @@ export default ()=> {
         updateStudent,
 
         students,
+        student,
         levels,
         majors,
     }

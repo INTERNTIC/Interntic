@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DepartmentHeadRequest;
+use App\Http\Resources\DepartmentHeadResource;
 use App\Models\DepartmentHead;
 use App\Traits\GeneralTrait;
 
@@ -11,55 +12,32 @@ class DepartmentHeadController extends Controller
 {
     use GeneralTrait;
 
-    public function addDepartmentHead(DepartmentHeadRequest $request)
-    {
-        DepartmentHead::create($request->except("password")+["password"=>bcrypt($request->password)]);
-    }
-
-    public function displayDepartmentHeads()
+    public function index()
     {
         $department_heads=DepartmentHead::all();
-        return $this->returnData($department_heads);
+        return $this->returnData(DepartmentHeadResource::collection($department_heads));
     }
 
-    public function getDepartmentHead($departmentHead)
+    public function store(DepartmentHeadRequest $request)
     {
-        return $this->returnData($departmentHead);
+       $department_head= DepartmentHead::create($request->except("password")+["password"=>bcrypt($request->password)]);
+       return $this->returnData(new DepartmentHeadResource($department_head));
     }
 
-    public function editDepartmentHead(DepartmentHeadRequest $request,DepartmentHead $departmentHead)
+    public function show(DepartmentHead $department_head)
     {
-        $departmentHead->update($request->except("password"));
+        return $this->returnData(new DepartmentHeadResource($department_head));
     }
 
-    public function deleteDepartmentHead($departmentHead)
+    public function update(DepartmentHeadRequest $request,DepartmentHead $department_head)
     {
-        $departmentHead->delete();
+        $department_head->update($request->except("password"));
+        return $this->returnData(new DepartmentHeadResource($department_head));
+    }
+
+    public function destroy(DepartmentHead $department_head)
+    {
+        $department_head->delete();
         return $this->returnSuccessMessage('Department head deleted successfully');
     }
-
-    // public function departmentheadResetPasword(Request $request,$department_head)
-    // {
-    //     Validator($request->all(),[
-    //         'old_password'=>'required',
-    //         'password' => 'required|min:6|confirmed',
-    //         'password_confirmation' => 'required|min:6'
-    //     ])->validate();
-
-
-    //     if($department_head==false)
-    //     {
-    //         return $this->returnError('Something went wrong');
-    //     }
-    //    if (Hash::check($request->old_password, $department_head->password)) {
-    //         $department_head->update([
-    //             'password'=>Hash::make($request->password),
-    //         ]);
-    //     }
-    //     else
-    //     {
-    //         return $this->returnError('Old password is incorrect');
-    //     }
-    //     return $this->returnSuccessMessage('Password updated successfully');
-    // }
 }

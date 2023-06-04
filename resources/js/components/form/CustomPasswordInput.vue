@@ -14,7 +14,6 @@ const props = defineProps({
   },
   label: {
     type: String,
-
   },
   placeholder: {
     type: String,
@@ -36,7 +35,7 @@ const toggle_password = () => {
 </script>
 <template>
   <div class="mb-3">
-    <label v-bind:for="label" class="form-label">{{ label }}</label>
+    <label v-bind:for="label" class="form-label">{{$props.label}}</label>
     <div class="input-group input-group-merge">
       <input class="form-control" :type="type" id="password" :readonly="readonly" :id="label" :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)" :class="{ 'is-invalid': showError }"

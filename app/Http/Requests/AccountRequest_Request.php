@@ -33,7 +33,7 @@ class AccountRequest_Request extends FormRequest
             'first_name'=>'required',
             'last_name'=>'required',
             'email'=>['required','unique:account_requests'],
-            'password'=>['required','min:6'],
+            'password'=>['required','min:6',"confirmed"],
             'phone'=>['required','numeric'],
             'company_name'=>'required',
             'company_location'=>'required',

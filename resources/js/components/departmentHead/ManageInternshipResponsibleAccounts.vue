@@ -4,6 +4,11 @@ import { onMounted, ref } from 'vue';
 
 import useInternshipResponsibleAccount from '@/composables/InternshipResponsibleAccount.js';
 import {Notify,getErrorText,refreshTable} from "@/newShared";
+import {
+    generalErrorMsg,
+    generalSuccessMsg,
+    errors
+} from "@/axiosClient";
 
 import { useLoading } from 'vue-loading-overlay'
 
@@ -16,8 +21,6 @@ const {
     getInternshipResponsibleAccounts,
     manageInternshipResponsibleAccount,
     internshipResponsibleAccounts,
-    generalErrorMsg,
-    generalSuccessMsg,
  } = useInternshipResponsibleAccount();
 const AccountRequestExemple = {
     "id": "",

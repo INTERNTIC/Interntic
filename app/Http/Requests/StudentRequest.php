@@ -37,7 +37,7 @@ class StudentRequest extends FormRequest
         return [
                 'first_name'=>'required',
                 'last_name'=>'required',
-                'birthday'=>'required',
+                'birthday'=>['required',"date"],
                 'place_of_birth'=>'required',
                 'phone'=>['required','numeric','unique:students,phone,'.$student->id],
                 'student_card'=>'required',

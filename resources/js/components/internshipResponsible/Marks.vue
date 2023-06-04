@@ -226,41 +226,40 @@ onMounted(async () => {
             </div> <!-- end card -->
         </div><!-- end col-->
     </div> <!-- end row-->
-    <FullWidthModal>
+    <FullWidthModal modal_heading="Set Student Marks">
         <template v-slot:body>
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title">Mark Information </h4>
                             <p class="text-muted font-14">
-                                Manage Student Mark
+                                Enter Student Mark
                             </p>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentStudentMarks.skills"
                                         :errorText="getErrorText(errors, 'skills')"
                                         :showError="errors.hasOwnProperty('skills')" label="skills" inputType="number"
-                                        placeholder="Enter Student skills" />
+                                        placeholder="Enter Student skills note" />
                                     <CustomInput v-model="currentStudentMarks.discipline"
                                         :errorText="getErrorText(errors, 'discipline')"
                                         :showError="errors.hasOwnProperty('discipline')" label="Discipline"
-                                        inputType="number" placeholder="Enter Student Discipline" />
+                                        inputType="number" placeholder="Enter Student Discipline note" />
                                     <CustomInput v-model="currentStudentMarks.initiative"
                                         :errorText="getErrorText(errors, 'initiative')"
                                         :showError="errors.hasOwnProperty('initiative')" label="initiative"
-                                        inputType="number" placeholder="Enter Student initiative" />
+                                        inputType="number" placeholder="Enter Student initiative note" />
 
                                 </div>
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentStudentMarks.creativity"
                                         :errorText="getErrorText(errors, 'creativity')"
                                         :showError="errors.hasOwnProperty('creativity')" label="creativity"
-                                        inputType="number" placeholder="Enter Student creativity" />
+                                        inputType="number" placeholder="Enter Student creativity note" />
                                     <CustomInput v-model="currentStudentMarks.knowledge"
                                         :errorText="getErrorText(errors, 'knowledge')"
                                         :showError="errors.hasOwnProperty('knowledge')" label="knowledge" inputType="number"
-                                        placeholder="Enter Student knowledge" />
+                                        placeholder="Enter Student knowledge note" />
                                 </div>
                             </div>
                         </div>

@@ -5,17 +5,18 @@ import DangerModal from '../modal/DangerModal.vue';
 
 import useStudent from '@/composables/Student.js';
 import StudentModelForm from './StudentModelForm.vue';
-import {Notify,refreshTable} from "@/newShared";
+import { Notify, refreshTable } from "@/newShared";
 import {
     generalErrorMsg,
     generalSuccessMsg,
     errors
-}from "@/axiosClient";
+} from "@/axiosClient";
+
 const { getStudents, storeStudent, destroyStudent,
-     updateStudent, students, getMajorsOfLevel, 
-     getLevels, levels, majors } = useStudent();
+    updateStudent, students, getMajorsOfLevel,
+    getLevels, levels, majors } = useStudent();
 const student = {
-    id:"",
+    id: "",
     first_name: "",
     last_name: "",
     student_card: "",
@@ -35,7 +36,7 @@ const isSecondaryTableActive = ref(false)
 $(document).on('click', 'tr button', async (e) => {
     let student_id = e.currentTarget.getAttribute('student_id')
     let button_role = e.currentTarget.getAttribute('button-role')
-    if (button_role=="edit") {
+    if (button_role == "edit") {
         window.scrollTo(0, 0);
     }
     if (student_id != undefined) {
@@ -89,7 +90,7 @@ const secondaryColumns =
 watch(
     () => currentStudent.value.level_id, () => {
         // $("select").val($("select option:first").val());
-        if (currentStudent.value.level_id != '') {
+        if (currentStudent.value?.level_id != '') {
             getMajorsOfLevel(currentStudent.value.level_id)
         }
     },
@@ -97,9 +98,9 @@ watch(
 
 const saveStudent = async () => {
 
-    if(currentStudent.value.id==""){
+    if (currentStudent.value.id == "") {
         await storeStudent(currentStudent.value)
-    }else{
+    } else {
         await updateStudent(currentStudent.value)
     }
     Notify(generalSuccessMsg.value, generalErrorMsg.value)
@@ -109,7 +110,7 @@ const saveStudent = async () => {
         if (isSecondaryTableActive.value) {
             refreshTable(secondaryTable, students.value)
         }
-         currentStudent.value = _.cloneDeep(student)
+        currentStudent.value = _.cloneDeep(student)
     }
 
 }
@@ -163,7 +164,7 @@ onMounted(async () => {
                         data: students.value,
                         columns: secondaryColumns
                     });
-                    // });
+                    get_table_back()
                 });
             });
         });
@@ -177,7 +178,13 @@ const showSecondaryTable = (TableStatus) => {
     isSecondaryTableActive.value = TableStatus
 }
 
-
+const table_status = ref(false)
+const get_table_back = () => {
+    setTimeout(() => {
+        table_status.value = true;
+    }, 500);
+    return true;
+}
 
 </script>
 <template>
@@ -230,19 +237,19 @@ const showSecondaryTable = (TableStatus) => {
                         <li class="nav-item">
                             <a @click="showSecondaryTable(false)" href="#basic-datatable-preview" data-bs-toggle="tab"
                                 aria-expanded="false" class="nav-link active">
-                                Preview
+                                Simple
                             </a>
                         </li>
                         <li class="nav-item">
                             <a @click="showSecondaryTable(true)" href="#basic-example-code" data-bs-toggle="tab"
                                 aria-expanded="true" class="nav-link">
-                                Code
+                                Details
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane show active" id="basic-datatable-preview">
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <div class="tab-pane show active" :class="{ 'd-none': !table_status }" id="basic-datatable-preview">
+                            <table id="scroll-horizontal-datatable" class="table table-hover table-bordered w-100 nowrap ">
                                 <thead>
                                     <tr>
                                         <th>Full Name</th>
@@ -255,7 +262,7 @@ const showSecondaryTable = (TableStatus) => {
 
                             </table>
                         </div>
-                        <div class="tab-pane" id="basic-example-code">
+                        <div class="tab-pane" :class="{ 'd-none': !table_status }" id="basic-example-code">
                             <table id="example" class="table table-hover  table-bordered w-100 nowrap">
                                 <thead>
                                     <tr>
@@ -277,39 +284,7 @@ const showSecondaryTable = (TableStatus) => {
             </div> <!-- end card -->
         </div><!-- end col-->
     </div> <!-- end row-->
-    <!-- Full width modal -->
-    <FullWidthModal>
-        <template v-slot:body>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="header-title">Student Information</h4>
-                            <p class="text-muted font-14">
-                                Edit Student Information
-                            </p>
-                            <div class="tab-content">
-                                <div class="tab-pane show active" id="floating-preview">
-                                    <!-- TODO fix edit student errors -->
-                                    <!-- <StudentModelForm v-bind:studentModel="currentStudent" :errors="errors" :majors="majors"
-                                        :levels="levels" /> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-slot:buttons>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-            <button type="button" @click="saveStudent" class="btn btn-info">Save changes</button>
-        </template>
-    </FullWidthModal>
-
-
-
-    <DangerModal
-    modal_heading="Delete Student">
+    <DangerModal modal_heading="Delete Student">
         <template v-slot:body>
             Are you sure you want to delete student <b>{{ currentStudent.first_name }} {{ currentStudent.last_name }} </b>
         </template>

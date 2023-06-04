@@ -120,22 +120,17 @@ onMounted(async () => {
                         <button type="button" @click="openDeleteModal(internship.id)" class="btn btn-danger">Delete</button>
 
                     </div>
-                </div> <!-- end card-body -->
+                </div>
             </div>
         </div>
     </div>
   
-    <FullWidthModal>
+    <FullWidthModal modal_heading="Request Internship">
         <template v-slot:body>
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title">Internship Offer</h4>
-                            <p class="text-muted font-14">
-                                Enter Internship offer Details
-                            </p>
-
                             <div class="row">
                                 <div class="col-lg-6">
                                     <CustomInput v-model="currentInternshipsRequest.theme"

@@ -3,36 +3,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DepartmentHead;
 use App\Models\SuperAdmin;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
-class SuperAdminController extends Controller 
+class SuperAdminController extends Controller
 {
-    public function superAdminResetPasword(Request $request,$id)
+    use GeneralTrait;
+    public function __construct() {
+        abort_if(!Auth::getDefaultDriver() == config('global.super_admin_guard'), 403);
+    }
+    public function index()
     {
-        Validator($request->all(),[
-            'old_password'=>'required',
-            'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required|min:6'
-        ])->validate();
-
-        $super_admin=SuperAdmin::find($id);
-        if($super_admin==false)
-        {
-            return $this->returnError('Something went wrong');
-        }
-       if (Hash::check($request->old_password, $super_admin->password)) {
-            $super_admin->update([
-                'password'=>Hash::make($request->password),
-            ]);
-        }
-        else
-        {
-            return $this->returnError('Old password is incorrect');
-        }
-        return $this->returnSuccessMessage('Password updated successfully');
+        $super_admins=SuperAdmin::all();
+        return $this->returnData($super_admins);
+    }
+    public function store(Request $request)
+    {
+        $super_admins=SuperAdmin::create($request->validate());
+        return $this->returnData($super_admins);
+    }
+    public function show(SuperAdmin $super_admin)
+    {
+        return $this->returnData($super_admin);
+    }
+    public function update(Request $request, SuperAdmin $superAdmin)
+    {
+        // TODO Gate
+        $request->validate([
+            'email' => ['required', 'email', 'ends_with:univ-constantine2.dz', 'unique:super_admins,email,'.$superAdmin->id],
+        ]);
+        $superAdmin->update(["email" => $request->email]);
+        return $this->returnData($superAdmin, "Updated Successfully");
+    }
+    public function delete(SuperAdmin $super_admin)
+    {
+        $super_admin->delete();
+        return $this->returnSuccessMessage("Deleted Successfully");
     }
 }

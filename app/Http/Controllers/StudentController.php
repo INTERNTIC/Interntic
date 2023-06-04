@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 use App\Traits\GeneralTrait;
+use App\Traits\SendEmail;
 
 class StudentController extends Controller
 {
     use GeneralTrait;
+    use SendEmail;
 
     public function addStudentInfo(StudentRequest $request)
     {
@@ -28,14 +29,13 @@ class StudentController extends Controller
     
     public function diplayStudents()
     {
-        // TODO check this for no student if ther is an Error
-        $students = Student::with("level_major.level")->get();
+        // $students = Student::with("level_major.level")->get();
+        $students = Student::all();
         return $this->returnData(StudentResource::collection($students));
     }
 
     public function editStudentInfo(StudentRequest $request, Student $student)
     {
-        // TODO validate the date form , also in store function
         $level_major_id = DB::table('level_major')->where('level_id', $request->level_id)->where('major_id', $request->major_id)->value('id');
         $guard = Auth::getDefaultDriver();
         if ($guard == config('global.department_head_guard')) {
@@ -70,18 +70,17 @@ class StudentController extends Controller
     public function studentCreateAccount(Request $request)
     {
         Validator::make($request->all(), [
-            'student_card' => 'required',
+            'student_card' => ['required',"exists:students,student_card"],
             'email' => ['required', 'ends_with:univ-constantine2.dz', 'unique:student_accounts'],
-            'password' => ['required', 'min:6'],
+            'password' => ['required', 'min:6','confirmed'],
         ])->validate();
 
 
-        $student_id = DB::table('students')->where('student_card', $request->student_card_number)->value('id');
+        $student_id = DB::table('students')->where('student_card', $request->student_card)->value('id');
 
-        if ($student_id == false) {
-            return $this->returnError('Please be sure about your card number or contact your department head');
-        }
-
+        Validator::make(['id'=>$student_id], [
+            'id' => ['required','unique:student_accounts,id'],
+        ])->validate();
         $token = Str::random(64);
         $email = $request->email;
 
@@ -93,19 +92,25 @@ class StudentController extends Controller
         ]);
         $data = [];
         $data['token'] = $token;
-        Mail::send('verificationMail', $data, function ($message) use ($token, $email) {
-            $message->subject('Email verification');
-            $message->to($email);
-        });
+        
+        $this->sendEmail($data,$email,"verificationMail","verificationMail");
+
+        return $this->returnSuccessMessage('Your account created Successfully please verify your email');
+
     }
 
     public function emailVerification($token)
     {
-        $student_account = StudentAccount::where('token', $token)->get()->first();
-        $student_account->update([
-            'email_verified' => 1,
-            'token' => null
-        ]);
+        $student_account = StudentAccount::where('token', $token)->first();
+        $msg='Your account already verified';
+        if($student_account){
+            $msg='Your account verified successfully ';
+            $student_account->update([
+                'email_verified' => 1,
+                'token' => null
+            ]);
+        }
+        return redirect()->to("login/student?message=".$msg);
     }
 
     // public function studentResetPasword(Request $request,$id)

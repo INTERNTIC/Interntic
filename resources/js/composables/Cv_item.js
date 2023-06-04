@@ -1,11 +1,14 @@
 import { ref } from "vue"
-export default ()=> {
+export default () => {
 
 
     const cvItems = ref([])
 
-    const getCvItems = async (url = '/studentCvItems') => {
-
+    const getCvItems = async (student_id) => {
+        let url = "/studentCvItems/";
+        if (student_id) {
+            url ="/studentCvItems/"+ student_id
+        }
         await axios.get(url).then((response) => {
             cvItems.value = response.data.data
         })
@@ -16,8 +19,8 @@ export default ()=> {
     }
     const updateCvItem = async (id, cvItem) => {
 
-        await axios.post('/studentCvItems/' + id+'?_method=patch', cvItem, { headers: { 'Content-Type': 'multipart/form-data' } })
-    
+        await axios.post('/studentCvItems/' + id + '?_method=patch', cvItem, { headers: { 'Content-Type': 'multipart/form-data' } })
+
     }
     const destroyCvItem = async (id) => {
 

@@ -59,9 +59,13 @@ class Student extends Model
 	{
 		return $this->internship_requests->where("status",config("global.internship_request_status.accepted_by_department_head"));
 	}
-	public function internshipsIAcceptedByInternshipResponsible()
+	public function internshipsAcceptedByInternshipResponsible()
 	{
 		return $this->internship_requests->where("status",config("global.internship_request_status.accepted_by_internship_responsible"));
+	}
+	public function internshipsAcceptedByInternshipResponsibleId()
+	{
+		return $this->internshipsAcceptedByInternshipResponsible()->pluck('id')->toArray();
 	}
 	public function passedInternships()
 	{

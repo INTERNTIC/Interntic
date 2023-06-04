@@ -16,7 +16,6 @@ class AssessmentController extends Controller
     use GeneralTrait;
     public function index()
     {
-        // internship respo
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
             $authorizedInternshipsIds = InternshipResponsible::find(auth()->id())->internshipsIAcceptedByStudentId();
             $assessments=Assessment::allAssessments($authorizedInternshipsIds);
@@ -48,11 +47,4 @@ class AssessmentController extends Controller
         $assessment->delete();
         return $this->returnSuccessMessage('Aseessment deleted successfully');
     }
-    // public function assessmentsOfInternship($internship_request_id)
-    // {
-    // TODO check authorization
-    //     $assessments = Assessment::where('internship_request_id', $internship_request_id)->get();
-      
-    //     return $this->returnData(AssessmentResource::collection($assessments));
-    // }
 }

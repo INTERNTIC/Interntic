@@ -6,9 +6,11 @@ use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use App\Models\AccountRequest;
 use Illuminate\Validation\Rule;
+use App\Services\CompanyService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CompanyRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\CompanyController;
 use App\Http\Requests\AccountRequest_Request;
 use App\Http\Resources\AccountRequestResource;
 use App\Http\Requests\InternshipResponsibleRequest;
@@ -23,17 +25,12 @@ class AccountRequestController extends Controller
         return $this->returnData(AccountRequestResource::collection(AccountRequest::all()));
     }
 
-    public function store(AccountRequest_Request $request)
+    public function store(AccountRequest_Request $request,CompanyService $companyService)
     {
         $company_name = $request->company_name;
         $company_location = $request->company_location;
-        $companyRequest = new CompanyRequest([
-            'name' => $company_name,
-            'location' => $company_location
-        ]);
 
-        $company = (new CompanyController)->findOrCreate($companyRequest);
-        $request->validated();
+        $company = $companyService->findOrCreate($company_name,$company_location);
         $data = $request->only([
             'first_name',
             'last_name',
@@ -44,7 +41,9 @@ class AccountRequestController extends Controller
         ]);
         $data['company_id'] = $company->id;
         $accountRequest = AccountRequest::create($data);
-        return $this->returnData(new AccountRequestResource($accountRequest));
+        // TODO make account accepted by souper admin
+        $msg="your account is waiting to be confirmed by department head";
+        return $this->returnData(new AccountRequestResource($accountRequest),$msg);
     }
 
     public function show(AccountRequest $accountRequest)

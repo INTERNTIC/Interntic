@@ -12,7 +12,6 @@ use App\Models\InternshipResponsible;
 
 class MarkController extends Controller
 {
-    // TODO fix authorizetion
     use GeneralTrait;
     public function index()
     {

@@ -9,25 +9,24 @@ class InternshipRequestResource extends JsonResource
     public function getStatus($status){
             switch ($status) {
                 case 0:
-                return "not_seen";
+                return  str_replace("_", " ", "not_seen");
                 case 1:
                     
-                return "accepted_by_department_head";
+                return str_replace("_", " ", "accepted_by_department_head");
                 case 2:
                     
-                return "refused_by_department_head";
+                return str_replace("_", " ", "refused_by_department_head");
                 case 3:
                     
-                return "refused_by_internship_responsible";
+                return str_replace("_", " ", "refused_by_internship_responsible");
                 case 4:
                     
-                return "accepted_by_internship_responsible";
+                return str_replace("_", " ", "accepted_by_internship_responsible");
                 case 5:                
-                return "accepted_by_student";
+                return str_replace("_", " ", "accepted_by_student");
             }
         
     }
-    // TODO create function that show status as in config 
 
     public function toArray($request)
     {

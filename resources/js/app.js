@@ -9,6 +9,8 @@ import 'vue-loading-overlay/dist/css/index.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import FullWidthModal from '@/components/modal/FullWidthModal.vue';
 import CustomInput from '@/components/form/CustomInput.vue';
+import SelectInput from '@/components/form/SelectInput.vue';
+import FloatingInput from '@/components/form/FloatingInput.vue';
 import "./axiosClient";
 
 
@@ -27,6 +29,8 @@ app.config.errorHandler = (error, vm, info) => {
   };
 app.component('FullWidthModal', FullWidthModal);
 app.component('CustomInput', CustomInput);
+app.component('FloatingInput', FloatingInput);
+app.component('SelectInput', SelectInput);
 app.use(pinia);
 app.use(CKEditor)
 app.use(LoadingPlugin);

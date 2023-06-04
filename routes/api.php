@@ -35,6 +35,11 @@ use App\Http\Controllers\InternshipAccountsRequestsController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+// not Auth routes 
+Route::post('/studentCreateAccount', [StudentController::class, "studentCreateAccount"]);
+Route::get('/emailVerification/{token}', [StudentController::class, "emailVerification"])->name('emailVerification');
+
+
 
 //Authentication part
 Route::controller(AuthController::class)->group(function () {
@@ -50,8 +55,6 @@ Route::controller(AuthController::class)->group(function () {
 });
 Route::group(['middleware' => 'check.auth.guard'], function () {
     //Student part
-    Route::post('/studentCreateAccount', [StudentController::class, "studentCreateAccount"]);
-    Route::post('/emailVerification/{token}', [StudentController::class, "emailVerification"])->name('emailVerification');
     // Route::post('/displayAccount',[StudentController::class,"displayAccount"]); use getStudent from department head
     Route::post('/studentResetPasword/{id}', [StudentController::class, "studentResetPasword"]);
     Route::group(['middleware' => 'check.auth.guard'], function () {
@@ -59,15 +62,10 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     });
 
     //Super admin part
-    Route::post('/addDepartmentHead', [DepartmentHeadController::class, "addDepartmentHead"]);
-    Route::get('/displayDepartmentHeads', [DepartmentHeadController::class, "displayDepartmentHeads"]);
-    Route::get('/getDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "getDepartmentHead"]);
-    Route::patch('/editDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "editDepartmentHead"]);
-    Route::delete('/deleteDepartmentHead/{departmentHead}', [DepartmentHeadController::class, "deleteDepartmentHead"]);
-
-    
-    Route::post('/superAdminResetPasword/{id}', [SuperAdminController::class, "superAdminResetPasword"]);
-
+    // department_heads 
+    Route::apiResource('department-heads', DepartmentHeadController::class);
+    Route::apiResource('super-admins', SuperAdminController::class);
+    Route::apiResource('departments', DepartmentController::class);
 
 
     // Department head part
@@ -80,7 +78,7 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::get('/getStudent/{student}', [StudentController::class, "getStudent"]);
     Route::patch('/editStudentInfo/{student}', [StudentController::class, "editStudentInfo"]);
     Route::delete('/deleteStudent/{student}', [StudentController::class, "deleteStudent"]);
-    Route::post('/departmentheadResetPasword/{department_head}', [DepartmentHeadController::class, "departmentheadResetPasword"]);
+    // Route::post('/departmentheadResetPasword/{department_head}', [DepartmentHeadController::class, "departmentheadResetPasword"]);
 
 
 
@@ -96,37 +94,35 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
     Route::get('/selectOffer/{offer}', [InternshipOffersController::class, "selectOffer"]);
     Route::patch('/editOffer/{offer}', [InternshipOffersController::class, "editOffer"]);
     Route::delete('/deleteOffer/{offer}', [InternshipOffersController::class, "deleteOffer"]);
-    Route::post('/responsibleResetPassword/{id}', [InternshipResponsibleController::class, "responsibleResetPasword"]);
+    // Route::post('/responsibleResetPassword/{id}', [InternshipResponsibleController::class, "responsibleResetPasword"]);
 
 
-
-
-    // u shold be auth
-    // TODO try defult auth middleware
-    // TODO cv fix model and db
-    // short_cut at depremtent unique
-    Route::apiResource('companyCauses', CompanyCauseController::class,  ['only' => ['index', 'store', 'destroy']]);
+    Route::apiResource('companyCauses', CompanyCauseController::class,  ['only' => ['index', 'store','update','destroy']]);
     Route::apiResource('companyRefuses', CompanyRefuseController::class,  ['only' => ['index', 'store', 'show', 'destroy']]);
     Route::apiResource('departmentRefuses', DepartmentRefuseController::class,  ['only' => ['index', 'store', 'show', 'destroy']]);
-    Route::apiResource('departmentCauses', DepartmentCauseController::class,  ['only' => ['index', 'store', 'destroy']]);
+    Route::apiResource('departmentCauses', DepartmentCauseController::class,  ['only' => ['index', 'store','update', 'destroy']]);
+    Route::get('departmentCauses/get_all',[DepartmentCauseController::class,"get_all"  ]);
+    Route::get('companyCauses/get_all',[CompanyCauseController::class,"get_all"  ]);
 
 
     Route::get('/levels/majors/{level}', [LevelController::class, "getMajors"]);
     Route::apiResource('levels', LevelController::class);
     Route::apiResource('majors', MajorController::class);
     Route::apiResource('companies', CompanyController::class);
+    Route::get('studentCvItems/{student}', [StudentCvItemController::class,"index"]);
     Route::apiResource('studentCvItems', StudentCvItemController::class);
     Route::get('/marks/generate-pdf/{internshipRequest}', [InternshipRequestController::class, "getPDF"]);
     Route::apiResource('marks', MarkController::class);
-    Route::apiResource('departments', DepartmentController::class);
+    
 
     Route::post('/internshipRequests/manage/{internshipRequest}', [InternshipRequestController::class, "manageTheInternshipRequest"]);
-    Route::get('/internships/accepted-by-internship-responsible', [InternshipRequestController::class, "internshipsIAcceptedByInternshipResponsible"]);
+    Route::get('/internships/accepted-by-internship-responsible', [InternshipRequestController::class, "internshipsAcceptedByInternshipResponsible"]);
     Route::get('/internships/accepted-by-department-head', [InternshipRequestController::class, "internshipsIAcceptedByDepartmentHead"]);
     Route::get('/internships/accepted-by-student', [InternshipRequestController::class, "internshipsIAcceptedByStudent"]);
     Route::get('/internships/refused', [InternshipRequestController::class, "refusedInternships"]);
     Route::get('/internships/students/not-assessed', [InternshipRequestController::class, "studentInternshipsNotAssessedToday"]);
     Route::get('/internships/passed', [InternshipRequestController::class, "myPassedInternships"]);
+    Route::post('/internships/accept/{internshipRequest}', [InternshipRequestController::class, "accept_my_internship"]);
 
     Route::apiResource('accountRequests', AccountRequestController::class, ['only' => ['index','show', 'destroy']]);
     Route::post('accountRequests/manage/{accountRequest}', [AccountRequestController::class,'manageAccountRequest']);
@@ -138,5 +134,3 @@ Route::group(['middleware' => 'check.auth.guard'], function () {
 Route::post('accountRequests', [AccountRequestController::class,'store']);
 
 // Route::get('/level_majors',[LevelMajorController::class,"manageTheInternshipRequest"]);
-
-// TODO add company id to company causes table

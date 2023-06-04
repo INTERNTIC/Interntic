@@ -74,14 +74,14 @@ class InternshipResponsible extends Authenticatable implements JWTSubject
 		return $this->internshipsWaiting()->pluck('id')->toArray();
 	}
 
-	public function internshipsIAcceptedByInternshipResponsible()
+	public function internshipsAcceptedByInternshipResponsible()
 	{
 		return $this->company->internship_Requests->where('status', '=',config('global.internship_request_status.accepted_by_internship_responsible'))->where('internshipResponsible_email', $this->email);
 	}
 
 	public function internshipsIAcceptedByInternshipResponsibleId()
 	{
-		return $this->internshipsIAcceptedByInternshipResponsible()->pluck('id')->toArray();
+		return $this->internshipsAcceptedByInternshipResponsible()->pluck('id')->toArray();
 	}
 
 	public function internshipsIAcceptedByStudent()

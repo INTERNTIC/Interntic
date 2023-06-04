@@ -29,7 +29,7 @@ class Major extends Model
 	{
 		return $this->hasMany(LevelMajor::class);
 	}
-	public function departments()
+	public function department()
 	{
 		return $this->belongsTo(Department::class);
 	}

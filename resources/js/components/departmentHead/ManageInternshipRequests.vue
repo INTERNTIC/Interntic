@@ -5,30 +5,37 @@ import DangerModalOutline from '../modal/DangerModalOutline.vue';
 import InfoModalOutline from '@/components/modal/InfoModalOutline.vue';
 
 import useInternshipRequest from '@/composables/InternshipRequests.js';
+import useDepartmentCause from "@/composables/DepartmentCause.js";
 import SuccessModal from '../modal/SuccessModal.vue';
+import { useRouter } from 'vue-router';
 import SelectInput from '../form/SelectInput.vue';
-import {useLoading} from 'vue-loading-overlay'
-import {getErrorText,errorNotify,Notify,refreshTable} from "@/newShared";
-import {generalErrorMsg,
+import { useLoading } from 'vue-loading-overlay'
+import { getErrorText, errorNotify, Notify, refreshTable } from "@/newShared";
+import {
+    generalErrorMsg,
     generalSuccessMsg,
-    errors} from "@/axiosClient";
+    errors
+} from "@/axiosClient";
 const $loading = useLoading({
-    });
+});
 const judgement = ref({
     decision: "",
     cause_id: ""
 });
 const createNewCause = ref(false)
 
+const rouetr = useRouter();
+
 const {
     getInternshipRequests,
-    getDepartmentRefuseCauses,
     manageInternshipRequests,
     studentsRequests,
-    departmentRefuseCauses,
-    storeDepartmentRefuseCause,
-    newCause,
-   } = useInternshipRequest();
+} = useInternshipRequest();
+
+const { get_department_causes_all,
+    store_department_cause,
+    new_cause,
+    department_causes} = useDepartmentCause();
 
 const internshipsRequestExemple = {
     id: '',
@@ -51,9 +58,9 @@ const internshipsRequestExemple = {
         level_id: '',
         major_id: '',
     },
-    company:{
-    name: '',
-    location: '',
+    company: {
+        name: '',
+        location: '',
     },
 }
 const currentInternshipsRequest = ref(internshipsRequestExemple)
@@ -61,8 +68,14 @@ let principleTable = null;
 
 
 $(document).on('click', 'tr button', async (e) => {
+    if (e.currentTarget.getAttribute('button_type') == "view_cv") {
+        const student_id = e.currentTarget.getAttribute('student_id');
+        rouetr.push({ name: "student-cv", params: { student_id } })
+        return;
+    }
     const internship_request_id = e.currentTarget.getAttribute('internship_request_id')
     currentInternshipsRequest.value = studentsRequests.value.find(requst => requst.id == internship_request_id);
+
 });
 const principleColumns =
     [
@@ -78,7 +91,8 @@ const principleColumns =
             data: null,
             render: function (data, type, row) {
                 return ` <button  button_type="edit" internship_request_id='${data.id}'  type="button" class="btn btn-dark btn-sm me-2" data-bs-toggle="modal"
-                        data-bs-target="#full-width-modal">View</button>`;
+                        data-bs-target="#full-width-modal">View</button>
+                        <button button_type='view_cv' student_id='${data.student.id}'  type="button" class="btn btn-dark btn-sm me-2" >View CV</button>`;
             }
         },
     ];
@@ -114,10 +128,10 @@ const submitHandeledRequest = async () => {
 
 
 const saveRefuseCause = async () => {
-    await storeDepartmentRefuseCause(newCause.value);
+    await store_department_cause(new_cause.value);
     if (generalErrorMsg.value == "") {
-        await getDepartmentRefuseCauses();
-        judgement.value.cause_id = newCause.value.id
+        await get_department_causes_all();
+        judgement.value.cause_id = new_cause.value.id
         createNewCause.value = false;
     }
 }
@@ -125,7 +139,7 @@ const saveRefuseCause = async () => {
 
 onMounted(async () => {
     await getInternshipRequests()
-    await getDepartmentRefuseCauses()
+    await get_department_causes_all()
     import('@/assets/js/vendor/jquery.dataTables.min.js').then(() => {
         import('@/assets/js/vendor/dataTables.bootstrap5.js').then(() => {
             import('@/assets/js/vendor/dataTables.responsive.min.js').then(() => {
@@ -174,20 +188,20 @@ onMounted(async () => {
                 <div class="card-body">
                     <h4 class="header-title">Internships List</h4>
                     <p class="text-muted font-14">
-                        Here is a list of unmanaged internship requests 
+                        Here is a list of unmanaged internship requests
                     </p>
-                            <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Card Number</th>
-                                        <th>Major</th>
-                                        <th>Level</th>
-                                        <th data-orderable="false">Action</th>
-                                    </tr>
-                                </thead>
+                    <table id="scroll-horizontal-datatable" class="table table-hover  table-bordered w-100 nowrap ">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Card Number</th>
+                                <th>Major</th>
+                                <th>Level</th>
+                                <th data-orderable="false">Action</th>
+                            </tr>
+                        </thead>
 
-                            </table>
+                    </table>
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
@@ -249,9 +263,10 @@ onMounted(async () => {
         <template v-slot:body>
             <SelectInput propertyOfValue="id" property-of-show="cause" placeholder="Select Refuse Cause"
                 v-model="judgement.cause_id" :errorText="getErrorText(errors, 'cause_id')"
-                :showError="errors.hasOwnProperty('cause_id')" label="Select Refuse Cause" :options="departmentRefuseCauses" />
+                :showError="errors.hasOwnProperty('cause_id')" label="Select Refuse Cause"
+                :options="department_causes" />
             <div v-if="createNewCause" class="col-lg-6 mt-2">
-                <CustomInput v-model="newCause.cause" label="New Cause" placeholder="Enter New Cause"
+                <CustomInput v-model="new_cause.cause" label="New Cause" placeholder="Enter New Cause"
                     :errorText="getErrorText(errors, 'cause')" :showError="errors.hasOwnProperty('cause')" />
                 <button @click="saveRefuseCause" type="button" class="btn btn-info">Submit</button>
                 <button @click="createNewCause = false" type="button" class="btn btn-light">Cancel</button>

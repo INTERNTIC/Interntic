@@ -62,6 +62,8 @@ class AuthController extends Controller
 
                 case config("global.internship_responsible_guard"):
                     return $this->returnData(new InternshipResponsibleResource($user));
+                case config("global.super_admin_guard"):
+                    return $this->returnData($user);
             }
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage());
@@ -96,6 +98,8 @@ class AuthController extends Controller
                 case config("global.internship_responsible_guard"):
                     return $this->returnData(new InternshipResponsibleResource($user));
                     break;
+                case config("global.super_admin_guard"):
+                    return $this->returnData($user);
             }
         } catch (\Throwable $th) {
             return $this->returnError($th->getMessage(), $th->getCode());
@@ -137,8 +141,7 @@ class AuthController extends Controller
             case 'internship_responsible':
                 $account = InternshipResponsible::where('email', $email)->first();
         }
-        return $account??$this->returnError("wrong Email");
-        
+        return $account ?? $this->returnError("wrong Email");
     }
 
     public function forgetPassword(Request $request, $guard)
@@ -175,14 +178,14 @@ class AuthController extends Controller
     {
 
         $request->validate([
-            "old_password" => ['required','current_password'],
+            "old_password" => ['required', 'current_password'],
             'password' => ['required', "confirmed", 'min:6'],
         ]);
-        
 
-        $user=auth()->user();
 
-        
+        $user = auth()->user();
+
+
 
         $user->update([
             'password' => bcrypt($request->password)
@@ -193,13 +196,14 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
 
+        $guards = implode(",", config("global.guards"));
         $request->validate([
-            // TODO guard should be in array
             "token" => ['required', 'exists:password_resets,token'],
-            "guard" => ['required'],
+            "guard" => ['required', "in:" . $guards],
             "email" => ['required'],
             'password' => ['required', "confirmed", 'min:6'],
         ]);
+
         $token = $request->token;
         $guard = $request->guard;
 

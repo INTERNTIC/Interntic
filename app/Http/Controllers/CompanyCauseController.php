@@ -2,47 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CompanyCauseResource;
 use App\Models\CompanyCause;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CompanyCauseController extends Controller
 {
     use GeneralTrait;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return $this->returnData(CompanyCause::all());
+        return CompanyCauseResource::collection(CompanyCause::where('company_id',auth()->id())->paginate(4));
+    }
+    public function get_all()
+    {
+        return $this->returnData(CompanyCauseResource::collection(CompanyCause::where("company_id",auth()->id())->get()));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        Validator::make($request->all(),[ 
+        $request->validate([ 
             'cause'=>['required','string'],
-        ])->validate();
+        ]);
         $company_id=auth()->id();
         $companyCause=CompanyCause::create($request->only('cause')+['company_id'=>$company_id]);
         return $this->returnData($companyCause);
     }
 
+    public function update(Request $request, CompanyCause $companyCause)
+    {
+        $request->validate([ 
+            'cause'=>['required','string'],
+        ]);
+        $companyCause->update($request->only("cause"));
+        return $this->returnData($companyCause,"Updated Succssefuly");
+    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\CompanyCause  $companyCause
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(CompanyCause $companyCause)
     {
         $companyCause->delete();
