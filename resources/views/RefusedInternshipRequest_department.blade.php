@@ -18,6 +18,11 @@ We appreciate your interest in our organization and your eagerness to gain pract
 We understand that this news may be disappointing, but please remember that there are various factors involved in the selection process, and our decision does not reflect on your capabilities or potential. We encourage you to continue exploring other internship opportunities and to pursue your career goals with determination and enthusiasm.
 
 We sincerely appreciate your interest in {{$internship_request->student->level_major->major->department->name}} and wish you the best in your future endeavors. If you have any further questions or require additional feedback, please feel free to reach out to us.
+@if($status)
+<p>Note: Our decision is final and not subject to modification.</p>
+@endif
+Thank you for your understanding.
+
 
 Thank you for your understanding.
 

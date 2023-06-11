@@ -34,7 +34,7 @@ class InternshipRequestResource extends JsonResource
         "id"=>$this->id,
         "student_id"=>$this->student_id,
         "internshipResponsible_email"=>$this->internshipResponsible_email,
-        "status"=>$this->status,
+        "status"=>$this->status??0,
         "textStatus"=>$this->getStatus($this->status),
         "theme"=>$this->theme,
         "start_at"=>date_format(date_create($this->start_at), 'Y-m-d'),

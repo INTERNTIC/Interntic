@@ -14,15 +14,34 @@ class InternshipOffersController extends Controller
 {
     use GeneralTrait;
 
+    // public function displayOffers()
+    // {
+    //     if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
+    //         $user_id = Auth::guard('internship_responsible')->id();
+    //         $offers = Offer::where('internship_responsible_id', $user_id)->paginate(3);
+    //     } else if (Auth::getDefaultDriver() == config('global.student_guard')) {
+    //         $offers = Offer::paginate(5);
+    //     }
+    //     return  OfferResource::collection($offers);
+    //     // of you want to add custom key value to the collection
+    //     // return  OfferResource::collection($offers)->additional( [
+    //     //     'key' => "value",
+    //     // ]);
+    // }
     public function displayOffers()
     {
         if (Auth::getDefaultDriver() == config('global.internship_responsible_guard')) {
             $user_id = Auth::guard('internship_responsible')->id();
             $offers = Offer::where('internship_responsible_id', $user_id)->paginate(3);
+            return  OfferResource::collection($offers);
         } else if (Auth::getDefaultDriver() == config('global.student_guard')) {
-            $offers = Offer::paginate(5);
+            $pagination = request('pagination',true);
+            if ($pagination==="false") {
+                return $this->returnData(OfferResource::collection(Offer::all()));
+            }else{
+                return  OfferResource::collection(Offer::paginate(6));
+            }
         }
-        return  OfferResource::collection($offers);
         // of you want to add custom key value to the collection
         // return  OfferResource::collection($offers)->additional( [
         //     'key' => "value",

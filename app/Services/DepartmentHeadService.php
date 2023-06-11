@@ -37,9 +37,10 @@ class DepartmentHeadService
         $student = Student::find($internshipRequest->student_id);
         $studentAccount = StudentAccount::find($internshipRequest->student_id);
         $data = [
-            'departmentCause' => $departmentCause,
-            'internshipRequest' => $internshipRequest,
-            'student' => $student
+            'department_cause' => $departmentCause,
+            'internship_request' => $internshipRequest,
+            'student' => $student,
+            'status'=>false
         ];
 
         $departmentRefuseRequest = [
@@ -47,7 +48,7 @@ class DepartmentHeadService
             'department_cause_id' => $request->cause_id
         ];
 
-        $departmentRefuse = DepartmentRefuse::create($departmentRefuseRequest);
+        // $departmentRefuse = DepartmentRefuse::create($departmentRefuseRequest);
         $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_department', 'Refused Internship Request');
         $internshipRequest->status = config('global.internship_request_status.refused_by_department_head');
         $internshipRequest->save();
@@ -64,7 +65,8 @@ class DepartmentHeadService
         $data = [
             'department_cause' => $department_cause,
             'internship_request' => $internship_request,
-            'student' => $student
+            'student' => $student,
+            'status'=>true,
         ];
 
         $this->sendEmail($data, $studentAccount->email, 'RefusedInternshipRequest_department', 'Refused Internship Request');

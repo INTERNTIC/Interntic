@@ -14,10 +14,12 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Requests\AccountRequest_Request;
 use App\Http\Resources\AccountRequestResource;
 use App\Http\Requests\InternshipResponsibleRequest;
+use App\Traits\SendEmail;
 
 class AccountRequestController extends Controller
 {
     use GeneralTrait;
+    use SendEmail;
     public $decisions = ['accept', 'refuse'];
 
     public function index()
@@ -35,11 +37,11 @@ class AccountRequestController extends Controller
             'first_name',
             'last_name',
             'email',
-            'password',
             'phone',
             'company_id'
         ]);
         $data['company_id'] = $company->id;
+        $data['password'] = bcrypt($request->password);
         $accountRequest = AccountRequest::create($data);
         // TODO make account accepted by souper admin
         $msg="your account is waiting to be confirmed by department head";
@@ -87,8 +89,11 @@ class AccountRequestController extends Controller
         ->setRedirector(app(\Illuminate\Routing\Redirector::class))
         ->validateResolved();
         $internshipResponsible = (new InternshipResponsibleController)->store($internshipResponsibleRequest)->getOriginalContent()['data'];
+
+
         if($internshipResponsible==true){
             $accountRequest->delete();
+            $this->sendEmail([],$accountRequest->email,"account_created","account created");
             return $this->returnSuccessMessage('account request accepted successfully');
         }else{
             return $this->returnError('Unable to accept the account request');
